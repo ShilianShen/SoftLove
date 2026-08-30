@@ -1,0 +1,11 @@
+.DS_Store
+**/.DS_Store
+conf.lua
+main.lua
+*.local.*
+*_local.*
+*.local
+scripts
+dist
+assets
+configs
