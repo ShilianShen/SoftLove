@@ -1,4 +1,5 @@
 local Content = require("src.softlove.tools.drawGraph.Content")
+local inspect = require("libs.inspect")
 local drawGraph = {
 	theme = {
 		colors = {
@@ -28,6 +29,7 @@ local function getNodeContent(node, X, Y, W, H)
 		content.vertices[ttag].textColor = task.dirty and "warning" or "success"
 		content.vertices[ttag].text = content.vertices[ttag].text .. task.count
 	end
+	content.title = "TASKS"
 	return content
 end
 
@@ -37,6 +39,14 @@ local function getGraphContent(graph, X, Y, W, H)
 		content.vertices[ntag].textColor = node.dirty and "warning" or "success"
 		content.vertices[ntag].text = content.vertices[ntag].text .. node.count
 	end
+	content.title = "NODES"
+	return content
+end
+
+local function getDataContent(node, X, Y, W, H)
+	local content = Content.newContent({ v = {} }, { v = {} }, { v = {} }, { "v" }, X, Y, W, H)
+	content.title = "DATA"
+	content.vertices.v.text = inspect(node.data)
 	return content
 end
 
@@ -62,8 +72,9 @@ local function draw(graph, X, Y, W, H)
 	love.graphics.setColor(drawGraph.theme.colors.background)
 	love.graphics.rectangle("fill", X, Y, W, H)
 
-	local graphContent = getGraphContent(graph, X, Y, W / 2, H)
+	local graphContent = getGraphContent(graph, X, Y, W / 2, H / 2)
 	local nodeContent = nil
+	local dataContent = nil
 
 	local ntag = getFocus(graphContent)
 	if ntag ~= drawGraph.memory.ntag and ntag ~= nil then
@@ -77,7 +88,7 @@ local function draw(graph, X, Y, W, H)
 		graphContent.vertices[ntag].borderColor = "accent_border"
 		graphContent.vertices[ntag].surfaceColor = "accent_surface"
 		local node = graph.nodes[ntag]
-		nodeContent = getNodeContent(node, X + W / 2, Y, W / 2, H)
+		nodeContent = getNodeContent(node, X, Y + H / 2, W / 2, H / 2)
 		drawGraph.memory.ttag = getFocus(nodeContent) or drawGraph.memory.ttag
 		local ttag = drawGraph.memory.ttag
 
@@ -99,11 +110,18 @@ local function draw(graph, X, Y, W, H)
 			edge.text = task.atag
 			table.insert(nodeContent.edges, edge)
 		end
+
+		dataContent = getDataContent(node, X + W / 2, Y, W / 2, H)
+	end
+
+	if dataContent ~= nil then
+		dataContent:draw(drawGraph.theme, drawGraph.font)
 	end
 
 	if nodeContent ~= nil then
 		nodeContent:draw(drawGraph.theme, drawGraph.font)
 	end
+
 	graphContent:draw(drawGraph.theme, drawGraph.font)
 end
 

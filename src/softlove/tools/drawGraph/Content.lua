@@ -1,6 +1,15 @@
 local Content = {}
 local style = require("src.softlove.tools.drawGraph.style")
 
+local function lineCount(str)
+	if str == "" then
+		return 0
+	end
+
+	local _, count = str:gsub("\n", "\n")
+	return count + 1
+end
+
 local function getDist(parents, order)
 	local depth = {}
 	for _, vtag in ipairs(order) do
@@ -50,14 +59,22 @@ end
 
 local function _newContent(vertices, parents, children, order, X, Y, W, H)
 	local content = {}
-	content.dist = getDist(parents, order)
+	local dist = getDist(parents, order)
+
+	content.title = ""
+	content.titleColor = "text"
+	content.borderColor = "border"
+	content.x = X
+	content.y = Y
+	content.w = W
+	content.h = H
 
 	content.vertices = {}
-	local D = #content.dist
+	local D = #dist
 	for j = 1, D do
-		local B = #content.dist[j]
+		local B = #dist[j]
 		for i = 1, B do
-			local vtag = content.dist[j][i]
+			local vtag = dist[j][i]
 			local x = X + W / B * (i - 0.5)
 			local y = Y + H / D * (j - 0.5)
 			content.vertices[vtag] = Content.newVertex(x, y, vtag)
@@ -80,9 +97,18 @@ local function _newContent(vertices, parents, children, order, X, Y, W, H)
 end
 
 local function drawContent(content, theme, font)
+	do
+		love.graphics.setColor(theme.colors[content.borderColor])
+		love.graphics.rectangle("line", content.x + 1, content.y + 1, content.w - 2, content.h - 2)
+
+		local w = font:getWidth(content.title or "")
+		love.graphics.setColor(theme.colors[content.titleColor])
+		love.graphics.print(content.title or "", content.x + (content.w - w) / 2, content.y)
+	end
+
 	for _, edge in ipairs(content.edges) do
 		local w = font:getWidth(edge.text or "")
-		local h = font:getHeight()
+		local h = font:getHeight() * lineCount(edge.text or "")
 		local x = (edge.x1 + edge.x2 - w) / 2
 		local y = (edge.y1 + edge.y2 - h) / 2
 		love.graphics.setColor(theme.colors[edge.borderColor])
@@ -95,7 +121,7 @@ local function drawContent(content, theme, font)
 
 	for _, vertex in pairs(content.vertices) do
 		local w = font:getWidth(vertex.text or "")
-		local h = font:getHeight()
+		local h = font:getHeight() * lineCount(vertex.text or "")
 		local x = vertex.x - w / 2
 		local y = vertex.y - h / 2
 		love.graphics.setColor(theme.colors[vertex.surfaceColor])
