@@ -1,5 +1,5 @@
 local Content = require("src.softlove.tools.drawGraph.Content")
-local softdraw = {
+local drawGraph = {
 	theme = {
 		colors = {
 			background = { 0.025, 0.025, 0.025, 0.7 },
@@ -26,6 +26,7 @@ local function getNodeContent(node, X, Y, W, H)
 	local content = Content.newContent(node.tasks, node.parents_c, node.children_c, node.order, X, Y, W, H)
 	for ttag, task in pairs(node.tasks) do
 		content.vertices[ttag].textColor = task.dirty and "warning" or "success"
+		content.vertices[ttag].text = content.vertices[ttag].text .. task.count
 	end
 	return content
 end
@@ -34,6 +35,7 @@ local function getGraphContent(graph, X, Y, W, H)
 	local content = Content.newContent(graph.nodes, graph.parents_n, graph.children_n, graph.order, X, Y, W, H)
 	for ntag, node in pairs(graph.nodes) do
 		content.vertices[ntag].textColor = node.dirty and "warning" or "success"
+		content.vertices[ntag].text = content.vertices[ntag].text .. node.count
 	end
 	return content
 end
@@ -41,8 +43,8 @@ end
 local function getFocus(content)
 	local mouseX, mouseY = love.mouse.getPosition()
 	for vtag, vertex in pairs(content.vertices) do
-		local w = softdraw.font:getWidth(vertex.text)
-		local h = softdraw.font:getHeight()
+		local w = drawGraph.font:getWidth(vertex.text)
+		local h = drawGraph.font:getHeight()
 		local dx = (mouseX - vertex.x) / w + 0.5
 		local dy = (mouseY - vertex.y) / h + 0.5
 		if 0 < dx and dx < 1 and 0 < dy and dy < 1 then
@@ -57,58 +59,60 @@ local function draw(graph, X, Y, W, H)
 	W = W or love.graphics.getWidth()
 	H = H or love.graphics.getHeight()
 
-	love.graphics.setColor(softdraw.theme.colors.background)
+	love.graphics.setColor(drawGraph.theme.colors.background)
 	love.graphics.rectangle("fill", X, Y, W, H)
 
 	local graphContent = getGraphContent(graph, X, Y, W / 2, H)
 	local nodeContent = nil
 
 	local ntag = getFocus(graphContent)
-	if ntag ~= softdraw.memory.ntag and ntag ~= nil then
-		softdraw.memory.ttag = nil
+	if ntag ~= drawGraph.memory.ntag and ntag ~= nil then
+		drawGraph.memory.ttag = nil
 	end
 
-	softdraw.memory.ntag = ntag or softdraw.memory.ntag
-	ntag = softdraw.memory.ntag
+	drawGraph.memory.ntag = ntag or drawGraph.memory.ntag
+	ntag = drawGraph.memory.ntag
 
 	if ntag then
 		graphContent.vertices[ntag].borderColor = "accent_border"
 		graphContent.vertices[ntag].surfaceColor = "accent_surface"
 		local node = graph.nodes[ntag]
 		nodeContent = getNodeContent(node, X + W / 2, Y, W / 2, H)
-		softdraw.memory.ttag = getFocus(nodeContent) or softdraw.memory.ttag
-		local ttag = softdraw.memory.ttag
+		drawGraph.memory.ttag = getFocus(nodeContent) or drawGraph.memory.ttag
+		local ttag = drawGraph.memory.ttag
 
 		if ttag then
 			nodeContent.vertices[ttag].borderColor = "accent_border"
 			nodeContent.vertices[ttag].surfaceColor = "accent_surface"
 			local task = node.tasks[ttag]
 			local v2 = nodeContent.vertices[ttag]
-			for _, dtag in pairs(node.parents_d[ttag]) do
+			for _, dtag in pairs(graph.parents_d[ntag][ttag]) do
 				local v1 = graphContent.vertices[dtag]
 				local edge = Content.newEdge(v1.x, v1.y, v2.x, v2.y)
 				edge.style = "dot"
-				edge.text = graph.nodes[dtag].access
+				edge.text = graph.nodes[dtag].atag
 				table.insert(nodeContent.edges, edge)
 			end
 			local v1 = graphContent.vertices[ntag]
 			local edge = Content.newEdge(v1.x, v1.y, v2.x, v2.y)
 			edge.style = "dot"
-			edge.text = task.access
+			edge.text = task.atag
 			table.insert(nodeContent.edges, edge)
 		end
 	end
 
 	if nodeContent ~= nil then
-		nodeContent:draw(softdraw.theme, softdraw.font)
+		nodeContent:draw(drawGraph.theme, drawGraph.font)
 	end
-	graphContent:draw(softdraw.theme, softdraw.font)
+	graphContent:draw(drawGraph.theme, drawGraph.font)
 end
 
-function softdraw.draw(...)
-	love.graphics.push("all")
-	draw(...)
-	love.graphics.pop()
-end
+setmetatable(drawGraph, {
+	__call = function(self, ...)
+		love.graphics.push("all")
+		draw(...)
+		love.graphics.pop()
+	end,
+})
 
-return softdraw
+return drawGraph

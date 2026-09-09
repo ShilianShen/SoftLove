@@ -81,7 +81,7 @@ end
 
 local function drawContent(content, theme, font)
 	for _, edge in ipairs(content.edges) do
-		local w = font:getWidth(edge.text)
+		local w = font:getWidth(edge.text or "")
 		local h = font:getHeight()
 		local x = (edge.x1 + edge.x2 - w) / 2
 		local y = (edge.y1 + edge.y2 - h) / 2
@@ -90,11 +90,11 @@ local function drawContent(content, theme, font)
 		love.graphics.setColor(theme.colors[edge.surfaceColor])
 		love.graphics.rectangle("fill", x, y, w, h)
 		love.graphics.setColor(theme.colors[edge.textColor])
-		love.graphics.print(edge.text, font, x, y)
+		love.graphics.print(edge.text or "", font, x, y)
 	end
 
 	for _, vertex in pairs(content.vertices) do
-		local w = font:getWidth(vertex.text)
+		local w = font:getWidth(vertex.text or "")
 		local h = font:getHeight()
 		local x = vertex.x - w / 2
 		local y = vertex.y - h / 2
@@ -103,7 +103,7 @@ local function drawContent(content, theme, font)
 		love.graphics.setColor(theme.colors[vertex.borderColor])
 		love.graphics.rectangle("line", x - 1, y - 1, w + 2, h + 2)
 		love.graphics.setColor(theme.colors[vertex.textColor])
-		love.graphics.print(vertex.text, font, x, y)
+		love.graphics.print(vertex.text or "", font, x, y)
 	end
 end
 
