@@ -1,6 +1,7 @@
 local softdep = require("libs.softdep")
 local mouse = require("src.softlove.devices.mouse")
 local keyboard = require("src.softlove.devices.keyboard")
+local joystick = require("src.softlove.devices.joystick")
 
 local devices = {
 	mouse = {
@@ -38,6 +39,7 @@ local devices = {
 			},
 		},
 	},
+	joystick = {},
 }
 
 return devices

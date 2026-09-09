@@ -1,5 +1,5 @@
 local Content = {}
-local style = require("src.softlove.tools.drawGraph.style")
+local style = require("src.softlove.drawGraph.style")
 
 local function lineCount(str)
 	if str == "" then

@@ -1,4 +1,4 @@
-local Content = require("src.softlove.tools.drawGraph.Content")
+local Content = require("src.softlove.drawGraph.Content")
 local inspect = require("libs.inspect")
 local drawGraph = {
 	theme = {
