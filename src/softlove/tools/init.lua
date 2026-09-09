@@ -1,4 +1,4 @@
-local softdep = require("libs.softdep_local")
+local softdep = require("libs.softdep")
 local tools = {}
 
 return tools
