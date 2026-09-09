@@ -1,5 +1,5 @@
 local Content = {}
-local style = require("softdraw.style")
+local style = require("src.softlove.tools.drawGraph.style")
 
 local function getDist(parents, order)
 	local depth = {}

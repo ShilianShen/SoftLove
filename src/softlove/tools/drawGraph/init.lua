@@ -1,4 +1,4 @@
-local Content = require("softdraw.Content")
+local Content = require("src.softlove.tools.drawGraph.Content")
 local softdraw = {
 	theme = {
 		colors = {
