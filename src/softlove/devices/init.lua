@@ -14,11 +14,11 @@ local devices = {
 				auto = mouse.dynamic,
 			},
 		},
-		-- apis = {
-		-- 	update = {
-		-- 		ttag = "update",
-		-- 	},
-		-- },
+		apis = {
+			update = {
+				ttag = "update",
+			},
+		},
 	},
 	keyboard = {
 		tasks = {
@@ -31,33 +31,13 @@ local devices = {
 				auto = keyboard.dynamic,
 			},
 		},
-		-- apis = {
-		-- 	update = {
-		-- 		func = keyboard.newKey,
-		-- 		ttag = "update",
-		-- 	},
-		-- },
+		apis = {
+			update = {
+				func = keyboard.newKey,
+				ttag = "update",
+			},
+		},
 	},
 }
-
--- function love.mousemoved(...)
--- 	devices.mouse.api.update()
--- end
-
--- function love.mousepressed(...)
--- 	devices.mouse.api.update()
--- end
-
--- function love.mousereleased(...)
--- 	devices.mouse.api.update()
--- end
-
--- function love.keypressed(key)
--- 	devices.keyboard.api.update(key)
--- end
-
--- function love.keyreleased(key)
--- 	devices.keyboard.api.update(key)
--- end
 
 return devices

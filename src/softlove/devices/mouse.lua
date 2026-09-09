@@ -1,8 +1,7 @@
-local mouse = {
-	buttons = { 1, 2, 3 },
-}
+local mouse = {}
 
 function mouse:init()
+	self.buttons = { 1, 2, 3 }
 	self.x1, self.y1 = 0, 0
 	self.x2, self.y2 = 0, 0
 	self.isDown1 = {}

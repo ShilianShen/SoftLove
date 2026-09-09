@@ -1,8 +1,7 @@
-local keyboard = {
-	buttons = {},
-}
+local keyboard = {}
 
 function keyboard:init()
+	self.buttons = {}
 	self.isDown1 = {}
 	self.isDown2 = {}
 	for _, bt in pairs(self.buttons) do
@@ -27,9 +26,9 @@ function keyboard:dynamic()
 	return false
 end
 
-function keyboard.newKey(key)
-	if keyboard.isDown2[key] == nil then
-		table.insert(keyboard.buttons, key)
+function keyboard:newKey(key)
+	if self.isDown2[key] == nil then
+		table.insert(self.buttons, key)
 	end
 end
 
