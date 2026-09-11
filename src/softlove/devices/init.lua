@@ -1,6 +1,6 @@
 local softdep = require("libs.softdep")
-local mouse = require("src.softlove.devices.mouse")
-local keyboard = require("src.softlove.devices.keyboard")
+local mouse = require("softlove.devices.mouse")
+local keyboard = require("softlove.devices.keyboard")
 local joystick = require("src.softlove.devices.joystick")
 
 local devices = {}
@@ -59,6 +59,28 @@ function devices.getNodes(ntags)
 	nodes[ntags.joystick] = {}
 
 	return nodes
+end
+
+function devices.setCallbacks(graph)
+	function love.mousemoved(...)
+		graph.nodes[devices.ntags.mouse].apis.update()
+	end
+
+	function love.mousepressed(...)
+		graph.nodes[devices.ntags.mouse].apis.update()
+	end
+
+	function love.mousereleased(...)
+		graph.nodes[devices.ntags.mouse].apis.update()
+	end
+
+	function love.keypressed(key)
+		graph.nodes[devices.ntags.keyboard].apis.update(key)
+	end
+
+	function love.keyreleased(key)
+		graph.nodes[devices.ntags.keyboard].apis.update(key)
+	end
 end
 
 return devices
