@@ -1,5 +1,5 @@
 local ui = {
-	elements = require("softlove.ui.elements"),
+	types = require("softlove.ui.types"),
 }
 
 return ui
