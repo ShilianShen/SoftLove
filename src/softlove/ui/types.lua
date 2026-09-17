@@ -23,17 +23,13 @@ end
 
 types.rectangle = function(config, layout)
 	local node = types.object(config, layout)
-	node.apis.draw = {
-		func = drawRectangle,
-	}
+	node.apis.draw.func = drawRectangle
 	return node
 end
 
 types.point = function(config, layout)
 	local node = types.object(config, layout)
-	node.apis.draw = {
-		func = drawPoint,
-	}
+	node.apis.draw.func = drawPoint
 	return node
 end
 
