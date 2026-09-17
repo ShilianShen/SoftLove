@@ -8,5 +8,6 @@ main.lua
 scripts
 dist
 assets
+!src/softlove/assets
 configs
 libs
