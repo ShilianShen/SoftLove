@@ -128,6 +128,7 @@ end
 setmetatable(drawGraph, {
 	__call = function(self, ...)
 		love.graphics.push("all")
+		love.graphics.setFont(self.font)
 		draw(...)
 		love.graphics.pop()
 	end,

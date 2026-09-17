@@ -1,5 +1,4 @@
-local softdep = require("libs.softdep")
-local styles = require("softlove.ui.styles")
+local elements = require("softlove.ui.elements")
 local ui = {}
 
 function ui.getNodes(ntags) end
