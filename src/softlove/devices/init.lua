@@ -1,6 +1,7 @@
 local mouse = require("softlove.devices.mouse")
 local keyboard = require("softlove.devices.keyboard")
 local joystick = require("softlove.devices.joystick")
+local wheel = require("softlove.devices.wheel")
 
 local devices = {}
 
@@ -8,6 +9,7 @@ local defaultNtags = {
 	mouse = "mouse",
 	keyboard = "keyboard",
 	joystick = "joystick",
+	wheel = "wheel",
 }
 
 function devices.getNodes(ntags)
