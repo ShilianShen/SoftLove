@@ -2,25 +2,14 @@ local mouse = require("softlove.devices.mouse")
 local keyboard = require("softlove.devices.keyboard")
 local joystick = require("softlove.devices.joystick")
 local wheel = require("softlove.devices.wheel")
+local ntags = require("softlove.ntags")
 
 local devices = {}
 
-local defaultNtags = {
-	mouse = "mouse",
-	keyboard = "keyboard",
-	joystick = "joystick",
-	wheel = "wheel",
-}
-
-function devices.getNodes(ntags)
+function devices.getNodes()
 	local nodes = {}
-	ntags = ntags or defaultNtags
-	for k, v in pairs(defaultNtags) do
-		ntags[k] = ntags[k] or v
-	end
-	devices.ntags = ntags
 
-	nodes[ntags.mouse] = {
+	nodes[ntags.devices.mouse] = {
 		tasks = {
 			init = {
 				func = mouse.init,
@@ -38,7 +27,7 @@ function devices.getNodes(ntags)
 		},
 	}
 
-	nodes[ntags.keyboard] = {
+	nodes[ntags.devices.keyboard] = {
 		tasks = {
 			init = {
 				func = keyboard.init,
@@ -57,30 +46,30 @@ function devices.getNodes(ntags)
 		},
 	}
 
-	nodes[ntags.joystick] = {}
-
+	nodes[ntags.devices.joystick] = {}
+	nodes[ntags.devices.wheel] = {}
 	return nodes
 end
 
 function devices.setCallbacks(graph)
 	function love.mousemoved(...)
-		graph.nodes[devices.ntags.mouse].apis.update()
+		graph.nodes[ntags.devices.mouse].apis.update()
 	end
 
 	function love.mousepressed(...)
-		graph.nodes[devices.ntags.mouse].apis.update()
+		graph.nodes[ntags.devices.mouse].apis.update()
 	end
 
 	function love.mousereleased(...)
-		graph.nodes[devices.ntags.mouse].apis.update()
+		graph.nodes[ntags.devices.mouse].apis.update()
 	end
 
 	function love.keypressed(key)
-		graph.nodes[devices.ntags.keyboard].apis.update(key)
+		graph.nodes[ntags.devices.keyboard].apis.update(key)
 	end
 
 	function love.keyreleased(key)
-		graph.nodes[devices.ntags.keyboard].apis.update(key)
+		graph.nodes[ntags.devices.keyboard].apis.update(key)
 	end
 end
 
