@@ -1,0 +1,3 @@
+local locales = {}
+
+return locales
