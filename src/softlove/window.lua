@@ -4,18 +4,12 @@ local ntags = require("softlove.ntags")
 function window.getNode()
 	local node = {
 		tasks = {
-			init = {
-				func = function(self)
-					self.w, self.h = love.graphics.getDimensions()
-				end,
-			},
 			update = {
 				func = function(self)
 					self.w, self.h = love.graphics.getDimensions()
 					self.visible = love.window.isVisible()
 					self.focus = love.window.hasFocus()
 				end,
-				parents_c = { "init" },
 			},
 		},
 		apis = {
@@ -29,7 +23,7 @@ function window.setCallbacks(graph)
 	love.focus = graph.nodes[ntags.window].apis.update
 	love.visible = graph.nodes[ntags.window].apis.update
 	love.resize = graph.nodes[ntags.window].apis.update
-	love.displayrotated = function(displayindex, orientation) end
+	-- love.displayrotated = function(displayindex, orientation) end
 end
 
 return window
