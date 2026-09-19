@@ -68,11 +68,12 @@ local function draw(graph, X, Y, W, H)
 	Y = Y or 0
 	W = W or love.graphics.getWidth()
 	H = H or love.graphics.getHeight()
+	local k = 0.6
 
 	love.graphics.setColor(drawGraph.theme.colors.background)
 	love.graphics.rectangle("fill", X, Y, W, H)
 
-	local graphContent = getGraphContent(graph, X, Y, W / 2, H / 2)
+	local graphContent = getGraphContent(graph, X, Y, W * k, H / 2)
 	local nodeContent = nil
 	local dataContent = nil
 
@@ -88,7 +89,7 @@ local function draw(graph, X, Y, W, H)
 		graphContent.vertices[ntag].borderColor = "accent_border"
 		graphContent.vertices[ntag].surfaceColor = "accent_surface"
 		local node = graph.nodes[ntag]
-		nodeContent = getNodeContent(node, X, Y + H / 2, W / 2, H / 2)
+		nodeContent = getNodeContent(node, X, Y + H / 2, W * k, H / 2)
 		drawGraph.memory.ttag = getFocus(nodeContent) or drawGraph.memory.ttag
 		local ttag = drawGraph.memory.ttag
 
@@ -111,7 +112,7 @@ local function draw(graph, X, Y, W, H)
 			table.insert(nodeContent.edges, edge)
 		end
 
-		dataContent = getDataContent(node, X + W / 2, Y, W / 2, H)
+		dataContent = getDataContent(node, X + W * k, Y, W * (1 - k), H)
 	end
 
 	if dataContent ~= nil then

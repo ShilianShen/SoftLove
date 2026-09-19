@@ -42,6 +42,7 @@ function devices.getNodes()
 			update = {
 				func = keyboard.newKey,
 				ttag = "update",
+				atag = "writable",
 			},
 		},
 	}
