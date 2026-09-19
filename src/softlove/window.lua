@@ -18,11 +18,13 @@ function window.getNode()
 	return node
 end
 
-function window.setCallbacks(node)
-	love.focus = node.apis.update
-	love.visible = node.apis.update
-	love.resize = node.apis.update
+function window.getCallbacks(node)
 	-- love.displayrotated = function(displayindex, orientation) end
+	return {
+		focus = node.apis.update,
+		visible = node.apis.update,
+		resize = node.apis.update,
+	}
 end
 
 return window

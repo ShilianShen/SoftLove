@@ -55,9 +55,11 @@ function keyboard.getNode()
 	return node
 end
 
-function keyboard.setCallbacks(node)
-	love.keypressed = node.apis.update
-	love.keyreleased = node.apis.update
+function keyboard.getCallbacks(node)
+	return {
+		keypressed = node.apis.update,
+		keyreleased = node.apis.update,
+	}
 end
 
 return keyboard

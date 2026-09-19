@@ -54,10 +54,12 @@ function mouse.getNode()
 	return node
 end
 
-function mouse.setCallbacks(node)
-	love.mousemoved = node.apis.update
-	love.mousepressed = node.apis.update
-	love.mousereleased = node.apis.update
+function mouse.getCallbacks(node)
+	return {
+		mousemoved = node.apis.update,
+		mousepressed = node.apis.update,
+		mousereleased = node.apis.update,
+	}
 end
 
 return mouse
