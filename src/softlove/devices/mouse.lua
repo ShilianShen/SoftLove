@@ -1,3 +1,4 @@
+local ntags = require("softlove.ntags")
 local mouse = {}
 
 function mouse:init()
@@ -31,6 +32,33 @@ function mouse:dynamic()
 		return true
 	end
 	return false
+end
+
+function mouse.getNode()
+	local node = {
+		tasks = {
+			init = {
+				func = mouse.init,
+			},
+			update = {
+				func = mouse.update,
+				parents_c = { "init" },
+				auto = mouse.dynamic,
+			},
+		},
+		apis = {
+			update = {
+				ttag = "update",
+			},
+		},
+	}
+	return node
+end
+
+function mouse.setCallbacks(graph)
+	love.mousemoved = graph.nodes[ntags.devices.mouse].apis.update
+	love.mousepressed = graph.nodes[ntags.devices.mouse].apis.update
+	love.mousereleased = graph.nodes[ntags.devices.mouse].apis.update
 end
 
 return mouse
