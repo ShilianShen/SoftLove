@@ -20,9 +20,4 @@ function devices.getNodes()
 	return nodes
 end
 
-function devices.setCallbacks(graph)
-	mouse.setCallbacks(graph)
-	keyboard.setCallbacks(graph)
-end
-
 return devices

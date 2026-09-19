@@ -1,4 +1,3 @@
-local ntags = require("softlove.ntags")
 local mouse = {}
 
 function mouse:init()

@@ -1,5 +1,4 @@
 local window = {}
-local ntags = require("softlove.ntags")
 
 function window.getNode()
 	local node = {

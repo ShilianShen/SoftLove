@@ -1,4 +1,3 @@
-local ntags = require("softlove.ntags")
 local keyboard = {}
 
 function keyboard:init()
