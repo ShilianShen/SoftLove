@@ -19,10 +19,10 @@ function window.getNode()
 	return node
 end
 
-function window.setCallbacks(graph)
-	love.focus = graph.nodes[ntags.window].apis.update
-	love.visible = graph.nodes[ntags.window].apis.update
-	love.resize = graph.nodes[ntags.window].apis.update
+function window.setCallbacks(node)
+	love.focus = node.apis.update
+	love.visible = node.apis.update
+	love.resize = node.apis.update
 	-- love.displayrotated = function(displayindex, orientation) end
 end
 
