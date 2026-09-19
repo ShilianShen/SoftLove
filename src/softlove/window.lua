@@ -12,25 +12,23 @@ function window.getNode()
 			update = {
 				func = function(self)
 					self.w, self.h = love.graphics.getDimensions()
+					self.visible = love.window.isVisible()
+					self.focus = love.window.hasFocus()
 				end,
 				parents_c = { "init" },
 			},
 		},
 		apis = {
-			resize = {
-				ttag = "update",
-			},
+			update = { ttag = "update" },
 		},
 	}
 	return node
 end
 
 function window.setCallbacks(graph)
-	love.focus = function(focus) end
-	love.visible = function(visible) end
-	love.resize = function(w, h)
-		graph.nodes[ntags.window].apis.resize()
-	end
+	love.focus = graph.nodes[ntags.window].apis.update
+	love.visible = graph.nodes[ntags.window].apis.update
+	love.resize = graph.nodes[ntags.window].apis.update
 	love.displayrotated = function(displayindex, orientation) end
 end
 
