@@ -4,6 +4,8 @@ local function init(self)
 	self.buttons = { 1, 2, 3 }
 	self.x1, self.y1 = 0, 0
 	self.x2, self.y2 = 0, 0
+	self.focus1 = false
+	self.focus2 = false
 	self.isDown1 = {}
 	self.isDown2 = {}
 	for _, bt in pairs(self.buttons) do
@@ -19,6 +21,8 @@ local function update(self)
 		self.isDown1[bt] = self.isDown2[bt]
 		self.isDown2[bt] = love.mouse.isDown(bt)
 	end
+	self.focus1 = self.focus2
+	self.focus2 = love.window.hasMouseFocus()
 end
 
 local function dynamic(self)
@@ -28,6 +32,9 @@ local function dynamic(self)
 		end
 	end
 	if self.x1 ~= self.x2 or self.y1 ~= self.y2 then
+		return true
+	end
+	if self.focus1 ~= self.focus2 then
 		return true
 	end
 	return false
@@ -59,6 +66,7 @@ function mouse.getCallbacks(node)
 		mousemoved = node.apis.update,
 		mousepressed = node.apis.update,
 		mousereleased = node.apis.update,
+		mousefocus = node.apis.update,
 	}
 end
 
