@@ -1,6 +1,6 @@
 local mouse = {}
 
-function mouse:init()
+local function init(self)
 	self.buttons = { 1, 2, 3 }
 	self.x1, self.y1 = 0, 0
 	self.x2, self.y2 = 0, 0
@@ -12,7 +12,7 @@ function mouse:init()
 	end
 end
 
-function mouse:update()
+local function update(self)
 	self.x1, self.y1 = self.x2, self.y2
 	self.x2, self.y2 = love.mouse.getPosition()
 	for _, bt in pairs(self.buttons) do
@@ -21,7 +21,7 @@ function mouse:update()
 	end
 end
 
-function mouse:dynamic()
+local function dynamic(self)
 	for _, bt in pairs(self.buttons) do
 		if self.isDown1[bt] ~= self.isDown2[bt] then
 			return true
@@ -37,12 +37,12 @@ function mouse.getNode()
 	local node = {
 		tasks = {
 			init = {
-				func = mouse.init,
+				func = init,
 			},
 			update = {
-				func = mouse.update,
+				func = update,
 				parents_c = { "init" },
-				auto = mouse.dynamic,
+				auto = dynamic,
 			},
 		},
 		apis = {
