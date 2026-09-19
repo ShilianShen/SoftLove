@@ -4,7 +4,10 @@ local joystick = require("softlove.devices.joystick")
 local wheel = require("softlove.devices.wheel")
 local ntags = require("softlove.ntags")
 
-local devices = {}
+local devices = {
+	mouse = mouse,
+	keyboard = keyboard,
+}
 
 function devices.getNodes()
 	local nodes = {}

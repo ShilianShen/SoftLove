@@ -55,10 +55,10 @@ function mouse.getNode()
 	return node
 end
 
-function mouse.setCallbacks(graph)
-	love.mousemoved = graph.nodes[ntags.devices.mouse].apis.update
-	love.mousepressed = graph.nodes[ntags.devices.mouse].apis.update
-	love.mousereleased = graph.nodes[ntags.devices.mouse].apis.update
+function mouse.setCallbacks(node)
+	love.mousemoved = node.apis.update
+	love.mousepressed = node.apis.update
+	love.mousereleased = node.apis.update
 end
 
 return mouse

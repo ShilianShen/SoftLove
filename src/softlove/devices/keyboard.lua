@@ -50,15 +50,15 @@ function keyboard.getNode()
 	return node
 end
 
-function keyboard.setCallbacks(graph)
-	love.keypressed = graph.nodes[ntags.devices.keyboard].apis.update
-	love.keyreleased = graph.nodes[ntags.devices.keyboard].apis.update
-end
-
 function keyboard:newKey(key)
 	if self.isDown2[key] == nil then
 		table.insert(self.buttons, key)
 	end
+end
+
+function keyboard.setCallbacks(node)
+	love.keypressed = node.apis.update
+	love.keyreleased = node.apis.update
 end
 
 return keyboard
