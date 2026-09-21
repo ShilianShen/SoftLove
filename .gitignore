@@ -5,10 +5,10 @@ main.lua
 *.local.*
 *_local.*
 *.local
-scripts
 dist
 assets
 !src/softlove/assets
 configs
 libs
 locales
+coverage

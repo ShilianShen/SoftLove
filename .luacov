@@ -1,0 +1,11 @@
+return {
+	statsfile = "coverage/luacov.stats.out",
+	reportfile = "coverage/lcov.info",
+
+	include = {
+		"^src/softlove",
+	},
+	exclude = {
+		"src/softlove/inspect",
+	},
+}

@@ -1,0 +1,52 @@
+name: CI
+
+on:
+  push:
+    paths:
+      - "**/*.lua"
+      - "scripts/ci.sh"
+      - ".github/workflows/ci.yml"
+
+  pull_request:
+    paths:
+      - "**/*.lua"
+      - "scripts/ci.sh"
+      - ".github/workflows/ci.yml"
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: read
+      id-token: write
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      - name: Setup Lua
+        uses: leafo/gh-actions-lua@v13
+        with:
+          luaVersion: "5.4"
+
+      - name: Setup LuaRocks
+        uses: leafo/gh-actions-luarocks@v6
+
+      - name: Install dependencies
+        run: |
+          luarocks install busted
+          luarocks install luacheck
+          luarocks install luacov
+          luarocks install luacov-reporter-lcov
+
+      - name: Run CI
+        run: bash ./scripts/ci.sh
+
+      - name: Upload coverage
+        uses: codecov/codecov-action@v5
+        with:
+          use_oidc: true
+          files: coverage/lcov.info
+          disable_search: true
+          fail_ci_if_error: true
