@@ -1,8 +1,4 @@
-local mouse = require("softlove.devices.mouse")
-local keyboard = require("softlove.devices.keyboard")
-local joystick = require("softlove.devices.joystick")
-local wheel = require("softlove.devices.wheel")
-local touch = require("softlove.devices.touch")
+local devices = require("softlove.devices")
 
 local softlove = {
 	drawGraph = require("softlove.drawGraph"),
@@ -59,12 +55,12 @@ function softlove.getNodes()
 		mouse = {
 			tasks = {
 				init = {
-					func = mouse.init,
+					func = devices.mouse.init,
 				},
 				update = {
-					func = mouse.update,
+					func = devices.mouse.update,
 					parents_c = { "init" },
-					auto = mouse.dynamic,
+					auto = devices.mouse.dynamic,
 				},
 			},
 			apis = {
@@ -76,17 +72,17 @@ function softlove.getNodes()
 		keyboard = {
 			tasks = {
 				init = {
-					func = keyboard.init,
+					func = devices.keyboard.init,
 				},
 				update = {
-					func = keyboard.update,
+					func = devices.keyboard.update,
 					parents_c = { "init" },
-					auto = keyboard.dynamic,
+					auto = devices.keyboard.dynamic,
 				},
 			},
 			apis = {
 				update = {
-					func = keyboard.write.newKey,
+					func = devices.keyboard.write.newKey,
 					ttag = "update",
 					atag = "writable",
 				},
@@ -95,17 +91,17 @@ function softlove.getNodes()
 		wheel = {
 			tasks = {
 				init = {
-					func = wheel.init,
+					func = devices.wheel.init,
 				},
 				update = {
-					func = wheel.update,
+					func = devices.wheel.update,
 					parents_c = { "init" },
-					auto = wheel.dynamic,
+					auto = devices.wheel.dynamic,
 				},
 			},
 			apis = {
 				moved = {
-					func = wheel.write.moved,
+					func = devices.wheel.write.moved,
 					atag = "writable",
 				},
 			},
