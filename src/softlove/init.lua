@@ -17,6 +17,16 @@ end
 
 function softlove.getNodes()
 	local nodes = {
+		window = {
+			tasks = {
+				update = {
+					func = softlove.window.update,
+				},
+			},
+			apis = {
+				update = { ttag = "update" },
+			},
+		},
 		locales = {
 			tasks = {
 				init = {
@@ -43,6 +53,15 @@ function softlove.getNodes()
 		},
 	}
 	return nodes
+end
+
+function softlove.getCallbacksWindow(node)
+	-- love.displayrotated = function(displayindex, orientation) end
+	return {
+		focus = node.apis.update,
+		visible = node.apis.update,
+		resize = node.apis.update,
+	}
 end
 
 return softlove
