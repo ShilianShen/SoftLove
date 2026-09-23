@@ -1,11 +1,9 @@
 local input = require("softlove.input")
-
+local system = require("softlove.system")
 local softlove = {
 	drawGraph = require("softlove.drawGraph"),
 	assets = require("softlove.assets"),
 	ui = require("softlove.ui"),
-	locales = require("softlove.locales"),
-	window = require("softlove.window"),
 	ntags = require("softlove.ntags"),
 }
 
@@ -21,7 +19,7 @@ function softlove.getNodes()
 		window = {
 			tasks = {
 				update = {
-					func = softlove.window.update,
+					func = system.window.update,
 				},
 			},
 			apis = {
@@ -32,22 +30,22 @@ function softlove.getNodes()
 			tasks = {
 				init = {
 					func = function(self)
-						softlove.locales.init(self)
-						union(self, softlove.locales.read)
+						system.locales.init(self)
+						union(self, system.locales.read)
 					end,
 				},
 			},
 			apis = {
 				add = {
-					func = softlove.locales.write.add,
+					func = system.locales.write.add,
 					atag = "writable",
 				},
 				del = {
-					func = softlove.locales.write.del,
+					func = system.locales.write.del,
 					atag = "writable",
 				},
 				setCurrent = {
-					func = softlove.locales.write.setCurrent,
+					func = system.locales.write.setCurrent,
 					atag = "writable",
 				},
 			},
