@@ -8,4 +8,39 @@ local softlove = {
 	ntags = require("softlove.ntags"),
 }
 
+local function union(self, other)
+	for k, v in pairs(other) do
+		assert(self[k] == nil)
+		self[k] = v
+	end
+end
+
+function softlove.locales.getNode()
+	local node = {
+		tasks = {
+			init = {
+				func = function(self)
+					softlove.locales.init(self)
+					union(self, softlove.locales.read)
+				end,
+			},
+		},
+		apis = {
+			add = {
+				func = softlove.locales.write.add,
+				atag = "writable",
+			},
+			del = {
+				func = softlove.locales.write.del,
+				atag = "writable",
+			},
+			setCurrent = {
+				func = softlove.locales.write.setCurrent,
+				atag = "writable",
+			},
+		},
+	}
+	return node
+end
+
 return softlove
