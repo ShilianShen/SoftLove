@@ -5,7 +5,7 @@ local ntags = {
 		sounds = "sounds",
 		shaders = "shaders",
 	},
-	devices = {
+	input = {
 		joystick = "joystick",
 		keyboard = "keyboard",
 		mouse = "mouse",
