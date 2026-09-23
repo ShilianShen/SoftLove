@@ -87,6 +87,24 @@ function softlove.getNodes()
 				},
 			},
 		},
+		wheel = {
+			tasks = {
+				init = {
+					func = softlove.devices.wheel.init,
+				},
+				update = {
+					func = softlove.devices.wheel.update,
+					parents_c = { "init" },
+					auto = softlove.devices.wheel.dynamic,
+				},
+			},
+			apis = {
+				moved = {
+					func = softlove.devices.wheel.write.moved,
+					atag = "writable",
+				},
+			},
+		},
 	}
 	return nodes
 end
@@ -113,6 +131,12 @@ function softlove.getCallbacksKeyboard(node)
 	return {
 		keypressed = node.apis.update,
 		keyreleased = node.apis.update,
+	}
+end
+
+function softlove.getCallbacksWheel(node)
+	return {
+		wheelmoved = node.apis.moved,
 	}
 end
 
