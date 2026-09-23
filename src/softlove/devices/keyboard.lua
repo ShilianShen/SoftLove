@@ -1,6 +1,9 @@
-local keyboard = {}
+local keyboard = {
+	read = {},
+	write = {},
+}
 
-local function init(self)
+function keyboard.init(self)
 	self.buttons = {}
 	self.isDown1 = {}
 	self.isDown2 = {}
@@ -10,14 +13,14 @@ local function init(self)
 	end
 end
 
-local function update(self, key)
+function keyboard.update(self, key)
 	for _, bt in pairs(self.buttons) do
 		self.isDown1[bt] = self.isDown2[bt]
 		self.isDown2[bt] = love.keyboard.isDown(bt)
 	end
 end
 
-local function dynamic(self)
+function keyboard.dynamic(self)
 	for _, bt in pairs(self.buttons) do
 		if self.isDown1[bt] ~= self.isDown2[bt] then
 			return true
@@ -26,40 +29,10 @@ local function dynamic(self)
 	return false
 end
 
-local function newKey(self, key)
+function keyboard.write.newKey(self, key)
 	if self.isDown2[key] == nil then
 		table.insert(self.buttons, key)
 	end
-end
-
-function keyboard.getNode()
-	local node = {
-		tasks = {
-			init = {
-				func = init,
-			},
-			update = {
-				func = update,
-				parents_c = { "init" },
-				auto = dynamic,
-			},
-		},
-		apis = {
-			update = {
-				func = newKey,
-				ttag = "update",
-				atag = "writable",
-			},
-		},
-	}
-	return node
-end
-
-function keyboard.getCallbacks(node)
-	return {
-		keypressed = node.apis.update,
-		keyreleased = node.apis.update,
-	}
 end
 
 return keyboard

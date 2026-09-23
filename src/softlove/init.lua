@@ -68,6 +68,25 @@ function softlove.getNodes()
 				},
 			},
 		},
+		keyboard = {
+			tasks = {
+				init = {
+					func = softlove.devices.keyboard.init,
+				},
+				update = {
+					func = softlove.devices.keyboard.update,
+					parents_c = { "init" },
+					auto = softlove.devices.keyboard.dynamic,
+				},
+			},
+			apis = {
+				update = {
+					func = softlove.devices.keyboard.write.newKey,
+					ttag = "update",
+					atag = "writable",
+				},
+			},
+		},
 	}
 	return nodes
 end
@@ -87,6 +106,13 @@ function softlove.getCallbacksMouse(node)
 		mousepressed = node.apis.update,
 		mousereleased = node.apis.update,
 		mousefocus = node.apis.update,
+	}
+end
+
+function softlove.getCallbacksKeyboard(node)
+	return {
+		keypressed = node.apis.update,
+		keyreleased = node.apis.update,
 	}
 end
 
