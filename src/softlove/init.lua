@@ -15,32 +15,34 @@ local function union(self, other)
 	end
 end
 
-function softlove.locales.getNode()
-	local node = {
-		tasks = {
-			init = {
-				func = function(self)
-					softlove.locales.init(self)
-					union(self, softlove.locales.read)
-				end,
+function softlove.getNodes()
+	local nodes = {
+		locales = {
+			tasks = {
+				init = {
+					func = function(self)
+						softlove.locales.init(self)
+						union(self, softlove.locales.read)
+					end,
+				},
 			},
-		},
-		apis = {
-			add = {
-				func = softlove.locales.write.add,
-				atag = "writable",
-			},
-			del = {
-				func = softlove.locales.write.del,
-				atag = "writable",
-			},
-			setCurrent = {
-				func = softlove.locales.write.setCurrent,
-				atag = "writable",
+			apis = {
+				add = {
+					func = softlove.locales.write.add,
+					atag = "writable",
+				},
+				del = {
+					func = softlove.locales.write.del,
+					atag = "writable",
+				},
+				setCurrent = {
+					func = softlove.locales.write.setCurrent,
+					atag = "writable",
+				},
 			},
 		},
 	}
-	return node
+	return nodes
 end
 
 return softlove
