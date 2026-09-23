@@ -51,6 +51,23 @@ function softlove.getNodes()
 				},
 			},
 		},
+		mouse = {
+			tasks = {
+				init = {
+					func = softlove.devices.mouse.init,
+				},
+				update = {
+					func = softlove.devices.mouse.update,
+					parents_c = { "init" },
+					auto = softlove.devices.mouse.dynamic,
+				},
+			},
+			apis = {
+				update = {
+					ttag = "update",
+				},
+			},
+		},
 	}
 	return nodes
 end
@@ -61,6 +78,15 @@ function softlove.getCallbacksWindow(node)
 		focus = node.apis.update,
 		visible = node.apis.update,
 		resize = node.apis.update,
+	}
+end
+
+function softlove.getCallbacksMouse(node)
+	return {
+		mousemoved = node.apis.update,
+		mousepressed = node.apis.update,
+		mousereleased = node.apis.update,
+		mousefocus = node.apis.update,
 	}
 end
 
