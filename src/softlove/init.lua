@@ -18,12 +18,18 @@ function softlove.getNodes()
 	local nodes = {
 		window = {
 			tasks = {
+				init = {
+					func = system.Window.init,
+				},
 				update = {
 					func = system.Window.update,
+					parents_c = { "init" },
 				},
 			},
 			apis = {
-				update = { ttag = "update" },
+				focus = { func = system.Window.focus, atag = "writable" },
+				visible = { func = system.Window.visible, atag = "writable" },
+				resize = { func = system.Window.resize, atag = "writable" },
 			},
 		},
 		locales = {
@@ -111,9 +117,9 @@ end
 function softlove.getCallbacksWindow(node)
 	-- love.displayrotated = function(displayindex, orientation) end
 	return {
-		focus = node.apis.update,
-		visible = node.apis.update,
-		resize = node.apis.update,
+		focus = node.apis.focus,
+		visible = node.apis.visible,
+		resize = node.apis.resize,
 	}
 end
 
