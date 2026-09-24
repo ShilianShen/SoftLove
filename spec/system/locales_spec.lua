@@ -1,13 +1,13 @@
 package.path = "src/?.lua;" .. "src/?/init.lua;" .. package.path
 local assert = require("luassert")
-local locales = require("softlove.system.locales")
+local Locales = require("softlove.system.Locales")
 
-describe("locales", function()
+describe("Locales", function()
 	local ctx
 
 	before_each(function()
 		ctx = {}
-		locales.init(ctx)
+		Locales.init(ctx)
 	end)
 
 	describe("init", function()
@@ -27,14 +27,14 @@ describe("locales", function()
 
 	describe("setCurrent", function()
 		it("should set current locale", function()
-			locales.setCurrent(ctx, "zh_CN")
+			Locales.setCurrent(ctx, "zh_CN")
 
 			assert.equals("zh_CN", ctx.current)
 		end)
 
 		it("should allow changing current locale", function()
-			locales.setCurrent(ctx, "zh_CN")
-			locales.setCurrent(ctx, "en_US")
+			Locales.setCurrent(ctx, "zh_CN")
+			Locales.setCurrent(ctx, "en_US")
 
 			assert.equals("en_US", ctx.current)
 		end)
@@ -42,7 +42,7 @@ describe("locales", function()
 
 	describe("translate", function()
 		it("should return key when current locale is not set", function()
-			local result = locales.translate(ctx, "hello")
+			local result = Locales.translate(ctx, "hello")
 
 			assert.equals("hello", result)
 		end)
@@ -52,9 +52,9 @@ describe("locales", function()
 				hello = "你好",
 			}
 
-			locales.setCurrent(ctx, "zh_CN")
+			Locales.setCurrent(ctx, "zh_CN")
 
-			assert.equals("你好", locales.translate(ctx, "hello"))
+			assert.equals("你好", Locales.translate(ctx, "hello"))
 		end)
 
 		it("should return nil when translation key does not exist", function()
@@ -62,9 +62,9 @@ describe("locales", function()
 				hello = "你好",
 			}
 
-			locales.setCurrent(ctx, "zh_CN")
+			Locales.setCurrent(ctx, "zh_CN")
 
-			assert.is_nil(locales.translate(ctx, "not_exists"))
+			assert.is_nil(Locales.translate(ctx, "not_exists"))
 		end)
 	end)
 
@@ -86,7 +86,7 @@ describe("locales", function()
 		end)
 
 		it("should load locale file and add it to translator", function()
-			locales.add(ctx, "zh_CN", "test_locale_zh")
+			Locales.add(ctx, "zh_CN", "test_locale_zh")
 
 			assert.same({
 				hello = "你好",
@@ -95,11 +95,11 @@ describe("locales", function()
 		end)
 
 		it("should allow translating after locale is added", function()
-			locales.add(ctx, "zh_CN", "test_locale_zh")
-			locales.setCurrent(ctx, "zh_CN")
+			Locales.add(ctx, "zh_CN", "test_locale_zh")
+			Locales.setCurrent(ctx, "zh_CN")
 
-			assert.equals("你好", locales.translate(ctx, "hello"))
-			assert.equals("世界", locales.translate(ctx, "world"))
+			assert.equals("你好", Locales.translate(ctx, "hello"))
+			assert.equals("世界", Locales.translate(ctx, "world"))
 		end)
 	end)
 
@@ -115,31 +115,31 @@ describe("locales", function()
 		end)
 
 		it("should delete specified locale", function()
-			locales.del(ctx, "zh_CN")
+			Locales.del(ctx, "zh_CN")
 
 			assert.is_nil(ctx.translator.zh_CN)
 			assert.is_not_nil(ctx.translator.en_US)
 		end)
 
 		it("should clear current when deleting current locale", function()
-			locales.setCurrent(ctx, "zh_CN")
+			Locales.setCurrent(ctx, "zh_CN")
 
-			locales.del(ctx, "zh_CN")
+			Locales.del(ctx, "zh_CN")
 
 			assert.is_false(ctx.current)
 		end)
 
 		it("should keep current when deleting another locale", function()
-			locales.setCurrent(ctx, "en_US")
+			Locales.setCurrent(ctx, "en_US")
 
-			locales.del(ctx, "zh_CN")
+			Locales.del(ctx, "zh_CN")
 
 			assert.equals("en_US", ctx.current)
 		end)
 
 		it("should not fail when deleting nonexistent locale", function()
 			assert.has_no.errors(function()
-				locales.del(ctx, "not_exists")
+				Locales.del(ctx, "not_exists")
 			end)
 
 			assert.is_nil(ctx.translator.not_exists)

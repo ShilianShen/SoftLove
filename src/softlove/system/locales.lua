@@ -1,18 +1,18 @@
-local locales = {}
+local Locales = {}
 
-function locales:init()
+function Locales:init()
 	self.translator = {}
 	self.current = false
 end
 
 ---@param locale string
-function locales:setCurrent(locale)
+function Locales:setCurrent(locale)
 	self.current = locale
 end
 
 ---@param key string
 ---@return string
-function locales:translate(key)
+function Locales:translate(key)
 	if not self.current then
 		return key
 	end
@@ -21,26 +21,26 @@ end
 
 ---@param locale string
 ---@param file string
-function locales:add(locale, file)
+function Locales:add(locale, file)
 	self.translator[locale] = require(file)
 end
 
 ---@param locale string
-function locales:del(locale)
+function Locales:del(locale)
 	self.translator[locale] = nil
 	if self.current == locale then
 		self.current = false
 	end
 end
 
-locales.read = {
-	translate = locales.translate,
+Locales.read = {
+	translate = Locales.translate,
 }
 
-locales.write = {
-	add = locales.add,
-	del = locales.del,
-	setCurrent = locales.setCurrent,
+Locales.write = {
+	add = Locales.add,
+	del = Locales.del,
+	setCurrent = Locales.setCurrent,
 }
 
-return locales
+return Locales

@@ -30,22 +30,22 @@ function softlove.getNodes()
 			tasks = {
 				init = {
 					func = function(self)
-						system.locales.init(self)
-						union(self, system.locales.read)
+						system.Locales.init(self)
+						union(self, system.Locales.read)
 					end,
 				},
 			},
 			apis = {
 				add = {
-					func = system.locales.write.add,
+					func = system.Locales.write.add,
 					atag = "writable",
 				},
 				del = {
-					func = system.locales.write.del,
+					func = system.Locales.write.del,
 					atag = "writable",
 				},
 				setCurrent = {
-					func = system.locales.write.setCurrent,
+					func = system.Locales.write.setCurrent,
 					atag = "writable",
 				},
 			},

@@ -1,5 +1,5 @@
 local system = {
-	locales = require("softlove.system.locales"),
+	Locales = require("softlove.system.Locales"),
 	window = require("softlove.system.window"),
 }
 
