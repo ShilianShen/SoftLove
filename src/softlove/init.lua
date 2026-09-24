@@ -19,7 +19,7 @@ function softlove.getNodes()
 		window = {
 			tasks = {
 				update = {
-					func = system.window.update,
+					func = system.Window.update,
 				},
 			},
 			apis = {

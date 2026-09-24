@@ -1,12 +1,12 @@
-local window = {
+local Window = {
 	read = {},
 	write = {},
 }
 
-function window.update(self)
+function Window.update(self)
 	self.w, self.h = love.graphics.getDimensions()
 	self.visible = love.window.isVisible()
 	self.focus = love.window.hasFocus()
 end
 
-return window
+return Window
