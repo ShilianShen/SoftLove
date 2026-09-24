@@ -1,4 +1,4 @@
-local fonts = require("softlove.assets.fonts")
+local fonts = require("softlove.assets.Fonts")
 local ntags = require("softlove.ntags")
 local assets = {
 	images = {},
