@@ -1,9 +1,9 @@
 local input = {
-	mouse = require("softlove.input.Mouse"),
-	keyboard = require("softlove.input.Keyboard"),
-	joystick = require("softlove.input.Joystick"),
-	wheel = require("softlove.input.Wheel"),
-	touch = require("softlove.input.Touch"),
+	Mouse = require("softlove.input.Mouse"),
+	Keyboard = require("softlove.input.Keyboard"),
+	Joystick = require("softlove.input.Joystick"),
+	Wheel = require("softlove.input.Wheel"),
+	Touch = require("softlove.input.Touch"),
 }
 
 return input

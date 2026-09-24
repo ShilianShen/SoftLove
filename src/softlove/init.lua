@@ -59,12 +59,12 @@ function softlove.getNodes()
 		mouse = {
 			tasks = {
 				init = {
-					func = input.mouse.init,
+					func = input.Mouse.init,
 				},
 				update = {
-					func = input.mouse.update,
+					func = input.Mouse.update,
 					parents_c = { "init" },
-					auto = input.mouse.dynamic,
+					auto = input.Mouse.dynamic,
 				},
 			},
 			apis = {
@@ -76,17 +76,17 @@ function softlove.getNodes()
 		keyboard = {
 			tasks = {
 				init = {
-					func = input.keyboard.init,
+					func = input.Keyboard.init,
 				},
 				update = {
-					func = input.keyboard.update,
+					func = input.Keyboard.update,
 					parents_c = { "init" },
-					auto = input.keyboard.dynamic,
+					auto = input.Keyboard.dynamic,
 				},
 			},
 			apis = {
 				update = {
-					func = input.keyboard.write.newKey,
+					func = input.Keyboard.write.newKey,
 					ttag = "update",
 					atag = "writable",
 				},
@@ -95,17 +95,17 @@ function softlove.getNodes()
 		wheel = {
 			tasks = {
 				init = {
-					func = input.wheel.init,
+					func = input.Wheel.init,
 				},
 				update = {
-					func = input.wheel.update,
+					func = input.Wheel.update,
 					parents_c = { "init" },
-					auto = input.wheel.dynamic,
+					auto = input.Wheel.dynamic,
 				},
 			},
 			apis = {
 				moved = {
-					func = input.wheel.write.moved,
+					func = input.Wheel.write.moved,
 					atag = "writable",
 				},
 			},
