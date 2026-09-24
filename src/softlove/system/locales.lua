@@ -33,14 +33,4 @@ function Locales:del(locale)
 	end
 end
 
-Locales.read = {
-	translate = Locales.translate,
-}
-
-Locales.write = {
-	add = Locales.add,
-	del = Locales.del,
-	setCurrent = Locales.setCurrent,
-}
-
 return Locales

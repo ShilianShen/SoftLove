@@ -31,21 +31,21 @@ function softlove.getNodes()
 				init = {
 					func = function(self)
 						system.Locales.init(self)
-						union(self, system.Locales.read)
+						self.translate = system.Locales.translate
 					end,
 				},
 			},
 			apis = {
 				add = {
-					func = system.Locales.write.add,
+					func = system.Locales.add,
 					atag = "writable",
 				},
 				del = {
-					func = system.Locales.write.del,
+					func = system.Locales.del,
 					atag = "writable",
 				},
 				setCurrent = {
-					func = system.Locales.write.setCurrent,
+					func = system.Locales.setCurrent,
 					atag = "writable",
 				},
 			},
