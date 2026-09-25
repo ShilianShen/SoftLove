@@ -1,6 +1,13 @@
-local Mouse = {}
 local State = require("softlove.input.State")
-local signals = { [1] = false, [2] = false, [3] = false, x = 0, y = 0, focus = false }
+local Mouse = {}
+local signals = {
+	[1] = false,
+	[2] = false,
+	[3] = false,
+	x = 0,
+	y = 0,
+	focus = false,
+}
 
 function Mouse:init()
 	State.init(self, signals)
