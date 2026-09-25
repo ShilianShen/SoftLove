@@ -4,6 +4,7 @@ local input = {
 	Joystick = require("softlove.input.Joystick"),
 	Wheel = require("softlove.input.Wheel"),
 	Touch = require("softlove.input.Touch"),
+	State = require("softlove.input.State"),
 }
 
 return input

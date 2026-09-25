@@ -62,9 +62,9 @@ function softlove.getNodes()
 					func = input.Mouse.init,
 				},
 				update = {
-					func = input.Mouse.update,
+					func = input.State.update,
 					parents_c = { "init" },
-					auto = input.Mouse.isDynamic,
+					auto = input.State.isDynamic,
 				},
 			},
 			apis = {

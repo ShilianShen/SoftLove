@@ -1,71 +1,26 @@
 local Mouse = {}
+local State = require("softlove.input.State")
+local signals = { [1] = false, [2] = false, [3] = false, x = 0, y = 0, focus = false }
 
 function Mouse:init()
-	self.buttons = { 1, 2, 3 }
-	self.x1, self.y1 = 0, 0
-	self.x2, self.y2 = 0, 0
-	self.focus1 = false
-	self.focus2 = false
-	self.isDown1 = {}
-	self.isDown2 = {}
-	for _, bt in pairs(self.buttons) do
-		self.isDown1[bt] = false
-		self.isDown2[bt] = false
-	end
-	self.dynamic = false
-end
-
-local function switch(self)
-	self.x1, self.y1 = self.x2, self.y2
-	for _, bt in pairs(self.buttons) do
-		self.isDown1[bt] = self.isDown2[bt]
-	end
-	self.focus1 = self.focus2
-end
-
-local function isDynamic(self)
-	for _, bt in pairs(self.buttons) do
-		if self.isDown1[bt] ~= self.isDown2[bt] then
-			return true
-		end
-	end
-	if self.x1 ~= self.x2 or self.y1 ~= self.y2 then
-		return true
-	end
-	if self.focus1 ~= self.focus2 then
-		return true
-	end
-	return false
-end
-
-function Mouse:update()
-	if self.dynamic then
-		switch(self)
-		self.dynamic = false
-	else
-		self.dynamic = isDynamic(self)
-	end
-end
-
-function Mouse:isDynamic()
-	return self.dynamic
+	State.init(self, signals)
 end
 
 function Mouse:pressed(x, y, button, istouch, presses)
-	self.isDown2[button] = true
+	self.s3[button] = true
 end
 
 function Mouse:released(x, y, button, istouch, presses)
-	self.isDown2[button] = false
+	self.s3[button] = false
 end
 
 function Mouse:moved(x, y, dx, dy, istouch)
-	self.x2 = x
-	self.y2 = y
+	self.s3.x = x
+	self.s3.y = y
 end
 
 function Mouse:focus(focus)
-	self.focus2 = focus
+	self.s3.focus = focus
 end
 
 return Mouse
