@@ -99,13 +99,13 @@ function softlove.getNodes()
 					func = input.Wheel.init,
 				},
 				update = {
-					func = input.Wheel.update,
+					func = input.State.update,
 					parents_c = { "init" },
-					auto = input.Wheel.dynamic,
+					auto = input.State.isDynamic,
 				},
 			},
 			apis = {
-				moved = { func = input.Wheel.write.moved, atag = "writable" },
+				moved = { func = input.Wheel.moved, atag = "writable" },
 			},
 		},
 	}
