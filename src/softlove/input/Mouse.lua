@@ -33,7 +33,7 @@ function Mouse:update()
 	self.focus2 = love.window.hasMouseFocus()
 end
 
-function Mouse:dynamic()
+function Mouse:isDynamic()
 	for _, bt in pairs(self.buttons) do
 		if self.isDown1[bt] ~= self.isDown2[bt] then
 			return true
