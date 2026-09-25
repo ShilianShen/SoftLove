@@ -68,10 +68,10 @@ function softlove.getNodes()
 				},
 			},
 			apis = {
-				moved = { func = input.Mouse.moved, atag = "writable", ttag = "update" },
-				pressed = { func = input.Mouse.pressed, atag = "writable", ttag = "update" },
-				released = { func = input.Mouse.released, atag = "writable", ttag = "update" },
-				focus = { func = input.Mouse.focus, atag = "writable", ttag = "update" },
+				moved = { func = input.Mouse.moved, atag = "writable" },
+				pressed = { func = input.Mouse.pressed, atag = "writable" },
+				released = { func = input.Mouse.released, atag = "writable" },
+				focus = { func = input.Mouse.focus, atag = "writable" },
 			},
 		},
 		keyboard = {
@@ -105,10 +105,7 @@ function softlove.getNodes()
 				},
 			},
 			apis = {
-				moved = {
-					func = input.Wheel.write.moved,
-					atag = "writable",
-				},
+				moved = { func = input.Wheel.write.moved, atag = "writable" },
 			},
 		},
 	}
