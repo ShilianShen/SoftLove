@@ -1,9 +1,6 @@
-local mouse = {
-	read = {},
-	write = {},
-}
+local Mouse = {}
 
-function mouse.init(self)
+function Mouse:init()
 	self.buttons = { 1, 2, 3 }
 	self.x1, self.y1 = 0, 0
 	self.x2, self.y2 = 0, 0
@@ -17,7 +14,15 @@ function mouse.init(self)
 	end
 end
 
-function mouse.update(self)
+local function switch(self)
+	self.x1, self.y1 = self.x2, self.y2
+	for _, bt in pairs(self.buttons) do
+		self.isDown1[bt] = self.isDown2[bt]
+	end
+	self.focus1 = self.focus2
+end
+
+function Mouse:update()
 	self.x1, self.y1 = self.x2, self.y2
 	self.x2, self.y2 = love.mouse.getPosition()
 	for _, bt in pairs(self.buttons) do
@@ -28,7 +33,7 @@ function mouse.update(self)
 	self.focus2 = love.window.hasMouseFocus()
 end
 
-function mouse.dynamic(self)
+function Mouse:dynamic()
 	for _, bt in pairs(self.buttons) do
 		if self.isDown1[bt] ~= self.isDown2[bt] then
 			return true
@@ -43,4 +48,25 @@ function mouse.dynamic(self)
 	return false
 end
 
-return mouse
+function Mouse:pressed(x, y, button, istouch, presses)
+	self.isDown2[button] = true
+	self.idk = true
+end
+
+function Mouse:released(x, y, button, istouch, presses)
+	self.isDown2[button] = false
+	self.idk = true
+end
+
+function Mouse:moved(x, y, dx, dy, istouch)
+	self.x2 = x
+	self.y2 = y
+	self.idk = true
+end
+
+function Mouse:focus(focus)
+	self.focus2 = focus
+	self.idk = true
+end
+
+return Mouse

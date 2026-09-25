@@ -62,15 +62,16 @@ function softlove.getNodes()
 					func = input.Mouse.init,
 				},
 				update = {
-					func = input.Mouse.update,
+					-- func = input.Mouse.update,
 					parents_c = { "init" },
-					auto = input.Mouse.dynamic,
+					-- auto = input.Mouse.dynamic,
 				},
 			},
 			apis = {
-				update = {
-					ttag = "update",
-				},
+				moved = { func = input.Mouse.moved, atag = "writable" },
+				pressed = { func = input.Mouse.pressed, atag = "writable" },
+				released = { func = input.Mouse.released, atag = "writable" },
+				focus = { func = input.Mouse.focus, atag = "writable" },
 			},
 		},
 		keyboard = {
@@ -125,10 +126,10 @@ end
 
 function softlove.getCallbacksMouse(node)
 	return {
-		mousemoved = node.apis.update,
-		mousepressed = node.apis.update,
-		mousereleased = node.apis.update,
-		mousefocus = node.apis.update,
+		mousemoved = node.apis.moved,
+		mousepressed = node.apis.pressed,
+		mousereleased = node.apis.released,
+		mousefocus = node.apis.focus,
 	}
 end
 
