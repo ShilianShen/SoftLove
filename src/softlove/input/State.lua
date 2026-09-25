@@ -1,6 +1,14 @@
 local State = {}
 
----@param signals table<any, any>
+local function const(t)
+    return setmetatable({}, {
+        __index = t,
+        __newindex = false,
+        __metatable = false,
+    })
+end
+
+---@param signals table<any, "number"|"boolean">
 function State:init(signals)
 	for i = 1, 3 do
 		local s = "s" .. i
@@ -9,6 +17,9 @@ function State:init(signals)
 			self[s][signal] = value
 		end
 	end
+    self.visit = State.visit
+    self.s1const = const(self.s1)
+    self.s2const = const(self.s2)
 end
 
 function State:update()
@@ -28,6 +39,10 @@ function State:isDynamic()
 		end
 	end
 	return false
+end
+
+function State:visit()
+	return self.s1const, self.s2const
 end
 
 return State
