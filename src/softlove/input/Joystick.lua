@@ -69,31 +69,31 @@ function Joystick:removed(joystick)
 end
 
 function Joystick:pressed(joystick, button)
-	self.joysticks[joystick].s3[button] = true
+	State.set(self.joysticks[joystick], button, true)
 end
 
 function Joystick:released(joystick, button)
-	self.joysticks[joystick].s3[button] = false
+	State.set(self.joysticks[joystick], button, false)
 end
 
 function Joystick:axis(joystick, axis, value)
-	self.joysticks[joystick].s3[axis] = value
+	State.set(self.joysticks[joystick], axis, value)
 end
 
 function Joystick:hat(joystick, hat, direction)
-	self.joysticks[joystick].s3[hat] = direction
+	State.set(self.joysticks[joystick], hat, direction)
 end
 
 function Joystick:gamepadpressed(joystick, button)
-	self.joysticks[joystick].s3[button] = true
+	State.set(self.joysticks[joystick], button, true)
 end
 
 function Joystick:gamepadreleased(joystick, button)
-	self.joysticks[joystick].s3[button] = false
+	State.set(self.joysticks[joystick], button, false)
 end
 
 function Joystick:gamepadaxis(joystick, axis, value)
-	self.joysticks[joystick].s3[axis] = value
+	State.set(self.joysticks[joystick], axis, value)
 end
 
 return Joystick

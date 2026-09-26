@@ -42,6 +42,12 @@ function State:isDynamic()
 	return false
 end
 
+---@param signal string
+---@param value any
+function State:set(signal, value)
+	self.s3[signal] = value
+end
+
 function State:visit()
 	return self.s1const, self.s2const
 end

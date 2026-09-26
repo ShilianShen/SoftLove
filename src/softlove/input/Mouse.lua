@@ -14,20 +14,20 @@ function Mouse:init()
 end
 
 function Mouse:pressed(x, y, button, istouch, presses)
-	self.s3[button] = true
+	State.set(self, button, true)
 end
 
 function Mouse:released(x, y, button, istouch, presses)
-	self.s3[button] = false
+	State.set(self, button, false)
 end
 
 function Mouse:moved(x, y, dx, dy, istouch)
-	self.s3.x = x
-	self.s3.y = y
+	State.set(self, "x", x)
+	State.set(self, "y", y)
 end
 
 function Mouse:focus(focus)
-	self.s3.focus = focus
+	State.set(self, "focus", focus)
 end
 
 return Mouse

@@ -10,8 +10,8 @@ function Wheel.init(self)
 end
 
 function Wheel.moved(self, dx, dy)
-	self.s3.dx = dx
-	self.s3.dy = dy
+	State.set(self, "dx", dx)
+	State.set(self, "dy", dy)
 end
 
 return Wheel
