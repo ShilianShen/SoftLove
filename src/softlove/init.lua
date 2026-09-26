@@ -14,6 +14,18 @@ local function union(self, other)
 	end
 end
 
+local function getInputStateTasks(x)
+	local tasks = {
+		init = { func = x.init },
+		update = {
+			func = x.update,
+			parents_c = { "init" },
+			auto = x.isDynamic,
+		},
+	}
+	return tasks
+end
+
 function softlove.getNodes()
 	local nodes = {
 		window = {
@@ -57,14 +69,7 @@ function softlove.getNodes()
 			},
 		},
 		joystick = {
-			tasks = {
-				init = { func = input.Joystick.init },
-				update = {
-					func = input.Joystick.update,
-					parents_c = { "init" },
-					auto = input.Joystick.isDynamic,
-				},
-			},
+			tasks = getInputStateTasks(input.Joystick),
 			apis = {
 				added = { func = input.Joystick.added, atag = "writable" },
 				removed = { func = input.Joystick.removed, atag = "writable" },
@@ -78,16 +83,7 @@ function softlove.getNodes()
 			},
 		},
 		mouse = {
-			tasks = {
-				init = {
-					func = input.Mouse.init,
-				},
-				update = {
-					func = input.State.update,
-					parents_c = { "init" },
-					auto = input.State.isDynamic,
-				},
-			},
+			tasks = getInputStateTasks(input.Mouse),
 			apis = {
 				moved = { func = input.Mouse.moved, atag = "writable" },
 				pressed = { func = input.Mouse.pressed, atag = "writable" },
@@ -96,30 +92,14 @@ function softlove.getNodes()
 			},
 		},
 		keyboard = {
-			tasks = {
-				init = { func = input.Keyboard.init },
-				update = {
-					func = input.Keyboard.update,
-					parents_c = { "init" },
-					auto = input.Keyboard.isDynamic,
-				},
-			},
+			tasks = getInputStateTasks(input.Keyboard),
 			apis = {
 				pressed = { func = input.Keyboard.pressed, atag = "writable" },
 				released = { func = input.Keyboard.released, atag = "writable" },
 			},
 		},
 		wheel = {
-			tasks = {
-				init = {
-					func = input.Wheel.init,
-				},
-				update = {
-					func = input.State.update,
-					parents_c = { "init" },
-					auto = input.State.isDynamic,
-				},
-			},
+			tasks = getInputStateTasks(input.Wheel),
 			apis = {
 				moved = { func = input.Wheel.moved, atag = "writable" },
 			},

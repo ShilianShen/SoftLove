@@ -1,9 +1,9 @@
 local State = require("softlove.input.State")
-local Mouse = {}
-
-function Mouse:init()
-	State.init(self)
-end
+local Mouse = {
+	init = State.init,
+	update = State.update,
+    isDynamic = State.isDynamic,
+}
 
 function Mouse:pressed(x, y, button, istouch, presses)
 	State.set(self, button, true)
