@@ -1,5 +1,4 @@
 local Fonts = require("softlove.assets.Fonts")
-local ntags = require("softlove.ntags")
 local assets = {
 	Fonts = {},
 }
@@ -7,7 +6,7 @@ local assets = {
 function assets.getNodes()
 	local nodes = {}
 
-	nodes[ntags.assets.fonts] = {
+	nodes["fonts"] = {
 		tasks = {
 			init = {
 				func = Fonts.init,
@@ -16,9 +15,9 @@ function assets.getNodes()
 		apis = {},
 	}
 
-	nodes[ntags.assets.images] = {}
-	nodes[ntags.assets.sounds] = {}
-	nodes[ntags.assets.shaders] = {}
+	nodes["images"] = {}
+	nodes["sounds"] = {}
+	nodes["shaders"] = {}
 
 	return nodes
 end

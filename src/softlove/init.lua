@@ -4,7 +4,6 @@ local softlove = {
 	drawGraph = require("softlove.drawGraph"),
 	assets = require("softlove.assets"),
 	ui = require("softlove.ui"),
-	ntags = require("softlove.ntags"),
 }
 
 local function union(self, other)
