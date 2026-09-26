@@ -95,7 +95,20 @@ function softlove.getNodes()
 				focus = { func = input.Mouse.focus, atag = "writable" },
 			},
 		},
-		keyboard = {},
+		keyboard = {
+			tasks = {
+				init = { func = input.Keyboard.init },
+				update = {
+					func = input.Keyboard.update,
+					parents_c = { "init" },
+					auto = input.Keyboard.isDynamic,
+				},
+			},
+			apis = {
+				pressed = { func = input.Keyboard.pressed, atag = "writable" },
+				released = { func = input.Keyboard.released, atag = "writable" },
+			},
+		},
 		wheel = {
 			tasks = {
 				init = {
@@ -149,8 +162,8 @@ end
 
 function softlove.getCallbacksKeyboard(node)
 	return {
-		keypressed = nil,
-		keyreleased = nil,
+		keypressed = node.apis.pressed,
+		keyreleased = node.apis.released,
 	}
 end
 
