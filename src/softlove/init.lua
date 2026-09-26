@@ -150,9 +150,9 @@ function softlove.getCallbacksJoystick(node)
 		joystickreleased = node.apis.released,
 		joystickaxis = node.apis.axis,
 		joystickhat = node.apis.hat,
-		gamepadpressed = node.apis.gamepadpressed,
-		gamepadreleased = node.apis.gamepadreleased,
-		gamepadaxis = node.apis.gamepadaxis,
+		gamepadpressed = node.apis.pressed,
+		gamepadreleased = node.apis.released,
+		gamepadaxis = node.apis.axis,
 	}
 end
 

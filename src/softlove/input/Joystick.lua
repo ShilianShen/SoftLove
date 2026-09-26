@@ -20,24 +20,9 @@ function Joystick:isDynamic()
 	return false
 end
 
-local function getInfo(joystick)
-	return {
-		name = joystick:getName(),
-		id = joystick:getID(),
-		guid = joystick:getGUID(),
-		deviceInfo = joystick:getDeviceInfo(),
-		axisCount = joystick:getAxisCount(),
-		buttonCount = joystick:getButtonCount(),
-		hatCount = joystick:getHatCount(),
-	}
-end
-
 function Joystick:added(joystick)
 	self.joysticks[joystick] = {}
 	State.init(self.joysticks[joystick])
-	for k, v in pairs(getInfo(joystick)) do
-		self.joysticks[joystick][k] = v
-	end
 end
 
 function Joystick:removed(joystick)
@@ -58,18 +43,6 @@ end
 
 function Joystick:hat(joystick, hat, direction)
 	State.set(self.joysticks[joystick], hat, direction)
-end
-
-function Joystick:gamepadpressed(joystick, button)
-	State.set(self.joysticks[joystick], button, true)
-end
-
-function Joystick:gamepadreleased(joystick, button)
-	State.set(self.joysticks[joystick], button, false)
-end
-
-function Joystick:gamepadaxis(joystick, axis, value)
-	State.set(self.joysticks[joystick], axis, value)
 end
 
 return Joystick
