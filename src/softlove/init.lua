@@ -67,18 +67,18 @@ function softlove.getNodes()
 				},
 			},
 		},
-		joystick = {
-			tasks = getInputStateTasks(input.Joystick),
+		joysticks = {
+			tasks = getInputStateTasks(input.Joysticks),
 			apis = {
-				added = { func = input.Joystick.added, atag = "writable" },
-				removed = { func = input.Joystick.removed, atag = "writable" },
-				pressed = { func = input.Joystick.pressed, atag = "writable" },
-				released = { func = input.Joystick.released, atag = "writable" },
-				axis = { func = input.Joystick.axis, atag = "writable" },
-				hat = { func = input.Joystick.hat, atag = "writable" },
-				gamepadpressed = { func = input.Joystick.gamepadpressed, atag = "writable" },
-				gamepadreleased = { func = input.Joystick.gamepadreleased, atag = "writable" },
-				gamepadaxis = { func = input.Joystick.gamepadaxis, atag = "writable" },
+				added = { func = input.Joysticks.added, atag = "writable" },
+				removed = { func = input.Joysticks.removed, atag = "writable" },
+				pressed = { func = input.Joysticks.pressed, atag = "writable" },
+				released = { func = input.Joysticks.released, atag = "writable" },
+				axis = { func = input.Joysticks.axis, atag = "writable" },
+				hat = { func = input.Joysticks.hat, atag = "writable" },
+				gamepadpressed = { func = input.Joysticks.gamepadpressed, atag = "writable" },
+				gamepadreleased = { func = input.Joysticks.gamepadreleased, atag = "writable" },
+				gamepadaxis = { func = input.Joysticks.gamepadaxis, atag = "writable" },
 			},
 		},
 		mouse = {
@@ -116,7 +116,7 @@ function softlove.getCallbacksWindow(node)
 	}
 end
 
-function softlove.getCallbacksJoystick(node)
+function softlove.getCallbacksJoysticks(node)
 	return {
 		joystickadded = node.apis.added,
 		joystickremoved = node.apis.removed,

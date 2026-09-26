@@ -1,17 +1,17 @@
 local State = require("softlove.input.State")
-local Joystick = {}
+local Joysticks = {}
 
-function Joystick:init()
+function Joysticks:init()
 	self.joysticks = {}
 end
 
-function Joystick:update()
+function Joysticks:update()
 	for _, state in pairs(self.joysticks) do
 		State.update(state)
 	end
 end
 
-function Joystick:isDynamic()
+function Joysticks:isDynamic()
 	for _, state in pairs(self.joysticks) do
 		if State.isDynamic(state) then
 			return true
@@ -21,39 +21,39 @@ function Joystick:isDynamic()
 end
 
 ---@param id integer
-function Joystick:visit(id)
+function Joysticks:visit(id)
 	return State.visit(self.joysticks[id])
 end
 
-function Joystick:added(joystick)
+function Joysticks:added(joystick)
 	local id = joystick:getID()
 	self.joysticks[id] = {}
 	State.init(self.joysticks[id])
 end
 
-function Joystick:removed(joystick)
+function Joysticks:removed(joystick)
 	local id = joystick:getID()
 	self.joysticks[id] = nil
 end
 
-function Joystick:pressed(joystick, button)
+function Joysticks:pressed(joystick, button)
 	local id = joystick:getID()
 	State.set(self.joysticks[id], button, true)
 end
 
-function Joystick:released(joystick, button)
+function Joysticks:released(joystick, button)
 	local id = joystick:getID()
 	State.set(self.joysticks[id], button, false)
 end
 
-function Joystick:axis(joystick, axis, value)
+function Joysticks:axis(joystick, axis, value)
 	local id = joystick:getID()
 	State.set(self.joysticks[id], axis, value)
 end
 
-function Joystick:hat(joystick, hat, direction)
+function Joysticks:hat(joystick, hat, direction)
 	local id = joystick:getID()
 	State.set(self.joysticks[id], hat, direction)
 end
 
-return Joystick
+return Joysticks
