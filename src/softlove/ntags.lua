@@ -10,7 +10,6 @@ local ntags = {
 		keyboard = "keyboard",
 		mouse = "mouse",
 		wheel = "wheel",
-		touch = "touch",
 	},
 	window = "window",
 }
