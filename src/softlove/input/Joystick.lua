@@ -20,6 +20,11 @@ function Joystick:isDynamic()
 	return false
 end
 
+---@param id integer
+function Joystick:visit(id)
+	return State.visit(self.joysticks[id])
+end
+
 function Joystick:added(joystick)
 	local id = joystick:getID()
 	self.joysticks[id] = {}

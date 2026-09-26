@@ -104,6 +104,33 @@ describe("Joystick", function()
 		end)
 	end)
 
+	describe("visit", function()
+		it("should return the previous states for the requested joystick ID", function()
+			Joystick.added(ctx, joystick)
+			Joystick.pressed(ctx, joystick, "a")
+			Joystick.update(ctx)
+
+			local s1, s2 = Joystick.visit(ctx, 1)
+
+			assert.is_nil(s1.a)
+			assert.is_true(s2.a)
+		end)
+
+		it("should visit joystick states independently", function()
+			local other = newJoystick(2)
+			Joystick.added(ctx, joystick)
+			Joystick.added(ctx, other)
+			Joystick.pressed(ctx, other, "b")
+			Joystick.update(ctx)
+
+			local _, first = Joystick.visit(ctx, 1)
+			local _, second = Joystick.visit(ctx, 2)
+
+			assert.is_nil(first.b)
+			assert.is_true(second.b)
+		end)
+	end)
+
 	describe("pressed", function()
 		it("should set the latest button state to true", function()
 			Joystick.added(ctx, joystick)
