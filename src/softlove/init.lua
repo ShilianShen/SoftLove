@@ -56,6 +56,27 @@ function softlove.getNodes()
 				},
 			},
 		},
+		joystick = {
+			tasks = {
+				init = { func = input.Joystick.init },
+				update = {
+					func = input.Joystick.update,
+					parents_c = { "init" },
+					auto = input.Joystick.isDynamic,
+				},
+			},
+			apis = {
+				added = { func = input.Joystick.added, atag = "writable" },
+				removed = { func = input.Joystick.removed, atag = "writable" },
+				pressed = { func = input.Joystick.pressed, atag = "writable" },
+				released = { func = input.Joystick.released, atag = "writable" },
+				axis = { func = input.Joystick.axis, atag = "writable" },
+				hat = { func = input.Joystick.hat, atag = "writable" },
+				gamepadpressed = { func = input.Joystick.gamepadpressed, atag = "writable" },
+				gamepadreleased = { func = input.Joystick.gamepadreleased, atag = "writable" },
+				gamepadaxis = { func = input.Joystick.gamepadaxis, atag = "writable" },
+			},
+		},
 		mouse = {
 			tasks = {
 				init = {
@@ -118,6 +139,20 @@ function softlove.getCallbacksWindow(node)
 		focus = node.apis.focus,
 		visible = node.apis.visible,
 		resize = node.apis.resize,
+	}
+end
+
+function softlove.getCallbacksJoystick(node)
+	return {
+		joystickadded = node.apis.added,
+		joystickremoved = node.apis.removed,
+		joystickpressed = node.apis.pressed,
+		joystickreleased = node.apis.released,
+		joystickaxis = node.apis.axis,
+		joystickhat = node.apis.hat,
+		gamepadpressed = node.apis.gamepadpressed,
+		gamepadreleased = node.apis.gamepadreleased,
+		gamepadaxis = node.apis.gamepadaxis,
 	}
 end
 
