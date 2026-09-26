@@ -58,7 +58,7 @@ end
 
 function Joystick:added(joystick)
 	self.joysticks[joystick] = {}
-	State.init(self.joysticks[joystick], siganls)
+	State.init(self.joysticks[joystick], {})
 	for k, v in pairs(getInfo(joystick)) do
 		self.joysticks[joystick][k] = v
 	end
@@ -68,10 +68,21 @@ function Joystick:removed(joystick)
 	self.joysticks[joystick] = nil
 end
 
-function Joystick:pressed(joystick, button) end
-function Joystick:released(joystick, button) end
-function Joystick:axis(joystick, axis, value) end
-function Joystick:hat(joystick, hat, direction) end
+function Joystick:pressed(joystick, button)
+	self.joysticks[joystick].s3[button] = true
+end
+
+function Joystick:released(joystick, button)
+	self.joysticks[joystick].s3[button] = false
+end
+
+function Joystick:axis(joystick, axis, value)
+	self.joysticks[joystick].s3[axis] = value
+end
+
+function Joystick:hat(joystick, hat, direction)
+	self.joysticks[joystick].s3[hat] = direction
+end
 
 function Joystick:gamepadpressed(joystick, button)
 	self.joysticks[joystick].s3[button] = true
