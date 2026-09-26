@@ -11,29 +11,20 @@ describe("Mouse", function()
 	end)
 
 	describe("init", function()
-		it("should initialize three mouse states", function()
-			local expected = {
-				[1] = false,
-				[2] = false,
-				[3] = false,
-				x = 0,
-				y = 0,
-				focus = false,
-			}
-
-			assert.same(expected, ctx.s1)
-			assert.same(expected, ctx.s2)
-			assert.same(expected, ctx.s3)
+		it("should initialize three empty mouse states", function()
+			assert.same({}, ctx.s1)
+			assert.same({}, ctx.s2)
+			assert.same({}, ctx.s3)
 		end)
 
 		it("should create independent mouse states", function()
-			ctx.s3[1] = true
-			ctx.s3.x = 10
+			Mouse.pressed(ctx, 10, 20, 1, false, 1)
+			Mouse.moved(ctx, 10, 20, 10, 20, false)
 
-			assert.is_false(ctx.s1[1])
-			assert.is_false(ctx.s2[1])
-			assert.equals(0, ctx.s1.x)
-			assert.equals(0, ctx.s2.x)
+			assert.is_nil(ctx.s1[1])
+			assert.is_nil(ctx.s2[1])
+			assert.is_nil(ctx.s1.x)
+			assert.is_nil(ctx.s2.x)
 		end)
 
 		it("should expose visit function", function()
@@ -51,8 +42,8 @@ describe("Mouse", function()
 		it("should not change other buttons", function()
 			Mouse.pressed(ctx, 10, 20, 2, false, 1)
 
-			assert.is_false(ctx.s3[1])
-			assert.is_false(ctx.s3[3])
+			assert.is_nil(ctx.s3[1])
+			assert.is_nil(ctx.s3[3])
 		end)
 	end)
 

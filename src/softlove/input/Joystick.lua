@@ -20,30 +20,6 @@ function Joystick:isDynamic()
 	return false
 end
 
-local siganls = {
-	a = false,
-	b = false,
-	x = false,
-	y = false,
-	back = false,
-	guide = false,
-	start = false,
-	leftstick = false,
-	rightstick = false,
-	leftshoulder = false,
-	rightshoulder = false,
-	dpup = false,
-	dpdown = false,
-	dpright = false,
-	dpleft = false,
-	leftx = 0,
-	lefty = 0,
-	rightx = 0,
-	righty = 0,
-	triggerleft = 0,
-	triggerright = 0,
-}
-
 local function getInfo(joystick)
 	return {
 		name = joystick:getName(),
@@ -58,7 +34,7 @@ end
 
 function Joystick:added(joystick)
 	self.joysticks[joystick] = {}
-	State.init(self.joysticks[joystick], {})
+	State.init(self.joysticks[joystick])
 	for k, v in pairs(getInfo(joystick)) do
 		self.joysticks[joystick][k] = v
 	end

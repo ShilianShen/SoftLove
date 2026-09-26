@@ -8,16 +8,10 @@ local function const(t)
 	})
 end
 
-local sis = { "s1", "s2", "s3" }
-
----@param signals table<any, "number"|"boolean">
-function State:init(signals)
-	for _, si in ipairs(sis) do
-		self[si] = {}
-		for signal, value in pairs(signals) do
-			self[si][signal] = value
-		end
-	end
+function State:init()
+	self.s1 = {}
+	self.s2 = {}
+	self.s3 = {}
 	self.visit = State.visit
 	self.s1const = const(self.s1)
 	self.s2const = const(self.s2)

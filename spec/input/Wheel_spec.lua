@@ -11,22 +11,17 @@ describe("Wheel", function()
 	end)
 
 	describe("init", function()
-		it("should initialize three wheel states", function()
-			local expected = {
-				dx = 0,
-				dy = 0,
-			}
-
-			assert.same(expected, ctx.s1)
-			assert.same(expected, ctx.s2)
-			assert.same(expected, ctx.s3)
+		it("should initialize three empty wheel states", function()
+			assert.same({}, ctx.s1)
+			assert.same({}, ctx.s2)
+			assert.same({}, ctx.s3)
 		end)
 
 		it("should create independent wheel states", function()
-			ctx.s3.dx = 10
+			Wheel.moved(ctx, 10, 0)
 
-			assert.equals(0, ctx.s1.dx)
-			assert.equals(0, ctx.s2.dx)
+			assert.is_nil(ctx.s1.dx)
+			assert.is_nil(ctx.s2.dx)
 			assert.equals(10, ctx.s3.dx)
 		end)
 
@@ -54,8 +49,8 @@ describe("Wheel", function()
 		it("should keep previous wheel states unchanged", function()
 			Wheel.moved(ctx, 10, -5)
 
-			assert.same({ dx = 0, dy = 0 }, ctx.s1)
-			assert.same({ dx = 0, dy = 0 }, ctx.s2)
+			assert.same({}, ctx.s1)
+			assert.same({}, ctx.s2)
 		end)
 	end)
 end)

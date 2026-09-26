@@ -1,16 +1,8 @@
 local State = require("softlove.input.State")
 local Mouse = {}
-local signals = {
-	[1] = false,
-	[2] = false,
-	[3] = false,
-	x = 0,
-	y = 0,
-	focus = false,
-}
 
 function Mouse:init()
-	State.init(self, signals)
+	State.init(self)
 end
 
 function Mouse:pressed(x, y, button, istouch, presses)
