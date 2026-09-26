@@ -2,13 +2,21 @@ package.path = "src/?.lua;" .. "src/?/init.lua;" .. package.path
 local assert = require("luassert")
 local Joystick = require("softlove.input.Joystick")
 
+local function newJoystick(id)
+	return {
+		getID = function()
+			return id
+		end,
+	}
+end
+
 describe("Joystick", function()
 	local ctx
 	local joystick
 
 	before_each(function()
 		ctx = {}
-		joystick = {}
+		joystick = newJoystick(1)
 		Joystick.init(ctx)
 	end)
 
@@ -22,7 +30,7 @@ describe("Joystick", function()
 		it("should initialize an empty state for the joystick", function()
 			Joystick.added(ctx, joystick)
 
-			local state = ctx.joysticks[joystick]
+			local state = ctx.joysticks[1]
 			assert.same({}, state.s1)
 			assert.same({}, state.s2)
 			assert.same({}, state.s3)
@@ -30,14 +38,14 @@ describe("Joystick", function()
 		end)
 
 		it("should keep joystick states independent", function()
-			local other = {}
+			local other = newJoystick(2)
 			Joystick.added(ctx, joystick)
 			Joystick.added(ctx, other)
 
 			Joystick.pressed(ctx, joystick, 1)
 
-			assert.is_true(ctx.joysticks[joystick].s3[1])
-			assert.is_nil(ctx.joysticks[other].s3[1])
+			assert.is_true(ctx.joysticks[1].s3[1])
+			assert.is_nil(ctx.joysticks[2].s3[1])
 		end)
 	end)
 
@@ -47,13 +55,13 @@ describe("Joystick", function()
 
 			Joystick.removed(ctx, joystick)
 
-			assert.is_nil(ctx.joysticks[joystick])
+			assert.is_nil(ctx.joysticks[1])
 		end)
 	end)
 
 	describe("update", function()
 		it("should update every joystick state", function()
-			local other = {}
+			local other = newJoystick(2)
 			Joystick.added(ctx, joystick)
 			Joystick.added(ctx, other)
 			Joystick.pressed(ctx, joystick, 1)
@@ -61,8 +69,8 @@ describe("Joystick", function()
 
 			Joystick.update(ctx)
 
-			assert.is_true(ctx.joysticks[joystick].s2[1])
-			assert.equals(0.5, ctx.joysticks[other].s2.leftx)
+			assert.is_true(ctx.joysticks[1].s2[1])
+			assert.equals(0.5, ctx.joysticks[2].s2.leftx)
 		end)
 	end)
 
@@ -78,7 +86,7 @@ describe("Joystick", function()
 		end)
 
 		it("should return true when any joystick state is dynamic", function()
-			local other = {}
+			local other = newJoystick(2)
 			Joystick.added(ctx, joystick)
 			Joystick.added(ctx, other)
 			Joystick.pressed(ctx, other, 1)
@@ -102,7 +110,7 @@ describe("Joystick", function()
 
 			Joystick.pressed(ctx, joystick, "a")
 
-			assert.is_true(ctx.joysticks[joystick].s3.a)
+			assert.is_true(ctx.joysticks[1].s3.a)
 		end)
 	end)
 
@@ -113,7 +121,7 @@ describe("Joystick", function()
 
 			Joystick.released(ctx, joystick, "a")
 
-			assert.is_false(ctx.joysticks[joystick].s3.a)
+			assert.is_false(ctx.joysticks[1].s3.a)
 		end)
 	end)
 
@@ -123,7 +131,7 @@ describe("Joystick", function()
 
 			Joystick.axis(ctx, joystick, "leftx", -0.75)
 
-			assert.equals(-0.75, ctx.joysticks[joystick].s3.leftx)
+			assert.equals(-0.75, ctx.joysticks[1].s3.leftx)
 		end)
 	end)
 
@@ -133,7 +141,7 @@ describe("Joystick", function()
 
 			Joystick.hat(ctx, joystick, 1, "lu")
 
-			assert.equals("lu", ctx.joysticks[joystick].s3[1])
+			assert.equals("lu", ctx.joysticks[1].s3[1])
 		end)
 	end)
 end)
