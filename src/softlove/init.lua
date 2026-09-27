@@ -14,62 +14,20 @@ local function union(self, other)
 end
 
 function softlove.getNodes()
-	local nodes = {
-		window = {
-			tasks = {
-				init = {
-					func = system.Window.init,
-				},
-				update = {
-					func = system.Window.update,
-					parents_c = { "init" },
-				},
-			},
-			apis = {
-				focus = { func = system.Window.focus, atag = "writable" },
-				visible = { func = system.Window.visible, atag = "writable" },
-				resize = { func = system.Window.resize, atag = "writable" },
-			},
-		},
-		locales = {
-			tasks = {
-				init = {
-					func = function(self)
-						system.Locales.init(self)
-						self.translate = system.Locales.translate
-					end,
-				},
-			},
-			apis = {
-				add = {
-					func = system.Locales.add,
-					atag = "writable",
-				},
-				del = {
-					func = system.Locales.del,
-					atag = "writable",
-				},
-				setCurrent = {
-					func = system.Locales.setCurrent,
-					atag = "writable",
-				},
-			},
-		},
-		fonts = {},
-	}
+	local nodes = {}
+	union(nodes, system.getNodes())
 	union(nodes, input.getNodes())
 	return nodes
 end
 
-function softlove.getCallbacksWindow(node)
-	-- love.displayrotated = function(displayindex, orientation) end
-	return {
-		focus = node.apis.focus,
-		visible = node.apis.visible,
-		resize = node.apis.resize,
-	}
+function softlove.getCallbacks(nodes)
+	local callbacks = {}
+	union(callbacks, system.getCallbacks(nodes))
+	union(callbacks, input.getCallbacks(nodes))
+	return callbacks
 end
 
+softlove.getCallbacksSystem = system.getCallbacks
 softlove.getCallbacksInput = input.getCallbacks
 
 return softlove
