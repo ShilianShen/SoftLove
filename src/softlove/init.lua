@@ -6,24 +6,24 @@ local softlove = {
 	ui = require("softlove.ui"),
 }
 
-local function union(self, other)
-	for k, v in pairs(other) do
-		assert(self[k] == nil)
-		self[k] = v
+local function union(...)
+	local args = { ... }
+	local result = {}
+	for _, arg in ipairs(args) do
+		for k, v in pairs(arg) do
+			assert(result[k] == nil)
+			result[k] = v
+		end
 	end
+	return result
 end
 
 function softlove.getNodes()
-	local nodes = {}
-	union(nodes, system.getNodes())
-	union(nodes, input.getNodes())
-	return nodes
+	return union(system.getNodes(), input.getNodes())
 end
 
 function softlove.setCallbacks(nodes)
-	local callbacks = {}
-	union(callbacks, system.getCallbacks(nodes))
-	union(callbacks, input.getCallbacks(nodes))
+	local callbacks = union(system.getCallbacks(nodes), input.getCallbacks(nodes))
 	for k, v in pairs(callbacks) do
 		love[k] = v
 	end
