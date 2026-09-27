@@ -13,18 +13,6 @@ local function union(self, other)
 	end
 end
 
-local function getInputStateTasks(x)
-	local tasks = {
-		init = { func = x.init },
-		update = {
-			func = x.update,
-			parents_c = { "init" },
-			auto = x.isDynamic,
-		},
-	}
-	return tasks
-end
-
 function softlove.getNodes()
 	local nodes = {
 		window = {
@@ -67,44 +55,9 @@ function softlove.getNodes()
 				},
 			},
 		},
-		joysticks = {
-			tasks = getInputStateTasks(input.Joysticks),
-			apis = {
-				added = { func = input.Joysticks.added, atag = "writable" },
-				removed = { func = input.Joysticks.removed, atag = "writable" },
-				pressed = { func = input.Joysticks.pressed, atag = "writable" },
-				released = { func = input.Joysticks.released, atag = "writable" },
-				axis = { func = input.Joysticks.axis, atag = "writable" },
-				hat = { func = input.Joysticks.hat, atag = "writable" },
-				gamepadpressed = { func = input.Joysticks.gamepadpressed, atag = "writable" },
-				gamepadreleased = { func = input.Joysticks.gamepadreleased, atag = "writable" },
-				gamepadaxis = { func = input.Joysticks.gamepadaxis, atag = "writable" },
-			},
-		},
-		mouse = {
-			tasks = getInputStateTasks(input.Mouse),
-			apis = {
-				moved = { func = input.Mouse.moved, atag = "writable" },
-				pressed = { func = input.Mouse.pressed, atag = "writable" },
-				released = { func = input.Mouse.released, atag = "writable" },
-				focus = { func = input.Mouse.focus, atag = "writable" },
-			},
-		},
-		keyboard = {
-			tasks = getInputStateTasks(input.Keyboard),
-			apis = {
-				pressed = { func = input.Keyboard.pressed, atag = "writable" },
-				released = { func = input.Keyboard.released, atag = "writable" },
-			},
-		},
-		wheel = {
-			tasks = getInputStateTasks(input.Wheel),
-			apis = {
-				moved = { func = input.Wheel.moved, atag = "writable" },
-			},
-		},
-        fonts = {},
+		fonts = {},
 	}
+	union(nodes, input.getNodes())
 	return nodes
 end
 
@@ -117,40 +70,6 @@ function softlove.getCallbacksWindow(node)
 	}
 end
 
-function softlove.getCallbacksJoysticks(node)
-	return {
-		joystickadded = node.apis.added,
-		joystickremoved = node.apis.removed,
-		joystickpressed = node.apis.pressed,
-		joystickreleased = node.apis.released,
-		joystickaxis = node.apis.axis,
-		joystickhat = node.apis.hat,
-		gamepadpressed = node.apis.pressed,
-		gamepadreleased = node.apis.released,
-		gamepadaxis = node.apis.axis,
-	}
-end
-
-function softlove.getCallbacksMouse(node)
-	return {
-		mousemoved = node.apis.moved,
-		mousepressed = node.apis.pressed,
-		mousereleased = node.apis.released,
-		mousefocus = node.apis.focus,
-	}
-end
-
-function softlove.getCallbacksKeyboard(node)
-	return {
-		keypressed = node.apis.pressed,
-		keyreleased = node.apis.released,
-	}
-end
-
-function softlove.getCallbacksWheel(node)
-	return {
-		wheelmoved = node.apis.moved,
-	}
-end
+softlove.getCallbacksInput = input.getCallbacks
 
 return softlove
