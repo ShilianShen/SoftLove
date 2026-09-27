@@ -1,39 +1,38 @@
-local system = {
-	Locales = require("softlove.system.Locales"),
-	Window = require("softlove.system.Window"),
-}
+local Locales = require("softlove.system.Locales")
+local Window = require("softlove.system.Window")
+local system = {}
 
 function system.getNodes()
 	return {
 		window = {
 			tasks = {
 				init = {
-					func = system.Window.init,
+					func = Window.init,
 				},
 				update = {
-					func = system.Window.update,
+					func = Window.update,
 					parents_c = { "init" },
 				},
 			},
 			apis = {
-				focus = { func = system.Window.focus, atag = "writable" },
-				visible = { func = system.Window.visible, atag = "writable" },
-				resize = { func = system.Window.resize, atag = "writable" },
+				focus = { func = Window.focus, atag = "writable" },
+				visible = { func = Window.visible, atag = "writable" },
+				resize = { func = Window.resize, atag = "writable" },
 			},
 		},
 		locales = {
 			tasks = {
 				init = {
 					func = function(self)
-						system.Locales.init(self)
-						self.translate = system.Locales.translate
+						Locales.init(self)
+						self.translate = Locales.translate
 					end,
 				},
 			},
 			apis = {
-				add = { func = system.Locales.add, atag = "writable" },
-				del = { func = system.Locales.del, atag = "writable" },
-				setCurrent = { func = system.Locales.setCurrent, atag = "writable" },
+				add = { func = Locales.add, atag = "writable" },
+				del = { func = Locales.del, atag = "writable" },
+				setCurrent = { func = Locales.setCurrent, atag = "writable" },
 			},
 		},
 	}

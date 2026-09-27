@@ -20,14 +20,13 @@ function softlove.getNodes()
 	return nodes
 end
 
-function softlove.getCallbacks(nodes)
+function softlove.setCallbacks(nodes)
 	local callbacks = {}
 	union(callbacks, system.getCallbacks(nodes))
 	union(callbacks, input.getCallbacks(nodes))
-	return callbacks
+	for k, v in pairs(callbacks) do
+		love[k] = v
+	end
 end
-
-softlove.getCallbacksSystem = system.getCallbacks
-softlove.getCallbacksInput = input.getCallbacks
 
 return softlove
