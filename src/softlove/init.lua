@@ -103,6 +103,7 @@ function softlove.getNodes()
 				moved = { func = input.Wheel.moved, atag = "writable" },
 			},
 		},
+        fonts = {},
 	}
 	return nodes
 end
