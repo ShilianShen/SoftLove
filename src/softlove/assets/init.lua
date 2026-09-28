@@ -19,6 +19,7 @@ local function getNode(types)
 					self.check = check
 					self.types = types
 				end,
+                back = false,
 			},
 		},
 		apis = {
