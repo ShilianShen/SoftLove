@@ -1,138 +1,111 @@
 local Content = require("softlove.drawGraph.Content")
+local getDAG = require("softlove.drawGraph.getDAG")
 local inspect = require("softlove.inspect")
+
 local drawGraph = {
-	theme = {
-		colors = {
-			background = { 0.025, 0.025, 0.025, 0.7 },
+	colors = {
+		background = { 0.025, 0.025, 0.025, 0.7 },
 
-			text = { 0.88, 0.88, 0.84 },
-			border = { 0.72, 0.72, 0.68 },
-			surface = { 0.055, 0.055, 0.050 },
+		point = { 0.90, 0.35, 0.25 },
+		text = { 0.88, 0.88, 0.84 },
+		border = { 0.72, 0.72, 0.68 },
+		surface = { 0.055, 0.055, 0.050 },
 
-			accent_border = { 0.72, 0.58, 0.12 },
-			accent_surface = { 0.12, 0.10, 0.04 },
+		accent_border = { 0.72, 0.58, 0.12 },
+		accent_surface = { 0.12, 0.10, 0.04 },
 
-			warning = { 0.95, 0.40, 0.18 },
-			success = { 0.40, 0.85, 0.45 },
-		},
+		warning = { 0.95, 0.40, 0.18 },
+		success = { 0.40, 0.85, 0.45 },
 	},
-	font = love.graphics.newFont(12),
-	memory = {
-		ntag = nil,
-		ttag = nil,
-	},
+	ntag = nil,
+	ttag = nil,
+	defaultNode = { tasks = {}, parents_c = {}, children_c = {}, order = {} },
 }
 
-local function getNodeContent(node, X, Y, W, H)
-	local content = Content.newContent(node.tasks, node.parents_c, node.children_c, node.order, X, Y, W, H)
-	for ttag, task in pairs(node.tasks) do
-		content.vertices[ttag].textColor = task.dirty and "warning" or "success"
-		content.vertices[ttag].text = content.vertices[ttag].text .. task.count
-	end
-	content.title = "TASKS"
-	return content
+function drawGraph:setFont(font)
+	self.font = font
+	self.drawable = love.graphics.newText(self.font)
 end
 
-local function getGraphContent(graph, X, Y, W, H)
-	local content = Content.newContent(graph.nodes, graph.parents_n, graph.children_n, graph.order, X, Y, W, H)
-	for ntag, node in pairs(graph.nodes) do
-		content.vertices[ntag].textColor = node.dirty and "warning" or "success"
-		content.vertices[ntag].text = content.vertices[ntag].text .. node.count
-	end
-	content.title = "NODES"
-	return content
-end
-
-local function getDataContent(node, X, Y, W, H)
-	local content = Content.newContent({ v = {} }, { v = {} }, { v = {} }, { "v" }, X, Y, W, H)
-	content.title = "DATA"
-	content.vertices.v.text = inspect(node.data)
-	return content
-end
-
-local function getFocus(content)
+function drawGraph:call(graph)
+	local rw = 0.6
+	local rh = 0.6
+	local W, H = love.graphics.getDimensions()
 	local mouseX, mouseY = love.mouse.getPosition()
-	for vtag, vertex in pairs(content.vertices) do
-		local w = drawGraph.font:getWidth(vertex.text)
-		local h = drawGraph.font:getHeight()
-		local dx = (mouseX - vertex.x) / w + 0.5
-		local dy = (mouseY - vertex.y) / h + 0.5
-		if 0 < dx and dx < 1 and 0 < dy and dy < 1 then
-			return vtag
+
+	local nodesContent =
+		getDAG(graph.nodes, graph.parents_n, graph.children_n, graph.order, self.ntag, 0, 0, W * rw, H * rh)
+
+	for ntag, text in pairs(nodesContent.texts) do
+		local x = text.x
+		local y = text.y
+		local w = self.font:getWidth(text.t)
+		local h = self.font:getHeight()
+		if mouseX >= x - w / 2 and mouseX <= x + w / 2 and mouseY >= y - h / 2 and mouseY <= y + h / 2 then
+			self.ntag = ntag
+			self.ttag = nil
+			break
 		end
 	end
-end
 
-local function draw(graph, X, Y, W, H)
-	X = X or 0
-	Y = Y or 0
-	W = W or love.graphics.getWidth()
-	H = H or love.graphics.getHeight()
-	local k = 0.6
+	local node = self.ntag and graph.nodes[self.ntag] or self.defaultNode
+	local tasksContent =
+		getDAG(node.tasks, node.parents_c, node.children_c, node.order, self.ttag, 0, H * rh, W * rw, H * (1 - rh))
 
-	love.graphics.setColor(drawGraph.theme.colors.background)
-	love.graphics.rectangle("fill", X, Y, W, H)
-
-	local graphContent = getGraphContent(graph, X, Y, W * k, H / 2)
-	local nodeContent = nil
-	local dataContent = nil
-
-	local ntag = getFocus(graphContent)
-	if ntag ~= drawGraph.memory.ntag and ntag ~= nil then
-		drawGraph.memory.ttag = nil
-	end
-
-	drawGraph.memory.ntag = ntag or drawGraph.memory.ntag
-	ntag = drawGraph.memory.ntag
-
-	if ntag then
-		graphContent.vertices[ntag].borderColor = "accent_border"
-		graphContent.vertices[ntag].surfaceColor = "accent_surface"
-		local node = graph.nodes[ntag]
-		nodeContent = getNodeContent(node, X, Y + H / 2, W * k, H / 2)
-		drawGraph.memory.ttag = getFocus(nodeContent) or drawGraph.memory.ttag
-		local ttag = drawGraph.memory.ttag
-
-		if ttag then
-			nodeContent.vertices[ttag].borderColor = "accent_border"
-			nodeContent.vertices[ttag].surfaceColor = "accent_surface"
-			local task = node.tasks[ttag]
-			local v2 = nodeContent.vertices[ttag]
-			for _, dtag in pairs(graph.parents_d[ntag][ttag]) do
-				local v1 = graphContent.vertices[dtag]
-				local edge = Content.newEdge(v1.x, v1.y, v2.x, v2.y)
-				edge.style = "dot"
-				edge.text = graph.nodes[dtag].atag
-				table.insert(nodeContent.edges, edge)
-			end
-			local v1 = graphContent.vertices[ntag]
-			local edge = Content.newEdge(v1.x, v1.y, v2.x, v2.y)
-			edge.style = "dot"
-			edge.text = task.atag
-			table.insert(nodeContent.edges, edge)
+	for ttag, text in pairs(tasksContent.texts) do
+		local x = text.x
+		local y = text.y
+		local w = self.font:getWidth(text.t)
+		local h = self.font:getHeight()
+		if mouseX >= x - w / 2 and mouseX <= x + w / 2 and mouseY >= y - h / 2 and mouseY <= y + h / 2 then
+			self.ttag = ttag
+			break
 		end
-
-		dataContent = getDataContent(node, X + W * k, Y, W * (1 - k), H)
 	end
 
-	if dataContent ~= nil then
-		dataContent:draw(drawGraph.theme, drawGraph.font)
+	local content = Content.union({ n = nodesContent, t = tasksContent })
+
+	if self.ntag and self.ttag then
+		for _, ptag in pairs(graph.parents_d[self.ntag][self.ttag]) do
+			local x1 = nodesContent.texts[ptag].x
+			local y1 = nodesContent.texts[ptag].y
+			local x2 = tasksContent.texts[self.ttag].x
+			local y2 = tasksContent.texts[self.ttag].y
+			content:add("ae" .. ptag, "line", { x1 = x1, y1 = y1, x2 = x2, y2 = y2, s = "dot" })
+			content:add("av" .. ptag, "text", {
+				x = (x1 + x2) / 2,
+				y = (y1 + y2) / 2,
+				t = node.atag,
+				bc = "surface",
+			})
+		end
 	end
 
-	if nodeContent ~= nil then
-		nodeContent:draw(drawGraph.theme, drawGraph.font)
-	end
+	content:add("dbackground", "rect", { x = W * rw, y = 0, w = W * (1 - rw), h = H, sc = "background" })
+	content:draw(self.colors, self.font)
 
-	graphContent:draw(drawGraph.theme, drawGraph.font)
+	if self.ntag then
+		self.drawable:setf(inspect(graph.nodes[self.ntag].data), W * rw, "left")
+		local x, y = W * rw, 0
+		local w, h = self.drawable:getDimensions()
+		if h > H then
+			local rate = (mouseY - y) / H
+			local offset = math.max(0, h - H) * rate
+			y = y - offset
+		end
+		love.graphics.draw(self.drawable, x, y)
+	end
 end
 
 setmetatable(drawGraph, {
-	__call = function(self, ...)
+	__call = function(self, graph)
 		love.graphics.push("all")
 		love.graphics.setFont(self.font)
-		draw(...)
+		drawGraph:call(graph)
 		love.graphics.pop()
 	end,
 })
+
+drawGraph:setFont(love.graphics.newFont(12))
 
 return drawGraph

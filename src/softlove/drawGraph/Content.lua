@@ -1,142 +1,182 @@
-local Content = {}
 local style = require("softlove.drawGraph.style")
 
-local function lineCount(str)
-	if str == "" then
-		return 0
+---@param tbl table<string, any>
+---@return fun(): string?, any
+local function sortedPairs(tbl)
+	local keys = {}
+
+	for key in pairs(tbl) do
+		keys[#keys + 1] = key
 	end
 
-	local _, count = str:gsub("\n", "\n")
-	return count + 1
-end
+	table.sort(keys)
 
-local function getDist(parents, order)
-	local depth = {}
-	for _, vtag in ipairs(order) do
-		depth[vtag] = 1
-		for ptag, _ in pairs(parents[vtag]) do
-			depth[vtag] = math.max(depth[vtag], depth[ptag] + 1)
+	local index = 0
+
+	return function()
+		index = index + 1
+
+		local key = keys[index]
+		if key ~= nil then
+			return key, tbl[key]
 		end
 	end
-
-	local dist = {}
-	for vtag, d in pairs(depth) do
-		dist[d] = dist[d] or {}
-		table.insert(dist[d], vtag)
-	end
-
-	for d = 1, #dist do
-		table.sort(dist[d])
-	end
-
-	return dist
 end
 
-function Content.newVertex(x, y, t)
+---@class Point
+---@field x number
+---@field y number
+---@field c string
+---@field w number
+
+---@class Line
+---@field x1 number
+---@field y1 number
+---@field x2 number
+---@field y2 number
+---@field c string
+---@field w number
+---@field s string
+
+---@class Rect
+---@field x number
+---@field y number
+---@field w number
+---@field h number
+---@field sc string
+---@field bc string
+
+---@class Text
+---@field x number
+---@field y number
+---@field t string
+---@field tc string
+---@field sc string
+---@field bc string
+
+---@class Content
+---@field points Point[]
+---@field lines Line[]
+---@field rects Rect[]
+---@field texts Text[]
+local Content = {}
+
+---@return Content
+function Content.new()
 	return {
-		x = x,
-		y = y,
-		surfaceColor = "surface",
-		borderColor = "border",
-		textColor = "text",
-		text = t,
+		points = {},
+		lines = {},
+		rects = {},
+		texts = {},
+
+		clean = Content.clean,
+		add = Content.add,
+		draw = Content.draw,
 	}
 end
 
-function Content.newEdge(x1, y1, x2, y2)
-	return {
-		x1 = x1,
-		y1 = y1,
-		x2 = x2,
-		y2 = y2,
-		surfaceColor = "surface",
-		borderColor = "border",
-		textColor = "text",
-		text = "",
-		style = "line",
-	}
+function Content:clean()
+	self.points = {}
+	self.lines = {}
+	self.rects = {}
 end
 
-local function _newContent(vertices, parents, children, order, X, Y, W, H)
-	local content = {}
-	local dist = getDist(parents, order)
-
-	content.title = ""
-	content.titleColor = "text"
-	content.borderColor = "border"
-	content.x = X
-	content.y = Y
-	content.w = W
-	content.h = H
-
-	content.vertices = {}
-	local D = #dist
-	for j = 1, D do
-		local B = #dist[j]
-		for i = 1, B do
-			local vtag = dist[j][i]
-			local x = X + W / B * (i - 0.5)
-			local y = Y + H / D * (j - 0.5)
-			content.vertices[vtag] = Content.newVertex(x, y, vtag)
-		end
+---@param key any
+---@param shape "point"|"line"|"rect"|"text"
+---@param args table<any>
+function Content:add(key, shape, args)
+	if shape == "point" then
+		self.points[key] = {
+			x = args.x or 0,
+			y = args.y or 0,
+			c = args.c or "point",
+			w = args.w or 1,
+		}
+	elseif shape == "line" then
+		self.lines[key] = {
+			x1 = args.x1 or 0,
+			y1 = args.y1 or 0,
+			x2 = args.x2 or 1,
+			y2 = args.y2 or 1,
+			c = args.c or "border",
+			w = args.w or 1,
+			s = args.s or "line",
+		}
+	elseif shape == "rect" then
+		self.rects[key] = {
+			x = args.x or 0,
+			y = args.y or 0,
+			w = args.w or 1,
+			h = args.h or 1,
+			sc = args.sc or "surface",
+			bc = args.bc or "border",
+		}
+	elseif shape == "text" then
+		self.texts[key] = {
+			x = args.x or 0,
+			y = args.y or 0,
+			t = args.t or "",
+			tc = args.tc or "text",
+			sc = args.sc or "surface",
+			bc = args.bc or "border",
+		}
 	end
-
-	content.edges = {}
-	for vtag, _ in pairs(vertices) do
-		local x1 = content.vertices[vtag].x
-		local y1 = content.vertices[vtag].y
-		for ctag, _ in pairs(children[vtag]) do
-			local x2 = content.vertices[ctag].x
-			local y2 = content.vertices[ctag].y
-			local edge = Content.newEdge(x1, y1, x2, y2)
-			table.insert(content.edges, edge)
-		end
-	end
-
-	return content
 end
 
-local function drawContent(content, theme, font)
-	do
-		love.graphics.setColor(theme.colors[content.borderColor])
-		love.graphics.rectangle("line", content.x + 1, content.y + 1, content.w - 2, content.h - 2)
+---@param colors table<any>
+---@param font love.Font|nil
+function Content:draw(colors, font)
+	font = font or love.graphics.getFont()
+	love.graphics.setFont(font)
 
-		local w = font:getWidth(content.title or "")
-		love.graphics.setColor(theme.colors[content.titleColor])
-		love.graphics.print(content.title or "", content.x + (content.w - w) / 2, content.y)
+	for _, rect in sortedPairs(self.rects) do
+		love.graphics.setColor(colors[rect.sc])
+		love.graphics.rectangle("fill", rect.x, rect.y, rect.w, rect.h)
+
+		love.graphics.setColor(colors[rect.bc])
+		love.graphics.rectangle("line", rect.x + 1, rect.y + 1, rect.w - 2, rect.h - 2)
 	end
 
-	for _, edge in ipairs(content.edges) do
-		local w = font:getWidth(edge.text or "")
-		local h = font:getHeight() * lineCount(edge.text or "")
-		local x = (edge.x1 + edge.x2 - w) / 2
-		local y = (edge.y1 + edge.y2 - h) / 2
-		love.graphics.setColor(theme.colors[edge.borderColor])
-		style[edge.style](edge.x1, edge.y1, edge.x2, edge.y2)
-		love.graphics.setColor(theme.colors[edge.surfaceColor])
+	for _, line in sortedPairs(self.lines) do
+		love.graphics.setColor(colors[line.c])
+		style[line.s](line.x1, line.y1, line.x2, line.y2)
+	end
+
+	for _, point in sortedPairs(self.points) do
+		love.graphics.setColor(colors[point.c])
+		love.graphics.rectangle("fill", point.x - point.w / 2, point.y - point.w / 2, point.w, point.w)
+	end
+
+	for _, text in sortedPairs(self.texts) do
+		local w = font:getWidth(text.t)
+		local h = font:getHeight()
+		local x = text.x - w / 2
+		local y = text.y - h / 2
+
+		love.graphics.setColor(colors[text.sc])
 		love.graphics.rectangle("fill", x, y, w, h)
-		love.graphics.setColor(theme.colors[edge.textColor])
-		love.graphics.print(edge.text or "", font, x, y)
-	end
 
-	for _, vertex in pairs(content.vertices) do
-		local w = font:getWidth(vertex.text or "")
-		local h = font:getHeight() * lineCount(vertex.text or "")
-		local x = vertex.x - w / 2
-		local y = vertex.y - h / 2
-		love.graphics.setColor(theme.colors[vertex.surfaceColor])
-		love.graphics.rectangle("fill", x - 1, y - 1, w + 2, h + 2)
-		love.graphics.setColor(theme.colors[vertex.borderColor])
-		love.graphics.rectangle("line", x - 1, y - 1, w + 2, h + 2)
-		love.graphics.setColor(theme.colors[vertex.textColor])
-		love.graphics.print(vertex.text or "", font, x, y)
+		love.graphics.setColor(colors[text.bc])
+		love.graphics.rectangle("line", x, y, w, h)
+
+		love.graphics.setColor(colors[text.tc])
+		love.graphics.print(text.t, x, y)
 	end
 end
 
-function Content.newContent(...)
-	local content = _newContent(...)
-	content.draw = drawContent
-	return content
+---@return Content
+function Content.union(pcs)
+	local result = Content.new()
+
+	for prefix, content in pairs(pcs) do
+		for _, key in ipairs({ "lines", "points", "rects", "texts" }) do
+			for k, v in pairs(content[key]) do
+				result[key][prefix .. k] = v
+			end
+		end
+	end
+
+	return result
 end
 
 return Content
