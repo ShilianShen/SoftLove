@@ -154,7 +154,7 @@ function Content:draw(colors, font)
 		local y = text.y - h / 2
 
 		love.graphics.setColor(colors[text.sc])
-		love.graphics.rectangle("fill", x, y, w, h)
+		love.graphics.rectangle("fill", x - 1, y - 1, w + 2, h + 2)
 
 		love.graphics.setColor(colors[text.bc])
 		love.graphics.rectangle("line", x, y, w, h)

@@ -93,6 +93,7 @@ function drawGraph:call(graph)
 			local offset = math.max(0, h - H) * rate
 			y = y - offset
 		end
+		love.graphics.setColor(node.dirty and self.colors.warning or self.colors.success)
 		love.graphics.draw(self.drawable, x, y)
 	end
 end
