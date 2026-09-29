@@ -8,12 +8,10 @@ function system.getNodes()
 			tasks = {
 				init = {
 					func = Window.init,
-					back = false,
 				},
 				update = {
 					func = Window.update,
 					parents_c = { "init" },
-					back = false,
 				},
 			},
 			apis = {
@@ -29,7 +27,6 @@ function system.getNodes()
 						Locales.init(self)
 						self.translate = Locales.translate
 					end,
-					back = false,
 				},
 			},
 			apis = {

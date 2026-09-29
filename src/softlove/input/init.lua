@@ -6,12 +6,11 @@ local input = {}
 
 local function getTasks(x)
 	local tasks = {
-		init = { func = x.init, back = false },
+		init = { func = x.init },
 		update = {
 			func = x.update,
 			parents_c = { "init" },
 			auto = x.isDynamic,
-			back = false,
 		},
 	}
 	return tasks
