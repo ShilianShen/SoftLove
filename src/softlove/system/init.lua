@@ -8,17 +8,22 @@ function system.getNodes()
 			tasks = {
 				init = {
 					func = Window.init,
+					back = false,
+					atag = "writable",
 				},
 				update = {
 					func = Window.update,
 					parents_c = { "init" },
+					back = false,
+					atag = "writable",
 				},
 			},
 			apis = {
-				focus = { func = Window.focus, atag = "writable" },
-				visible = { func = Window.visible, atag = "writable" },
-				resize = { func = Window.resize, atag = "writable" },
+				focus = { func = Window.focus, atag = "writable", dirty = true },
+				visible = { func = Window.visible, atag = "writable", dirty = true },
+				resize = { func = Window.resize, atag = "writable", dirty = true },
 			},
+			atag = "readonly",
 		},
 		locales = {
 			tasks = {
@@ -27,13 +32,16 @@ function system.getNodes()
 						Locales.init(self)
 						self.translate = Locales.translate
 					end,
+					atag = "writable",
+					back = false,
 				},
 			},
 			apis = {
-				add = { func = Locales.add, atag = "writable" },
-				del = { func = Locales.del, atag = "writable" },
-				setCurrent = { func = Locales.setCurrent, atag = "writable" },
+				add = { func = Locales.add, atag = "writable", dirty = true },
+				del = { func = Locales.del, atag = "writable", dirty = true },
+				setCurrent = { func = Locales.setCurrent, atag = "writable", dirty = true },
 			},
+			atag = "readonly",
 		},
 	}
 end

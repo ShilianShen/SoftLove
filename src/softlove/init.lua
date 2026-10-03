@@ -19,11 +19,11 @@ local function union(...)
 end
 
 function softlove.getNodes()
-	return union(system.getNodes(), input.getNodes(), assets.getNodes())
+	return union(system.getNodes(), assets.getNodes()) -- TODO: add input nodes
 end
 
 function softlove.setCallbacks(nodes)
-	local callbacks = union(system.getCallbacks(nodes), input.getCallbacks(nodes))
+	local callbacks = union(system.getCallbacks(nodes)) -- TODO: add input callbacks
 	for k, v in pairs(callbacks) do
 		love[k] = v
 	end

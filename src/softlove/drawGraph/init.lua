@@ -19,7 +19,7 @@ local drawGraph = {
 	},
 	ntag = nil,
 	ttag = nil,
-	defaultNode = { tasks = {}, parents_c = {}, children_c = {}, order = {} },
+	defaultNode = { tasks = {}, parents_c = {}, children_c = {}, order_c = {} },
 }
 
 function drawGraph:setFont(font)
@@ -34,7 +34,7 @@ function drawGraph:call(graph)
 	local mouseX, mouseY = love.mouse.getPosition()
 
 	local nodesContent =
-		getDAG(graph.nodes, graph.parents_n, graph.children_n, graph.order, self.ntag, 0, 0, W * rw, H * rh)
+		getDAG(graph.nodes, graph.parents_n, graph.children_n, graph.order_n, self.ntag, 0, 0, W * rw, H * rh)
 
 	for ntag, text in pairs(nodesContent.texts) do
 		local x = text.x
@@ -50,7 +50,7 @@ function drawGraph:call(graph)
 
 	local node = self.ntag and graph.nodes[self.ntag] or self.defaultNode
 	local tasksContent =
-		getDAG(node.tasks, node.parents_c, node.children_c, node.order, self.ttag, 0, H * rh, W * rw, H * (1 - rh))
+		getDAG(node.tasks, node.parents_c, node.children_c, node.order_c, self.ttag, 0, H * rh, W * rw, H * (1 - rh))
 
 	for ttag, text in pairs(tasksContent.texts) do
 		local x = text.x

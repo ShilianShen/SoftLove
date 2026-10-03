@@ -19,14 +19,18 @@ local function getNode(types)
 					self.check = check
 					self.types = types
 				end,
+				atag = "writable",
+				back = false,
 			},
 		},
 		apis = {
 			setMethod = {
 				func = Cache.setMethod,
 				atag = "writable",
+				dirty = true,
 			},
 		},
+		atag = "readonly",
 	}
 end
 
