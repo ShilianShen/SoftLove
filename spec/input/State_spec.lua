@@ -11,18 +11,16 @@ describe("State", function()
 	end)
 
 	describe("init", function()
-		it("should initialize three empty states", function()
+		it("should initialize two empty states", function()
 			assert.same({}, ctx.s1)
 			assert.same({}, ctx.s2)
-			assert.same({}, ctx.s3)
 		end)
 
 		it("should create independent state tables", function()
 			State.set(ctx, "button", true)
 
 			assert.is_nil(ctx.s1.button)
-			assert.is_nil(ctx.s2.button)
-			assert.is_true(ctx.s3.button)
+			assert.is_true(ctx.s2.button)
 		end)
 
 		it("should expose visit function", function()
@@ -31,33 +29,34 @@ describe("State", function()
 	end)
 
 	describe("set", function()
-		it("should establish a signal dynamically in the latest state", function()
+		it("should establish a signal in the current state", function()
 			State.set(ctx, "button", true)
 
 			assert.is_nil(ctx.s1.button)
-			assert.is_nil(ctx.s2.button)
-			assert.is_true(ctx.s3.button)
+			assert.is_true(ctx.s2.button)
 		end)
 
 		it("should replace the latest value of an established signal", function()
 			State.set(ctx, "x", 10)
 			State.set(ctx, "x", 20)
 
-			assert.equals(20, ctx.s3.x)
+			assert.equals(20, ctx.s2.x)
 		end)
 	end)
 
-	describe("update", function()
-		it("should shift newer values into previous states", function()
+	describe("step", function()
+		it("should copy current values into the previous state", function()
 			State.set(ctx, "button", true)
 			State.set(ctx, "x", 10)
 			State.step(ctx)
+			assert.same({ button = true, x = 10 }, ctx.s1)
+
 			State.set(ctx, "button", false)
 			State.set(ctx, "x", 20)
 
 			State.step(ctx)
 
-			assert.same({ button = true, x = 10 }, ctx.s1)
+			assert.same({ button = false, x = 20 }, ctx.s1)
 			assert.same({ button = false, x = 20 }, ctx.s2)
 		end)
 
@@ -67,34 +66,7 @@ describe("State", function()
 
 			State.step(ctx)
 
-			assert.same({ button = true, x = 20 }, ctx.s3)
-		end)
-	end)
-
-	describe("isDynamic", function()
-		it("should return false when no signals have been established", function()
-			assert.is_false(State.isDynamic(ctx))
-		end)
-
-		it("should return true while a new signal is being propagated", function()
-			State.set(ctx, "button", true)
-			State.step(ctx)
-
-			assert.is_true(State.isDynamic(ctx))
-		end)
-
-		it("should return true when the latest state differs", function()
-			State.set(ctx, "x", 10)
-
-			assert.is_true(State.isDynamic(ctx))
-		end)
-
-		it("should return false after equal values are propagated", function()
-			State.set(ctx, "button", true)
-			State.step(ctx)
-			State.step(ctx)
-
-			assert.is_false(State.isDynamic(ctx))
+			assert.same({ button = true, x = 20 }, ctx.s2)
 		end)
 	end)
 
@@ -111,10 +83,12 @@ describe("State", function()
 		it("should keep views in sync with state updates", function()
 			local s1, s2 = State.visit(ctx)
 			State.set(ctx, "x", 10)
+			assert.is_nil(s1.x)
+			assert.equals(10, s2.x)
 
 			State.step(ctx)
 
-			assert.is_nil(s1.x)
+			assert.equals(10, s1.x)
 			assert.equals(10, s2.x)
 		end)
 

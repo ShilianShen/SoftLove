@@ -25,9 +25,9 @@ describe("input", function()
 			for name, module in pairs(modules) do
 				local tasks = nodes[name].tasks
 				assert.equals(module.init, tasks.init.func)
-				assert.equals(module.step, tasks.update.func)
-				assert.same({ "init" }, tasks.update.parents_c)
-				assert.equals(module.isDynamic, tasks.update.auto)
+				assert.equals(module.step, tasks.step.func)
+				assert.same({ "init" }, tasks.step.parents_c)
+				assert.is_nil(tasks.step.auto)
 			end
 		end)
 

@@ -11,18 +11,16 @@ describe("Wheel", function()
 	end)
 
 	describe("init", function()
-		it("should initialize three empty wheel states", function()
+		it("should initialize two empty wheel states", function()
 			assert.same({}, ctx.s1)
 			assert.same({}, ctx.s2)
-			assert.same({}, ctx.s3)
 		end)
 
 		it("should create independent wheel states", function()
 			Wheel.moved(ctx, 10, 0)
 
 			assert.is_nil(ctx.s1.dx)
-			assert.is_nil(ctx.s2.dx)
-			assert.equals(10, ctx.s3.dx)
+			assert.equals(10, ctx.s2.dx)
 		end)
 
 		it("should expose visit function", function()
@@ -34,23 +32,22 @@ describe("Wheel", function()
 		it("should update the latest wheel delta", function()
 			Wheel.moved(ctx, 10, -5)
 
-			assert.equals(10, ctx.s3.dx)
-			assert.equals(-5, ctx.s3.dy)
+			assert.equals(10, ctx.s2.dx)
+			assert.equals(-5, ctx.s2.dy)
 		end)
 
 		it("should allow replacing the latest wheel delta", function()
 			Wheel.moved(ctx, 10, -5)
 			Wheel.moved(ctx, -2, 3)
 
-			assert.equals(-2, ctx.s3.dx)
-			assert.equals(3, ctx.s3.dy)
+			assert.equals(-2, ctx.s2.dx)
+			assert.equals(3, ctx.s2.dy)
 		end)
 
 		it("should keep previous wheel states unchanged", function()
 			Wheel.moved(ctx, 10, -5)
 
 			assert.same({}, ctx.s1)
-			assert.same({}, ctx.s2)
 		end)
 	end)
 end)

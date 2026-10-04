@@ -33,7 +33,6 @@ describe("Joystick", function()
 			local state = ctx.joysticks[1]
 			assert.same({}, state.s1)
 			assert.same({}, state.s2)
-			assert.same({}, state.s3)
 			assert.is_function(state.visit)
 		end)
 
@@ -44,8 +43,8 @@ describe("Joystick", function()
 
 			Joysticks.pressed(ctx, joystick, 1)
 
-			assert.is_true(ctx.joysticks[1].s3[1])
-			assert.is_nil(ctx.joysticks[2].s3[1])
+			assert.is_true(ctx.joysticks[1].s2[1])
+			assert.is_nil(ctx.joysticks[2].s2[1])
 		end)
 	end)
 
@@ -59,7 +58,7 @@ describe("Joystick", function()
 		end)
 	end)
 
-	describe("update", function()
+	describe("step", function()
 		it("should update every joystick state", function()
 			local other = newJoystick(2)
 			Joysticks.added(ctx, joystick)
@@ -74,41 +73,10 @@ describe("Joystick", function()
 		end)
 	end)
 
-	describe("isDynamic", function()
-		it("should return false when there are no joysticks", function()
-			assert.is_false(Joysticks.isDynamic(ctx))
-		end)
-
-		it("should return false when every joystick state is stable", function()
-			Joysticks.added(ctx, joystick)
-
-			assert.is_false(Joysticks.isDynamic(ctx))
-		end)
-
-		it("should return true when any joystick state is dynamic", function()
-			local other = newJoystick(2)
-			Joysticks.added(ctx, joystick)
-			Joysticks.added(ctx, other)
-			Joysticks.pressed(ctx, other, 1)
-
-			assert.is_true(Joysticks.isDynamic(ctx))
-		end)
-
-		it("should return false after a value has propagated", function()
-			Joysticks.added(ctx, joystick)
-			Joysticks.pressed(ctx, joystick, 1)
-			Joysticks.step(ctx)
-			Joysticks.step(ctx)
-
-			assert.is_false(Joysticks.isDynamic(ctx))
-		end)
-	end)
-
 	describe("visit", function()
 		it("should return the previous states for the requested joystick ID", function()
 			Joysticks.added(ctx, joystick)
 			Joysticks.pressed(ctx, joystick, "a")
-			Joysticks.step(ctx)
 
 			local s1, s2 = Joysticks.visit(ctx, 1)
 
@@ -121,7 +89,6 @@ describe("Joystick", function()
 			Joysticks.added(ctx, joystick)
 			Joysticks.added(ctx, other)
 			Joysticks.pressed(ctx, other, "b")
-			Joysticks.step(ctx)
 
 			local _, first = Joysticks.visit(ctx, 1)
 			local _, second = Joysticks.visit(ctx, 2)
@@ -137,7 +104,7 @@ describe("Joystick", function()
 
 			Joysticks.pressed(ctx, joystick, "a")
 
-			assert.is_true(ctx.joysticks[1].s3.a)
+			assert.is_true(ctx.joysticks[1].s2.a)
 		end)
 	end)
 
@@ -148,7 +115,7 @@ describe("Joystick", function()
 
 			Joysticks.released(ctx, joystick, "a")
 
-			assert.is_false(ctx.joysticks[1].s3.a)
+			assert.is_false(ctx.joysticks[1].s2.a)
 		end)
 	end)
 
@@ -158,7 +125,7 @@ describe("Joystick", function()
 
 			Joysticks.axis(ctx, joystick, "leftx", -0.75)
 
-			assert.equals(-0.75, ctx.joysticks[1].s3.leftx)
+			assert.equals(-0.75, ctx.joysticks[1].s2.leftx)
 		end)
 	end)
 
@@ -168,7 +135,7 @@ describe("Joystick", function()
 
 			Joysticks.hat(ctx, joystick, 1, "lu")
 
-			assert.equals("lu", ctx.joysticks[1].s3[1])
+			assert.equals("lu", ctx.joysticks[1].s2[1])
 		end)
 	end)
 end)
