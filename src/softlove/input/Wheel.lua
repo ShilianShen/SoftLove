@@ -2,7 +2,6 @@ local State = require("softlove.input.State")
 local Wheel = {
 	init = State.init,
 	step = State.step,
-	isDynamic = State.isDynamic,
 }
 
 function Wheel.moved(self, dx, dy)

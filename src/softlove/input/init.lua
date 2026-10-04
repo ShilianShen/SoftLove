@@ -2,12 +2,7 @@ Mouse = require("softlove.input.Mouse")
 Keyboard = require("softlove.input.Keyboard")
 Joysticks = require("softlove.input.Joysticks")
 Wheel = require("softlove.input.Wheel")
-local inspect = require("softlove.inspect")
 local input = {}
-
-local function isDynamic(x)
-	return x:isDynamic()
-end
 
 local function getTasks(x)
 	local tasks = {
@@ -15,7 +10,6 @@ local function getTasks(x)
 		step = {
 			func = x.step,
 			parents_c = { "init" },
-			-- auto = isDynamic,
 			atag = "writable",
 			back = true,
 		},

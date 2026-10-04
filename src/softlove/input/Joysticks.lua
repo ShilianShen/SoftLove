@@ -11,15 +11,6 @@ function Joysticks:step()
 	end
 end
 
-function Joysticks:isDynamic()
-	for _, state in pairs(self.joysticks) do
-		if State.isDynamic(state) then
-			return true
-		end
-	end
-	return false
-end
-
 ---@param id integer
 function Joysticks:visit(id)
 	return State.visit(self.joysticks[id])

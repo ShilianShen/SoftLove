@@ -13,10 +13,6 @@ function Keyboard:step()
 	State.step(self.scancodes)
 end
 
-function Keyboard:isDynamic()
-	return State.isDynamic(self.keys) or State.isDynamic(self.scancodes)
-end
-
 ---@param name "keys"|"scancodes"
 function Keyboard:visit(name)
 	return State.visit(self[name])
