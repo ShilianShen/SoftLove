@@ -5,9 +5,9 @@ function Joysticks:init()
 	self.joysticks = {}
 end
 
-function Joysticks:update()
+function Joysticks:step()
 	for _, state in pairs(self.joysticks) do
-		State.update(state)
+		State.step(state)
 	end
 end
 

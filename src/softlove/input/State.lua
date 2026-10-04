@@ -11,26 +11,23 @@ end
 function State:init()
 	self.s1 = {}
 	self.s2 = {}
-	self.s3 = {}
 	self.visit = State.visit
 	self.s1const = const(self.s1)
 	self.s2const = const(self.s2)
 	self.isDynamic = State.isDynamic
 end
 
-function State:update()
-	for signal, _ in pairs(self.s3) do
+function State:step()
+	for signal, _ in pairs(self.s2) do
 		self.s1[signal] = self.s2[signal]
-		self.s2[signal] = self.s3[signal]
 	end
 end
 
 function State:isDynamic()
-	for signal, _ in pairs(self.s3) do
+	for signal, _ in pairs(self.s2) do
 		local s1 = self.s1[signal]
 		local s2 = self.s2[signal]
-		local s3 = self.s3[signal]
-		if s1 ~= s2 or s2 ~= s3 then
+		if s1 ~= s2 then
 			return true
 		end
 	end
@@ -40,7 +37,7 @@ end
 ---@param signal string
 ---@param value any
 function State:set(signal, value)
-	self.s3[signal] = value
+	self.s2[signal] = value
 end
 
 function State:visit()

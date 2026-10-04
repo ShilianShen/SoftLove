@@ -1,7 +1,7 @@
 local State = require("softlove.input.State")
 local Mouse = {
 	init = State.init,
-	update = State.update,
+	step = State.step,
 	isDynamic = State.isDynamic,
 }
 

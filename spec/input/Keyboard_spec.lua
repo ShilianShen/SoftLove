@@ -32,7 +32,7 @@ describe("Keyboard", function()
 		it("should update both key and scancode states", function()
 			Keyboard.pressed(ctx, "space", "space_scancode", false)
 
-			Keyboard.update(ctx)
+			Keyboard.step(ctx)
 
 			assert.is_true(ctx.keys.s2.space)
 			assert.is_true(ctx.scancodes.s2.space_scancode)
@@ -52,8 +52,8 @@ describe("Keyboard", function()
 
 		it("should return false after values have propagated", function()
 			Keyboard.pressed(ctx, "space", "space_scancode", false)
-			Keyboard.update(ctx)
-			Keyboard.update(ctx)
+			Keyboard.step(ctx)
+			Keyboard.step(ctx)
 
 			assert.is_false(Keyboard.isDynamic(ctx))
 		end)
@@ -62,7 +62,7 @@ describe("Keyboard", function()
 	describe("visit", function()
 		it("should return key states when visiting keys", function()
 			Keyboard.pressed(ctx, "space", "space_scancode", false)
-			Keyboard.update(ctx)
+			Keyboard.step(ctx)
 
 			local s1, s2 = Keyboard.visit(ctx, "keys")
 
@@ -73,7 +73,7 @@ describe("Keyboard", function()
 
 		it("should return scancode states when visiting scancodes", function()
 			Keyboard.pressed(ctx, "space", "space_scancode", false)
-			Keyboard.update(ctx)
+			Keyboard.step(ctx)
 
 			local s1, s2 = Keyboard.visit(ctx, "scancodes")
 

@@ -51,11 +51,11 @@ describe("State", function()
 		it("should shift newer values into previous states", function()
 			State.set(ctx, "button", true)
 			State.set(ctx, "x", 10)
-			State.update(ctx)
+			State.step(ctx)
 			State.set(ctx, "button", false)
 			State.set(ctx, "x", 20)
 
-			State.update(ctx)
+			State.step(ctx)
 
 			assert.same({ button = true, x = 10 }, ctx.s1)
 			assert.same({ button = false, x = 20 }, ctx.s2)
@@ -65,7 +65,7 @@ describe("State", function()
 			State.set(ctx, "button", true)
 			State.set(ctx, "x", 20)
 
-			State.update(ctx)
+			State.step(ctx)
 
 			assert.same({ button = true, x = 20 }, ctx.s3)
 		end)
@@ -78,7 +78,7 @@ describe("State", function()
 
 		it("should return true while a new signal is being propagated", function()
 			State.set(ctx, "button", true)
-			State.update(ctx)
+			State.step(ctx)
 
 			assert.is_true(State.isDynamic(ctx))
 		end)
@@ -91,8 +91,8 @@ describe("State", function()
 
 		it("should return false after equal values are propagated", function()
 			State.set(ctx, "button", true)
-			State.update(ctx)
-			State.update(ctx)
+			State.step(ctx)
+			State.step(ctx)
 
 			assert.is_false(State.isDynamic(ctx))
 		end)
@@ -112,7 +112,7 @@ describe("State", function()
 			local s1, s2 = State.visit(ctx)
 			State.set(ctx, "x", 10)
 
-			State.update(ctx)
+			State.step(ctx)
 
 			assert.is_nil(s1.x)
 			assert.equals(10, s2.x)

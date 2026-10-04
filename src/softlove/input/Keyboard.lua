@@ -8,9 +8,9 @@ function Keyboard:init()
 	State.init(self.scancodes)
 end
 
-function Keyboard:update()
-	State.update(self.keys)
-	State.update(self.scancodes)
+function Keyboard:step()
+	State.step(self.keys)
+	State.step(self.scancodes)
 end
 
 function Keyboard:isDynamic()
