@@ -67,6 +67,7 @@ function drawGraph:call(graph)
 
 	if self.ntag and self.ttag then
 		for _, ptag in pairs(graph.parents_d[self.ntag][self.ttag]) do
+			local pnode = graph.nodes[ptag]
 			local x1 = nodesContent.texts[ptag].x
 			local y1 = nodesContent.texts[ptag].y
 			local x2 = tasksContent.texts[self.ttag].x
@@ -75,7 +76,7 @@ function drawGraph:call(graph)
 			content:add("av" .. ptag, "text", {
 				x = (x1 + x2) / 2,
 				y = (y1 + y2) / 2,
-				t = node.atag,
+				t = pnode.atag,
 				bc = "surface",
 			})
 		end
