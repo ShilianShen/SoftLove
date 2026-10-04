@@ -2,7 +2,7 @@ local State = require("softlove.input.State")
 local Mouse = {
 	init = State.init,
 	update = State.update,
-    isDynamic = State.isDynamic,
+	isDynamic = State.isDynamic,
 }
 
 function Mouse:pressed(x, y, button, istouch, presses)

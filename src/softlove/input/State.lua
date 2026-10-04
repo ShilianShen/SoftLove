@@ -15,6 +15,7 @@ function State:init()
 	self.visit = State.visit
 	self.s1const = const(self.s1)
 	self.s2const = const(self.s2)
+	self.isDynamic = State.isDynamic
 end
 
 function State:update()
