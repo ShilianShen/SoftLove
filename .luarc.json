@@ -6,5 +6,7 @@
         "after_each",
         "setup",
         "teardown"
-    ]
+    ],
+    "workspace.ignoreDir": ["dist"],
+    "diagnostics.ignoredFiles": "Disable"
 }

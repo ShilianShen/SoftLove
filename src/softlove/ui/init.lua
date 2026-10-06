@@ -7,4 +7,11 @@ end
 
 ui.System = require("softlove.ui.System")
 
+---@type softdep.declaration.Api
+ui.systemApiDraw = {
+	func = ui.System.draw,
+	dirty = false,
+	atag = "writable",
+}
+
 return ui
