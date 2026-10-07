@@ -1,8 +1,14 @@
+---@class softlove.ui.Section
+---@field _entry softlove.ui.Object
+---@field _order table[]
+---@field _draw function
 local Section = {}
 
+---@param object softlove.ui.Object
+---@param order table[]
 local function visit(object, order)
 	table.insert(order, object)
-	for _, child in ipairs(object.children) do
+	for _, child in ipairs(object._children) do
 		visit(child, order)
 	end
 end
@@ -17,6 +23,7 @@ function Section:draw()
 	end
 end
 
+---@param entry softlove.ui.Object
 function Section:init(entry)
 	self._entry = entry
 	self._order = {}
