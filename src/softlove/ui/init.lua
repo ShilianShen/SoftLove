@@ -1,20 +1,14 @@
 local Ui = require("softlove.ui.Ui")
-local Section = require("softlove.ui.Section")
-local ui = {}
-
-local function init(self)
-	Ui.init(self)
-	self.section = function(_, ...)
-		Section.init(...)
-	end
-end
+local ui = {
+	Section = require("softlove.ui.Section"),
+}
 
 function ui.getNode()
 	---@type softdep.declaration.Node
 	local node = {
 		tasks = {
 			init = {
-				func = init,
+				func = Ui.init,
 				atag = "writable",
 				back = false,
 			},

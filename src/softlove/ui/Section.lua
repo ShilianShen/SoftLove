@@ -31,4 +31,45 @@ function Section:init(entry)
 	self._draw = Section.draw
 end
 
+function Section:update(params)
+	self._entry:_update(nil, params)
+	for _, object in ipairs(self._order) do
+		for _, child in ipairs(object._children) do
+			child:_update(object, params)
+		end
+	end
+end
+
+function Section.getNode(getEnrty, parents_d)
+	---@type softdep.declaration.Node
+	local node = {
+		tasks = {
+			init = {
+				func = function(self, params)
+					Section.init(self, getEnrty(params.ui))
+				end,
+				atag = "writable",
+				back = false,
+				parents_d = { ui = "ui" },
+			},
+			update = {
+				func = Section.update,
+				atag = "writable",
+				back = false,
+				parents_d = parents_d,
+				parents_c = { "init" },
+			},
+		},
+		apis = {
+			draw = {
+				func = Section.draw,
+				atag = "writable",
+				dirty = false,
+			},
+		},
+		atag = "readonly",
+	}
+	return node
+end
+
 return Section
