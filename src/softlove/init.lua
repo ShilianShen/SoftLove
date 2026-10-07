@@ -4,7 +4,6 @@ local assets = require("softlove.assets")
 local ui = require("softlove.ui")
 local softlove = {
 	drawGraph = require("softlove.drawGraph"),
-	ui = require("softlove.ui"),
 }
 
 local function union(...)
@@ -29,5 +28,7 @@ function softlove.setCallbacks(nodes)
 		love[k] = v
 	end
 end
+
+softlove.getSection = ui.Section.getNode
 
 return softlove
