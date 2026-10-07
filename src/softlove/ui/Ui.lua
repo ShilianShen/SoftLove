@@ -69,8 +69,7 @@ end
 ---@param input softlove.ui.Patch
 ---@return softlove.ui.Object
 function Ui:new(key, input)
-	local patch = self.patchs[key]
-	assert(patch ~= nil)
+	local patch = self.patchs[key] or {}
 	local result = applyPatch(input, patch, Object)
 	result._children = result._children or {}
 	return result
