@@ -40,7 +40,7 @@ function Scope:draw(X, Y, W, H)
 	end
 end
 
-function Scope.newNode(target, calculate)
+function Scope.getNode(target, calculate)
 	return {
 		tasks = {
 			init = {
