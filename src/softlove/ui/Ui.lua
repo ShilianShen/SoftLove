@@ -1,24 +1,24 @@
 ---@class softlove.ui.Patch
----@field _x number|nil
----@field _y number|nil
----@field _w number|nil
----@field _h number|nil
----@field _update fun(self: softlove.ui.Object, parent: softlove.ui.Object|nil, params: table<string, table>)|nil
----@field _foreground function|nil
----@field _background function|nil
----@field _children softlove.ui.Object[]|nil
----@field _theme table|nil
+---@field x number|nil
+---@field y number|nil
+---@field w number|nil
+---@field h number|nil
+---@field update fun(self: softlove.ui.Object, parent: softlove.ui.Object|nil, params: table<string, table>)|nil
+---@field foreground function|nil
+---@field background function|nil
+---@field children softlove.ui.Object[]|nil
+---@field theme table|nil
 
 ---@class softlove.ui.Object
----@field _x number
----@field _y number
----@field _w number
----@field _h number
----@field _update fun(self: softlove.ui.Object, parent: softlove.ui.Object|nil, params: table<string, table>)
----@field _foreground function
----@field _background function
----@field _children softlove.ui.Object[]
----@field _theme table
+---@field x number
+---@field y number
+---@field w number
+---@field h number
+---@field update fun(self: softlove.ui.Object, parent: softlove.ui.Object|nil, params: table<string, table>)
+---@field foreground function
+---@field background function
+---@field children softlove.ui.Object[]
+---@field theme table
 
 ---@class softlove.ui.Ui
 ---@field patchs table<string, softlove.ui.Patch>
@@ -29,13 +29,13 @@ local function pass() end
 
 ---@type softlove.ui.Patch
 local Object = {
-	_x = 0,
-	_y = 0,
-	_w = 0,
-	_h = 0,
-	_update = pass,
-	_foreground = pass,
-	_background = pass,
+	x = 0,
+	y = 0,
+	w = 0,
+	h = 0,
+	update = pass,
+	foreground = pass,
+	background = pass,
 }
 
 local function applyPatch(...)
@@ -68,8 +68,8 @@ end
 function Ui:new(key, input)
 	local patch = self.patchs[key] or {}
 	local result = applyPatch(input, patch, Object)
-	result._children = result._children or {}
-	result._theme = result._theme or {}
+	result.children = result.children or {}
+	result.theme = result.theme or {}
 	return result
 end
 

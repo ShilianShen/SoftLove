@@ -1,41 +1,41 @@
 ---@class softlove.ui.Section
----@field _entry softlove.ui.Object
----@field _order table[]
----@field _draw function
+---@field entry softlove.ui.Object
+---@field order table[]
+---@field draw function
 local Section = {}
 
 ---@param object softlove.ui.Object
 ---@param order table[]
 local function visit(object, order)
 	table.insert(order, object)
-	for _, child in ipairs(object._children) do
+	for _, child in ipairs(object.children) do
 		visit(child, order)
 	end
 end
 
 function Section:draw()
-	for _, object in ipairs(self._order) do
-		object:_background()
+	for _, object in ipairs(self.order) do
+		object:background()
 	end
-	for i = #self._order, 1, -1 do
-		local object = self._order[i]
-		object:_foreground()
+	for i = #self.order, 1, -1 do
+		local object = self.order[i]
+		object:foreground()
 	end
 end
 
 ---@param entry softlove.ui.Object
 function Section:init(entry)
-	self._entry = entry
-	self._order = {}
-	visit(self._entry, self._order)
-	self._draw = Section.draw
+	self.entry = entry
+	self.order = {}
+	visit(self.entry, self.order)
+	self.draw = Section.draw
 end
 
 function Section:update(params)
-	self._entry:_update(nil, params)
-	for _, object in ipairs(self._order) do
-		for _, child in ipairs(object._children) do
-			child:_update(object, params)
+	self.entry:update(nil, params)
+	for _, object in ipairs(self.order) do
+		for _, child in ipairs(object.children) do
+			child:update(object, params)
 		end
 	end
 end
