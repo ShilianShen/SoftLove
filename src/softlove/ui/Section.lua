@@ -1,7 +1,6 @@
 ---@class softlove.ui.Section
 ---@field entry softlove.ui.Object
 ---@field order table[]
----@field draw function
 local Section = {}
 
 ---@param object softlove.ui.Object
@@ -28,7 +27,6 @@ function Section:init(entry)
 	self.entry = entry
 	self.order = {}
 	visit(self.entry, self.order)
-	self.draw = Section.draw
 end
 
 function Section:update(params)
