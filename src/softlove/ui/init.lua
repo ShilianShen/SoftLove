@@ -1,4 +1,5 @@
 local ui = {}
+local Ui = {}
 
 ---@class softlove.ui.Object
 ---@field _x number
@@ -23,13 +24,6 @@ local function drawSection(self)
 		object:_foreground()
 	end
 end
-
----@type softdep.declaration.Api
-ui.systemApiDraw = {
-	func = drawSection,
-	dirty = false,
-	atag = "writable",
-}
 
 local function applyPatch(...)
 	local args = { ... }
@@ -64,7 +58,7 @@ local Object = {
 ---@param key string
 ---@param input table
 ---@return table
-local function new(self, key, input)
+function Ui:new(key, input)
 	local patch = self.patchs[key]
 	local result = applyPatch(input, patch, self.patchs.Object)
 	result.children = result.children or {}
@@ -78,15 +72,21 @@ local function visit(object, order)
 	end
 end
 
-local function section(self, t, entry)
+function Ui:section(t, entry)
 	t._entry = entry
 	t._order = {}
 	visit(t._entry, t._order)
 	t._draw = drawSection
 end
 
-local function newPatch(self, key, patch)
+function Ui:newPatch(key, patch)
 	self.patchs[key] = patch
+end
+
+function Ui:init()
+	self.patchs = { Object = Object }
+	self.new = Ui.new
+	self.section = Ui.section
 end
 
 function ui.getNode()
@@ -94,17 +94,13 @@ function ui.getNode()
 	local node = {
 		tasks = {
 			init = {
-				func = function(self)
-					self.patchs = { Object = Object }
-					self.new = new
-					self.section = section
-				end,
+				func = Ui.init,
 				atag = "writable",
 				back = false,
 			},
 		},
 		apis = {
-			newPatch = { func = newPatch, atag = "writable", dirty = true },
+			newPatch = { func = Ui.newPatch, atag = "writable", dirty = true },
 		},
 		atag = "readonly",
 	}
