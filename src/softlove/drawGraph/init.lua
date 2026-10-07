@@ -86,7 +86,21 @@ function drawGraph:call(graph)
 	content:draw(self.colors, self.font)
 
 	if self.ntag then
-		self.drawable:setf(inspect(graph.nodes[self.ntag].data), W * rw, "left")
+		local apis = {}
+		for itag, api in pairs(node.apis) do
+			apis[itag] = { dirty = api.dirty, atag = api.atag, func = api.func }
+		end
+		self.drawable:setf(
+			inspect({
+				data = node.data,
+				count = node.count,
+				atag = node.atag,
+				dirty = node.dirty,
+				apis = apis,
+			}),
+			W * rw,
+			"left"
+		)
 		local x, y = W * rw, 0
 		local w, h = self.drawable:getDimensions()
 		if h > H then
