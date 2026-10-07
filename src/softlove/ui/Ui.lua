@@ -19,7 +19,8 @@
 ---@field _children softlove.ui.Object[]
 
 ---@class softlove.ui.Ui
----@field patchs softlove.ui.Patch[]
+---@field patchs table<string, softlove.ui.Patch>
+---@field new function
 local Ui = {}
 
 local function pass() end
@@ -56,6 +57,11 @@ end
 ---@param key string
 ---@param patch softlove.ui.Patch
 function Ui:newPatch(key, patch)
+	for k, v in pairs(patch) do
+		if type(v) == "table" then
+			patch[k] = nil
+		end
+	end
 	self.patchs[key] = patch
 end
 
@@ -64,6 +70,7 @@ end
 ---@return softlove.ui.Object
 function Ui:new(key, input)
 	local patch = self.patchs[key]
+	assert(patch ~= nil)
 	local result = applyPatch(input, patch, Object)
 	result._children = result._children or {}
 	return result
