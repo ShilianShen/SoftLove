@@ -14,7 +14,6 @@ local ui = {}
 ---@field entry softlove.ui.Object
 ---@field order table[]
 
-
 local function drawSection(self)
 	for _, object in ipairs(self._order) do
 		object:_background()
@@ -83,6 +82,7 @@ local function section(self, t, entry)
 	t._entry = entry
 	t._order = {}
 	visit(t._entry, t._order)
+	t._draw = drawSection
 end
 
 local function newPatch(self, key, patch)
