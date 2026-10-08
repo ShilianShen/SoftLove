@@ -28,7 +28,7 @@ end
 ---@param parents softdep.AdjList
 ---@param children softdep.AdjList
 ---@param order string[]
----@param target softdep.Node
+---@param target string
 ---@param X number
 ---@param Y number
 ---@param W number

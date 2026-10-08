@@ -55,10 +55,10 @@ end
 ---@field bc string
 
 ---@class softlove.drawGraph.Content
----@field points softlove.drawGraph.Point[]
----@field lines softlove.drawGraph.Line[]
----@field rects softlove.drawGraph.Rect[]
----@field texts softlove.drawGraph.Text[]
+---@field points table<string, softlove.drawGraph.Point>
+---@field lines table<string, softlove.drawGraph.Line>
+---@field rects table<string, softlove.drawGraph.Rect>
+---@field texts table<string, softlove.drawGraph.Text>
 local Content = {}
 
 ---@return softlove.drawGraph.Content
