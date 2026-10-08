@@ -27,11 +27,14 @@ function drawGraph:setFont(font)
 	self.drawable = love.graphics.newText(self.font)
 end
 
-function drawGraph:call(graph)
+function drawGraph:call(graph, theme, font)
+	love.graphics.push("all")
 	local rw = 0.6
 	local rh = 0.6
 	local W, H = love.graphics.getDimensions()
 	local mouseX, mouseY = love.mouse.getPosition()
+	theme = theme or self.theme
+	font = font or self.font
 
 	local nodesContent =
 		getDAG(graph.nodes, graph.parents_n, graph.children_n, graph.order_n, self.ntag, 0, 0, W * rw, H * rh)
@@ -39,8 +42,8 @@ function drawGraph:call(graph)
 	for ntag, text in pairs(nodesContent.texts) do
 		local x = text.x
 		local y = text.y
-		local w = self.font:getWidth(text.t)
-		local h = self.font:getHeight()
+		local w = font:getWidth(text.t)
+		local h = font:getHeight()
 		if mouseX >= x - w / 2 and mouseX <= x + w / 2 and mouseY >= y - h / 2 and mouseY <= y + h / 2 then
 			self.ntag = ntag
 			self.ttag = nil
@@ -55,8 +58,8 @@ function drawGraph:call(graph)
 	for ttag, text in pairs(tasksContent.texts) do
 		local x = text.x
 		local y = text.y
-		local w = self.font:getWidth(text.t)
-		local h = self.font:getHeight()
+		local w = font:getWidth(text.t)
+		local h = font:getHeight()
 		if mouseX >= x - w / 2 and mouseX <= x + w / 2 and mouseY >= y - h / 2 and mouseY <= y + h / 2 then
 			self.ttag = ttag
 			break
@@ -83,7 +86,7 @@ function drawGraph:call(graph)
 	end
 
 	content:add("dbackground", "rect", { x = W * rw, y = 0, w = W * (1 - rw), h = H, sc = "background" })
-	content:draw(self.theme, self.font)
+	content:draw(theme, font)
 
 	if self.ntag then
 		local apis = {}
@@ -108,18 +111,14 @@ function drawGraph:call(graph)
 			local offset = math.max(0, h - H) * rate
 			y = y - offset
 		end
-		love.graphics.setColor(node.dirty and self.theme.warning or self.theme.success)
+		love.graphics.setColor(node.dirty and theme.warning or theme.success)
 		love.graphics.draw(self.drawable, x, y)
 	end
+	love.graphics.pop()
 end
 
 setmetatable(drawGraph, {
-	__call = function(self, graph)
-		love.graphics.push("all")
-		love.graphics.setFont(self.font)
-		drawGraph:call(graph)
-		love.graphics.pop()
-	end,
+	__call = drawGraph.call,
 })
 
 drawGraph:setFont(love.graphics.newFont(12))
