@@ -8,7 +8,7 @@ local Joysticks = {}
 
 ---@class softlove.input.Joysticks
 ---@field joysticks table<integer, softlove.input.Joystick>
----@field get fun(self: softlove.input.Joysticks, id: integer, key: softlove.input.JoystickKeys): any
+---@field get fun(self: softlove.input.Joysticks, id: integer, key: softlove.input.JoystickKeys): any, any
 
 ---@param self table
 function Joysticks.init(self)
@@ -78,7 +78,7 @@ end
 ---@param self softlove.input.Joysticks
 ---@param joystick love.Joystick
 ---@param hat softlove.input.JoystickKeys
----@param direction boolean
+---@param direction love.JoystickHat
 function Joysticks.hat(self, joystick, hat, direction)
 	local id = joystick:getID()
 	State.set(self.joysticks[id], hat, direction)

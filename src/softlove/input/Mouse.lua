@@ -5,7 +5,7 @@ local Mouse = {
 	step = State.step,
 }
 
----@alias softlove.input.MouseKeys 1|2|3|"x"|"y"|"focus"
+---@alias softlove.input.MouseKeys integer|"x"|"y"|"focus"
 
 ---@class softlove.input.Mouse: softlove.input.State<softlove.input.MouseKeys>
 
@@ -14,7 +14,7 @@ local Mouse = {
 ---@param y number
 ---@param button softlove.input.MouseKeys
 ---@param istouch boolean
----@param presses boolean
+---@param presses number
 function Mouse.pressed(self, x, y, button, istouch, presses)
 	State.set(self, button, true)
 end
@@ -24,7 +24,7 @@ end
 ---@param y number
 ---@param button softlove.input.MouseKeys
 ---@param istouch boolean
----@param presses boolean
+---@param presses number
 function Mouse.released(self, x, y, button, istouch, presses)
 	State.set(self, button, false)
 end
