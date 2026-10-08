@@ -1,5 +1,14 @@
 local State = require("softlove.input.State")
+
 local Joysticks = {}
+
+---@alias softlove.input.JoystickKeys love.GamepadButton|love.GamepadAxis
+
+---@class softlove.input.Joystick: softlove.input.State<softlove.input.JoystickKeys>
+
+---@class softlove.input.Joysticks
+---@field joysticks table<integer, softlove.input.Joystick>
+---@field get fun(self: softlove.input.Joysticks, id: integer): any
 
 function Joysticks.init(self)
 	self.joysticks = {}

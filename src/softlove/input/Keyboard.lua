@@ -1,4 +1,5 @@
 local State = require("softlove.input.State")
+
 local Keyboard = {}
 
 ---@class softlove.input.KeyboardKeys: softlove.input.State<love.KeyConstant>
@@ -8,8 +9,8 @@ local Keyboard = {}
 ---@class softlove.input.Keyboard
 ---@field keys softlove.input.KeyboardKeys
 ---@field scancodes softlove.input.KeyboardScancodes
----@field getKey function
----@field getScancode function
+---@field getKey fun(self: softlove.input.Keyboard, key: love.KeyConstant): boolean
+---@field getScancode fun(self: softlove.input.Keyboard, scancode: love.Scancode): boolean
 
 ---@param self table
 function Keyboard.init(self)
