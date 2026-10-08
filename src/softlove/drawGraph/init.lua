@@ -100,10 +100,11 @@ function drawGraph:call(graph, theme, font)
 				atag = node.atag,
 				dirty = node.dirty,
 				apis = apis,
-			}),
-			W * rw,
+			}, { indent = "    " }),
+			W * (1 - rw),
 			"left"
 		)
+		self.drawable:setFont(font)
 		local x, y = W * rw, 0
 		local w, h = self.drawable:getDimensions()
 		if h > H then
