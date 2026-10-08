@@ -12,7 +12,8 @@
     "Lua.runtime.version": "LuaJIT",
     "Lua.workspace.library": ["${3rd}/love2d/library"],
     "[lua]": {
-        "editor.defaultFormatter": "JohnnyMorganz.stylua"
+        "editor.defaultFormatter": "JohnnyMorganz.stylua",
+        "editor.formatOnSave": true
     },
     "stylua.targetReleaseVersion": "latest",
     "files.associations": {
