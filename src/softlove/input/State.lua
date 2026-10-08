@@ -1,11 +1,11 @@
----@alias softlove.input.SignalKey string|integer
+---@alias softlove.input.VisitFn<T> fun(self: softlove.input.State<T>): table<T, any>, table<T, any>
 
----@class softlove.input.State
----@field s1 table<softlove.input.SignalKey, any>
----@field s2 table<softlove.input.SignalKey, any>
----@field s1const table<softlove.input.SignalKey, any>
----@field s2const table<softlove.input.SignalKey, any>
----@field visit function
+---@class softlove.input.State<T>
+---@field s1 table<T, any>
+---@field s2 table<T, any>
+---@field s1const table<T, any>
+---@field s2const table<T, any>
+---@field visit softlove.input.VisitFn<T>
 
 local State = {}
 
@@ -26,22 +26,25 @@ function State.init(self)
 	self.visit = State.visit
 end
 
----@param self softlove.input.State
+---@generic T
+---@param self softlove.input.State<T>
 function State.step(self)
 	for signal, _ in pairs(self.s2) do
 		self.s1[signal] = self.s2[signal]
 	end
 end
 
----@param self softlove.input.State
----@param key softlove.input.SignalKey
+---@generic T
+---@param self softlove.input.State<T>
+---@param key T
 ---@param value any
 function State.set(self, key, value)
 	self.s2[key] = value
 end
 
+---@generic T
 ---@param self softlove.input.State
----@return table<softlove.input.SignalKey, any>, table<softlove.input.SignalKey, any>
+---@return table<T, any>, table<T, any>
 function State.visit(self)
 	return self.s1const, self.s2const
 end

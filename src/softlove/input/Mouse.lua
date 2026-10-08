@@ -7,11 +7,7 @@ local Mouse = {
 
 ---@alias softlove.input.MouseKeys 1|2|3|"x"|"y"|"focus"
 
----@class softlove.input.Mouse: softlove.input.State
----@field s1 table<softlove.input.MouseKeys, any>
----@field s2 table<softlove.input.MouseKeys, any>
----@field s1const table<softlove.input.MouseKeys, any>
----@field s2const table<softlove.input.MouseKeys, any>
+---@class softlove.input.Mouse: softlove.input.State<softlove.input.MouseKeys>
 
 ---@param self softlove.input.Mouse
 ---@param x number
