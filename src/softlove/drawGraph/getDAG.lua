@@ -1,5 +1,7 @@
 local Content = require("softlove.drawGraph.Content")
 
+---@param parents softdep.AdjList
+---@param order string[]
 local function getDist(parents, order)
 	local depth = {}
 	for _, vtag in ipairs(order) do
@@ -22,6 +24,15 @@ local function getDist(parents, order)
 	return dist
 end
 
+---@param vertices table<string, softdep.Node>
+---@param parents softdep.AdjList
+---@param children softdep.AdjList
+---@param order string[]
+---@param target softdep.Node
+---@param X number
+---@param Y number
+---@param W number
+---@param H number
 local function getDAG(vertices, parents, children, order, target, X, Y, W, H)
 	X = X or 0
 	Y = Y or 0

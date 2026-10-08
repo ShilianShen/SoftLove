@@ -3,30 +3,14 @@ local getDAG = require("softlove.drawGraph.getDAG")
 local inspect = require("softlove.inspect")
 
 local drawGraph = {
-	theme = {
-		background = { 0.025, 0.025, 0.025, 0.7 },
-
-		point = { 0.90, 0.35, 0.25 },
-		text = { 0.88, 0.88, 0.84 },
-		border = { 0.72, 0.72, 0.68 },
-		surface = { 0.055, 0.055, 0.050 },
-
-		accent_border = { 0.72, 0.58, 0.12 },
-		accent_surface = { 0.12, 0.10, 0.04 },
-
-		warning = { 0.95, 0.40, 0.18 },
-		success = { 0.40, 0.85, 0.45 },
-	},
 	ntag = nil,
 	ttag = nil,
 	defaultNode = { tasks = {}, parents_c = {}, children_c = {}, order_c = {} },
 }
 
-function drawGraph:setFont(font)
-	self.font = font
-	self.drawable = love.graphics.newText(self.font)
-end
-
+---@param graph softdep.Graph
+---@param theme table|nil
+---@param font love.Font|nil
 function drawGraph:call(graph, theme, font)
 	love.graphics.push("all")
 	local rw = 0.6
@@ -118,10 +102,23 @@ function drawGraph:call(graph, theme, font)
 	love.graphics.pop()
 end
 
-setmetatable(drawGraph, {
-	__call = drawGraph.call,
-})
+setmetatable(drawGraph, { __call = drawGraph.call })
 
-drawGraph:setFont(love.graphics.newFont(12))
+drawGraph.theme = {
+	background = { 0.025, 0.025, 0.025, 0.7 },
+
+	point = { 0.90, 0.35, 0.25 },
+	text = { 0.88, 0.88, 0.84 },
+	border = { 0.72, 0.72, 0.68 },
+	surface = { 0.055, 0.055, 0.050 },
+
+	accent_border = { 0.72, 0.58, 0.12 },
+	accent_surface = { 0.12, 0.10, 0.04 },
+
+	warning = { 0.95, 0.40, 0.18 },
+	success = { 0.40, 0.85, 0.45 },
+}
+drawGraph.font = love.graphics.newFont(12)
+drawGraph.drawable = love.graphics.newText(drawGraph.font)
 
 return drawGraph

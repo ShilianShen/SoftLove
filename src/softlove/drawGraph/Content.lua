@@ -23,13 +23,13 @@ local function sortedPairs(tbl)
 	end
 end
 
----@class Point
+---@class softlove.drawGraph.Point
 ---@field x number
 ---@field y number
 ---@field c string
 ---@field w number
 
----@class Line
+---@class softlove.drawGraph.Line
 ---@field x1 number
 ---@field y1 number
 ---@field x2 number
@@ -38,7 +38,7 @@ end
 ---@field w number
 ---@field s string
 
----@class Rect
+---@class softlove.drawGraph.Rect
 ---@field x number
 ---@field y number
 ---@field w number
@@ -46,7 +46,7 @@ end
 ---@field sc string
 ---@field bc string
 
----@class Text
+---@class softlove.drawGraph.Text
 ---@field x number
 ---@field y number
 ---@field t string
@@ -54,14 +54,14 @@ end
 ---@field sc string
 ---@field bc string
 
----@class Content
----@field points Point[]
----@field lines Line[]
----@field rects Rect[]
----@field texts Text[]
+---@class softlove.drawGraph.Content
+---@field points softlove.drawGraph.Point[]
+---@field lines softlove.drawGraph.Line[]
+---@field rects softlove.drawGraph.Rect[]
+---@field texts softlove.drawGraph.Text[]
 local Content = {}
 
----@return Content
+---@return softlove.drawGraph.Content
 function Content.new()
 	return {
 		points = {},
@@ -164,7 +164,7 @@ function Content:draw(theme, font)
 	end
 end
 
----@return Content
+---@return softlove.drawGraph.Content
 function Content.union(pcs)
 	local result = Content.new()
 

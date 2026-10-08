@@ -2,6 +2,12 @@ local style = {}
 
 style.line = love.graphics.line
 
+---@param x1 number
+---@param y1 number
+---@param x2 number
+---@param y2 number
+---@param dashLength number
+---@param gapLength number
 function style.dash(x1, y1, x2, y2, dashLength, gapLength)
 	dashLength = dashLength or 10
 	gapLength = gapLength or 6
@@ -23,6 +29,12 @@ function style.dash(x1, y1, x2, y2, dashLength, gapLength)
 	end
 end
 
+---@param x1 number
+---@param y1 number
+---@param x2 number
+---@param y2 number
+---@param spacing number
+---@param radius number
 function style.dot(x1, y1, x2, y2, spacing, radius)
 	spacing = spacing or 4
 	radius = radius or 1
