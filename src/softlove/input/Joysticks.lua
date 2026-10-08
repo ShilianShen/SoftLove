@@ -3,6 +3,7 @@ local Joysticks = {}
 
 function Joysticks.init(self)
 	self.joysticks = {}
+	self.visit = Joysticks.visit
 end
 
 function Joysticks.step(self)

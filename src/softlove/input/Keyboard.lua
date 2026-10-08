@@ -6,6 +6,7 @@ function Keyboard.init(self)
 	self.scancodes = {}
 	State.init(self.keys)
 	State.init(self.scancodes)
+	self.visit = Keyboard.visit
 end
 
 function Keyboard.step(self)
