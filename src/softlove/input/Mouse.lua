@@ -7,16 +7,7 @@ local Mouse = {
 
 ---@alias softlove.input.MouseKeys 1|2|3|"x"|"y"|"focus"
 
----@class softlove.input.MouseState
----@field x? number
----@field y? number
----@field focus? boolean
----@field [1] boolean|nil
----@field [2] boolean|nil
----@field [3] boolean|nil
-
 ---@class softlove.input.Mouse: softlove.input.State<softlove.input.MouseKeys>
----@field visit fun(self: softlove.input.Mouse): softlove.input.MouseState, softlove.input.MouseState
 
 ---@param self softlove.input.Mouse
 ---@param x number
