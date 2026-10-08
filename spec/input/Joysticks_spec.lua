@@ -24,6 +24,10 @@ describe("Joystick", function()
 		it("should initialize an empty joystick collection", function()
 			assert.same({}, ctx.joysticks)
 		end)
+
+		it("should expose get function", function()
+			assert.equals(Joysticks.get, ctx.get)
+		end)
 	end)
 
 	describe("added", function()
@@ -33,7 +37,7 @@ describe("Joystick", function()
 			local state = ctx.joysticks[1]
 			assert.same({}, state.s1)
 			assert.same({}, state.s2)
-			assert.is_function(state.visit)
+			assert.is_function(state.get)
 		end)
 
 		it("should keep joystick states independent", function()
@@ -73,28 +77,47 @@ describe("Joystick", function()
 		end)
 	end)
 
-	describe("visit", function()
-		it("should return the previous states for the requested joystick ID", function()
+	describe("get", function()
+		it("should return the previous and current values for the requested joystick", function()
 			Joysticks.added(ctx, joystick)
 			Joysticks.pressed(ctx, joystick, "a")
 
-			local s1, s2 = Joysticks.visit(ctx, 1)
+			local previous, current = ctx:get(1, "a")
 
-			assert.is_nil(s1.a)
-			assert.is_true(s2.a)
+			assert.is_nil(previous)
+			assert.is_true(current)
 		end)
 
-		it("should visit joystick states independently", function()
+		it("should read joystick states independently", function()
 			local other = newJoystick(2)
 			Joysticks.added(ctx, joystick)
 			Joysticks.added(ctx, other)
 			Joysticks.pressed(ctx, other, "b")
 
-			local _, first = Joysticks.visit(ctx, 1)
-			local _, second = Joysticks.visit(ctx, 2)
+			local _, first = ctx:get(1, "b")
+			local _, second = ctx:get(2, "b")
 
-			assert.is_nil(first.b)
-			assert.is_true(second.b)
+			assert.is_nil(first)
+			assert.is_true(second)
+		end)
+
+		it("should return nil values for an unknown joystick", function()
+			local previous, current = ctx:get(99, "a")
+
+			assert.is_nil(previous)
+			assert.is_nil(current)
+		end)
+
+		it("should return previous and current values after stepping", function()
+			Joysticks.added(ctx, joystick)
+			Joysticks.axis(ctx, joystick, "leftx", 0.5)
+			Joysticks.step(ctx)
+			Joysticks.axis(ctx, joystick, "leftx", -0.75)
+
+			local previous, current = ctx:get(1, "leftx")
+
+			assert.equals(0.5, previous)
+			assert.equals(-0.75, current)
 		end)
 	end)
 

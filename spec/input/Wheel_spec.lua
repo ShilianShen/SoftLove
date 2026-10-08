@@ -23,8 +23,31 @@ describe("Wheel", function()
 			assert.equals(10, ctx.s2.dx)
 		end)
 
-		it("should expose visit function", function()
-			assert.is_function(ctx.visit)
+		it("should expose get function", function()
+			assert.is_function(ctx.get)
+		end)
+	end)
+
+	describe("get", function()
+		it("should return previous and current wheel deltas", function()
+			Wheel.moved(ctx, 10, -5)
+
+			local previousDx, currentDx = ctx:get("dx")
+			local previousDy, currentDy = ctx:get("dy")
+			assert.is_nil(previousDx)
+			assert.equals(10, currentDx)
+			assert.is_nil(previousDy)
+			assert.equals(-5, currentDy)
+
+			Wheel.step(ctx)
+			Wheel.moved(ctx, -2, 3)
+			previousDx, currentDx = ctx:get("dx")
+			previousDy, currentDy = ctx:get("dy")
+
+			assert.equals(10, previousDx)
+			assert.equals(-2, currentDx)
+			assert.equals(-5, previousDy)
+			assert.equals(3, currentDy)
 		end)
 	end)
 

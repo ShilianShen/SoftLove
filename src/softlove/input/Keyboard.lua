@@ -9,8 +9,8 @@ local Keyboard = {}
 ---@class softlove.input.Keyboard
 ---@field keys softlove.input.KeyboardKeys
 ---@field scancodes softlove.input.KeyboardScancodes
----@field getKey fun(self: softlove.input.Keyboard, key: love.KeyConstant): boolean
----@field getScancode fun(self: softlove.input.Keyboard, scancode: love.Scancode): boolean
+---@field getKey fun(self: softlove.input.Keyboard, key: love.KeyConstant): boolean?, boolean?
+---@field getScancode fun(self: softlove.input.Keyboard, scancode: love.Scancode): boolean?, boolean?
 
 ---@param self table
 function Keyboard.init(self)
@@ -47,7 +47,7 @@ end
 
 ---@param self softlove.input.Keyboard
 ---@param key love.KeyConstant
----@return boolean
+---@return boolean?, boolean?
 function Keyboard.getKey(self, key)
 	return self.keys:get(key)
 end

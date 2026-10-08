@@ -26,8 +26,39 @@ describe("Mouse", function()
 			assert.equals(10, ctx.s2.x)
 		end)
 
-		it("should expose visit function", function()
-			assert.is_function(ctx.visit)
+		it("should expose get function", function()
+			assert.is_function(ctx.get)
+		end)
+	end)
+
+	describe("get", function()
+		it("should return previous and current button states", function()
+			Mouse.pressed(ctx, 10, 20, 2, false, 1)
+
+			local previous, current = ctx:get(2)
+
+			assert.is_nil(previous)
+			assert.is_true(current)
+
+			Mouse.step(ctx)
+			Mouse.released(ctx, 10, 20, 2, false, 1)
+			previous, current = ctx:get(2)
+
+			assert.is_true(previous)
+			assert.is_false(current)
+		end)
+
+		it("should return mouse position and focus values", function()
+			Mouse.moved(ctx, 100, 200, 10, 20, false)
+			Mouse.focus(ctx, true)
+
+			local _, x = ctx:get("x")
+			local _, y = ctx:get("y")
+			local _, focus = ctx:get("focus")
+
+			assert.equals(100, x)
+			assert.equals(200, y)
+			assert.is_true(focus)
 		end)
 	end)
 
