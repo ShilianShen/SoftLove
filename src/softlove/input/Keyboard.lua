@@ -4,19 +4,20 @@ local Keyboard = {}
 ---@class softlove.input.KeyboardKeysState
 ---@field [love.KeyConstant] boolean|nil
 
----@class softlove.input.KeyboardKeys: softlove.input.State<softlove.input.KeyboardKeysState>
+---@class softlove.input.KeyboardKeys: softlove.input.State<love.KeyConstant>
 ---@field visit fun(self: softlove.input.KeyboardKeys): softlove.input.KeyboardKeysState, softlove.input.KeyboardKeysState
 
 ---@class softlove.input.KeyboardScancodesState
 ---@field [love.Scancode] boolean|nil
 
----@class softlove.input.KeyboardScancodes: softlove.input.State<softlove.input.KeyboardScancodesState>
+---@class softlove.input.KeyboardScancodes: softlove.input.State<love.Scancode>
 ---@field visit fun(self: softlove.input.KeyboardScancodes): softlove.input.KeyboardScancodesState, softlove.input.KeyboardScancodesState
 
 ---@class softlove.input.Keyboard
 ---@field keys softlove.input.KeyboardKeys
 ---@field scancodes softlove.input.KeyboardScancodes
----@field visit function
+---@field visitKeys fun(self: softlove.input.Keyboard): softlove.input.KeyboardKeysState, softlove.input.KeyboardKeysState
+---@field visitScancodes fun(self: softlove.input.Keyboard): softlove.input.KeyboardScancodesState, softlove.input.KeyboardScancodesState
 
 ---@param self table
 function Keyboard.init(self)
@@ -24,7 +25,8 @@ function Keyboard.init(self)
 	self.scancodes = {}
 	State.init(self.keys)
 	State.init(self.scancodes)
-	self.visit = Keyboard.visit
+	self.visitKeys = Keyboard.visitKeys
+	self.visitScancodes = Keyboard.visitScancodes
 end
 
 ---@param self softlove.input.Keyboard
@@ -34,9 +36,15 @@ function Keyboard.step(self)
 end
 
 ---@param self softlove.input.Keyboard
----@param name "keys"|"scancodes"
-function Keyboard.visit(self, name)
-	return State.visit(self[name])
+---@return softlove.input.KeyboardKeysState, softlove.input.KeyboardKeysState
+function Keyboard.visitKeys(self)
+	return self.keys:visit()
+end
+
+---@param self softlove.input.Keyboard
+---@return softlove.input.KeyboardScancodesState, softlove.input.KeyboardScancodesState
+function Keyboard.visitScancodes(self)
+	return self.scancodes:visit()
 end
 
 ---@param self softlove.input.Keyboard
