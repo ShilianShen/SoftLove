@@ -43,7 +43,7 @@ function State.set(self, key, value)
 end
 
 ---@generic T
----@param self softlove.input.State
+---@param self softlove.input.State<T>
 ---@return table<T, any>, table<T, any>
 function State.visit(self)
 	return self.s1const, self.s2const
