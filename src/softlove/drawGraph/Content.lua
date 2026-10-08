@@ -123,27 +123,27 @@ function Content:add(key, shape, args)
 	end
 end
 
----@param colors table<any>
+---@param theme table<any>
 ---@param font love.Font|nil
-function Content:draw(colors, font)
+function Content:draw(theme, font)
 	font = font or love.graphics.getFont()
 	love.graphics.setFont(font)
 
 	for _, rect in sortedPairs(self.rects) do
-		love.graphics.setColor(colors[rect.sc])
+		love.graphics.setColor(theme[rect.sc])
 		love.graphics.rectangle("fill", rect.x, rect.y, rect.w, rect.h)
 
-		love.graphics.setColor(colors[rect.bc])
+		love.graphics.setColor(theme[rect.bc])
 		love.graphics.rectangle("line", rect.x + 1, rect.y + 1, rect.w - 2, rect.h - 2)
 	end
 
 	for _, line in sortedPairs(self.lines) do
-		love.graphics.setColor(colors[line.c])
+		love.graphics.setColor(theme[line.c])
 		style[line.s](line.x1, line.y1, line.x2, line.y2)
 	end
 
 	for _, point in sortedPairs(self.points) do
-		love.graphics.setColor(colors[point.c])
+		love.graphics.setColor(theme[point.c])
 		love.graphics.rectangle("fill", point.x - point.w / 2, point.y - point.w / 2, point.w, point.w)
 	end
 
@@ -153,13 +153,13 @@ function Content:draw(colors, font)
 		local x = text.x - w / 2
 		local y = text.y - h / 2
 
-		love.graphics.setColor(colors[text.sc])
+		love.graphics.setColor(theme[text.sc])
 		love.graphics.rectangle("fill", x - 1, y - 1, w + 2, h + 2)
 
-		love.graphics.setColor(colors[text.bc])
+		love.graphics.setColor(theme[text.bc])
 		love.graphics.rectangle("line", x, y, w, h)
 
-		love.graphics.setColor(colors[text.tc])
+		love.graphics.setColor(theme[text.tc])
 		love.graphics.print(text.t, x, y)
 	end
 end

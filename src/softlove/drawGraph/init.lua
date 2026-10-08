@@ -3,7 +3,7 @@ local getDAG = require("softlove.drawGraph.getDAG")
 local inspect = require("softlove.inspect")
 
 local drawGraph = {
-	colors = {
+	theme = {
 		background = { 0.025, 0.025, 0.025, 0.7 },
 
 		point = { 0.90, 0.35, 0.25 },
@@ -83,7 +83,7 @@ function drawGraph:call(graph)
 	end
 
 	content:add("dbackground", "rect", { x = W * rw, y = 0, w = W * (1 - rw), h = H, sc = "background" })
-	content:draw(self.colors, self.font)
+	content:draw(self.theme, self.font)
 
 	if self.ntag then
 		local apis = {}
@@ -108,7 +108,7 @@ function drawGraph:call(graph)
 			local offset = math.max(0, h - H) * rate
 			y = y - offset
 		end
-		love.graphics.setColor(node.dirty and self.colors.warning or self.colors.success)
+		love.graphics.setColor(node.dirty and self.theme.warning or self.theme.success)
 		love.graphics.draw(self.drawable, x, y)
 	end
 end
