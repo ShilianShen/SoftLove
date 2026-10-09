@@ -1,7 +1,6 @@
 local input = require("softlove.input")
 local system = require("softlove.system")
 local assets = require("softlove.assets")
-local ui = require("softlove.ui")
 local softlove = {
 	drawGraph = require("softlove.drawGraph"),
 }
@@ -19,7 +18,7 @@ local function union(...)
 end
 
 function softlove.getNodes()
-	return union(system.getNodes(), assets.getNodes(), input.getNodes(), { ui = ui.getNode() })
+	return union(system.getNodes(), assets.getNodes(), input.getNodes())
 end
 
 function softlove.setCallbacks(nodes)
@@ -28,7 +27,5 @@ function softlove.setCallbacks(nodes)
 		love[k] = v
 	end
 end
-
-softlove.getSection = ui.Section.getNode
 
 return softlove
