@@ -1,4 +1,5 @@
 local Cache = require("softlove.assets.Cache")
+local Fonts = require("softlove.assets.Fonts")
 local assets = {}
 
 local function check(self, obj)
@@ -36,7 +37,17 @@ end
 
 function assets.getNodes()
 	return {
-		fonts = getNode({ "Font" }),
+		---@type softdep.declaration.Node
+		fonts = {
+			tasks = {
+				init = { func = Fonts.init, back = false, atag = "writable" },
+			},
+			apis = {
+				set = { func = Fonts.set, atag = "writable", dirty = true },
+			},
+			atag = "readonly",
+		},
+		-- fonts = getNode({ "Font" }),
 		images = getNode({ "Image", "ImageData" }),
 		shaders = getNode({ "Shader" }),
 		source = getNode({ "Source", "SoundData" }),
