@@ -1,5 +1,4 @@
 local Cache = require("softlove.assets.Cache")
-local Fonts = require("softlove.assets.Fonts")
 local assets = {}
 
 local function check(self, obj)
