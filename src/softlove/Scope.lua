@@ -8,11 +8,11 @@ function Scope:init()
 	end
 end
 
-function Scope:draw(X, Y, W, H)
-	love.graphics.setColor(0, 0, 0)
+function Scope:draw(X, Y, W, H, theme)
+	love.graphics.setColor(theme.background)
 	love.graphics.rectangle("fill", X - 1, Y - 1, W + 2, H + 2)
 
-	love.graphics.setColor(1, 1, 1)
+	love.graphics.setColor(theme.border)
 	love.graphics.rectangle("line", X, Y, W, H)
 
 	local max, min
@@ -28,14 +28,16 @@ function Scope:draw(X, Y, W, H)
 		table.insert(points, y)
 	end
 
-	love.graphics.setColor(1, 1, 1)
+	love.graphics.setColor(theme.accent_border)
 	love.graphics.line(points)
+
+	love.graphics.setColor(theme.text)
 	love.graphics.print(max, X + W, Y)
 	love.graphics.print(min, X + W, Y + H)
 
 	local y0 = Y + H * (max - 0) / (max - min)
 	if Y < y0 and y0 < Y + H then
-		love.graphics.setColor(1, 0, 0)
+		love.graphics.setColor(theme.warning)
 		love.graphics.line(X, y0, X + W, y0)
 	end
 end
