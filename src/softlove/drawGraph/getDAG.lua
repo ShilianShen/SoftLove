@@ -54,7 +54,7 @@ local function getDAG(vertices, parents, children, order, target, X, Y, W, H)
 			content:add(vtag, "text", {
 				x = x,
 				y = y,
-				t = vtag .. vertex.count,
+				t = vtag,
 				tc = vertex.dirty and "warning" or "success",
 				sc = target == vtag and "accent_surface" or nil,
 				bc = target == vtag and "accent_border" or nil,
