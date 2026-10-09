@@ -37,18 +37,7 @@ end
 
 function assets.getNodes()
 	return {
-		---@type softdep.declaration.Node
-		fonts = {
-			tasks = {
-				init = { func = Fonts.init, back = false, atag = "writable" },
-			},
-			apis = {
-				setFont = { func = Fonts.setFont, atag = "writable", dirty = true },
-				setText = { func = Fonts.setText, atag = "writable", dirty = true },
-			},
-			atag = "readonly",
-		},
-		-- fonts = getNode({ "Font" }),
+		fonts = getNode({ "Font" }),
 		images = getNode({ "Image", "ImageData" }),
 		shaders = getNode({ "Shader" }),
 		source = getNode({ "Source", "SoundData" }),
