@@ -43,7 +43,8 @@ function assets.getNodes()
 				init = { func = Fonts.init, back = false, atag = "writable" },
 			},
 			apis = {
-				set = { func = Fonts.set, atag = "writable", dirty = true },
+				setFont = { func = Fonts.setFont, atag = "writable", dirty = true },
+				setText = { func = Fonts.setText, atag = "writable", dirty = true },
 			},
 			atag = "readonly",
 		},
