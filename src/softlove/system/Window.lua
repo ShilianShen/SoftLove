@@ -1,7 +1,10 @@
 local Window = {}
 
 function Window:init()
-	self.w, self.h = 0, 0
+	self.x = 0
+	self.y = 0
+	self.w = 0
+	self.h = 0
 	self.visible = false
 	self.focus = false
 end
