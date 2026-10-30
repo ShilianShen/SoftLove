@@ -73,21 +73,25 @@ function drawGraph:call(graph, theme, font)
 	content:draw(theme, font)
 
 	if self.ntag then
-		local apis = {}
-		for itag, api in pairs(node.apis) do
-			apis[itag] = { dirty = api.dirty, atag = api.atag, func = api.func }
+		if not self.ttag then
+			local apis = {}
+			for itag, api in pairs(node.apis) do
+				apis[itag] = { dirty = api.dirty, atag = api.atag, func = api.func }
+			end
+			self.drawable:setf(
+				inspect({
+					data = node.data,
+					count = node.count,
+					atag = node.atag,
+					dirty = node.dirty,
+					apis = apis,
+				}, { indent = "    " }),
+				W * (1 - rw),
+				"left"
+			)
+		else
+			self.drawable:setf(inspect(node.tasks[self.ttag], { indent = "    " }), W * (1 - rw), "left")
 		end
-		self.drawable:setf(
-			inspect({
-				data = node.data,
-				count = node.count,
-				atag = node.atag,
-				dirty = node.dirty,
-				apis = apis,
-			}, { indent = "    " }),
-			W * (1 - rw),
-			"left"
-		)
 		self.drawable:setFont(font)
 		local x, y = W * rw, 0
 		local w, h = self.drawable:getDimensions()
