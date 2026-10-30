@@ -3,6 +3,8 @@ local system = require("softlove.system")
 local assets = require("softlove.assets")
 local softlove = {
 	drawGraph = require("softlove.drawGraph"),
+	Scope = require("softlove.Scope"),
+	TimeProfiler = require("softlove.TimeProfiler"),
 }
 
 local function union(...)
