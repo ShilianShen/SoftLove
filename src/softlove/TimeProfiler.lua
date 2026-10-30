@@ -1,5 +1,3 @@
-local inspect = require("src.softlove.inspect")
-
 ---@class softlove.TimeProfiler.Metadata
 ---@field sum_dt number
 ---@field sum_dt2 number
