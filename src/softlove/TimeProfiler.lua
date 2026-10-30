@@ -164,7 +164,7 @@ function TimeProfiler.comp(a, b)
 end
 
 function TimeProfiler:draw(theme, font)
-    local tab = formatTable(self.order, {"ntag", "ttag", "mu", "sigma"})
+    local tab = formatTable(self.order, {"ntag", "ttag", "mu", "sigma", "n", "N"})
     local head = (tab:match("^(.-)\r?\n") or tab)
 
     local text = love.graphics.newText(font, tab)
