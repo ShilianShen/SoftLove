@@ -28,10 +28,10 @@ function TimeProfiler.new(graph)
 	return profiler
 end
 
---- @param data table  
---- @param columns table? 
---- @param rows table? 
---- @return string
+---@param data table  
+---@param columns table? 
+---@param rows table? 
+---@return string
 local function formatTable(data, columns, rows)
     assert(type(data) == "table", "data must be a table")
 
@@ -164,7 +164,7 @@ function TimeProfiler.comp(a, b)
 end
 
 function TimeProfiler:draw(theme, font)
-    local tab = formatTable(self.order, {"ntag", "ttag", "mu", "sigma", "n", "N"})
+    local tab = formatTable(self.order, {"ntag", "ttag", "mu", "sigma", "n", "N", "sum_dt"})
     local head = (tab:match("^(.-)\r?\n") or tab)
 
     local text = love.graphics.newText(font, tab)
