@@ -81,7 +81,11 @@ local function formatTable(data, columns, rows)
         local row = { tostring(r) }
         for _, c in ipairs(col_names) do
             local v = type(dict) == "table" and dict[c] or nil
-            row[#row + 1] = v == nil and "" or tostring(v)
+            if type(v) == "number" and v % 1 ~= 0 then
+                row[#row + 1] = string.format("%.2e", v):gsub("e([+-])0+", "e%1")
+            else
+                row[#row + 1] = v == nil and "" or tostring(v)
+            end
         end
         grid[#grid + 1] = row
     end
