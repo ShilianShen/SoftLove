@@ -2,7 +2,7 @@ local layout = require("softlove.ui.layout")
 local util = require("softlove.ui.util")
 local Widget = require("softlove.ui.Widget")
 
----@type ui.Widget
+---@type softlove.ui.Widget
 return {
 	x = 0,
 	y = 0,

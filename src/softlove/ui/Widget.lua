@@ -1,21 +1,21 @@
 local util = require("softlove.ui.util")
 
----@class ui.Widget: ui.Bounds
+---@class softlove.ui.Widget: softlove.ui.Bounds
 ---@field z number
 ---@field visible boolean
 ---@field ["public"] boolean
 ---@field active boolean
 ---@field state table<string, any>
----@field children table<any, ui.Widget>
----@field _layout fun(self: ui.Widget, parent: ui.Bounds)
----@field _draw fun(self: ui.Widget, theme: ui.Theme)
----@field _update fun(self: ui.Widget, params: table<string, table>)
----@field inside fun(self: ui.Widget, x: number, y: number): boolean
----@field hooked fun(self: ui.Widget): table
+---@field children table<any, softlove.ui.Widget>
+---@field _layout fun(self: softlove.ui.Widget, parent: softlove.ui.Bounds)
+---@field _draw fun(self: softlove.ui.Widget, theme: softlove.ui.Theme)
+---@field _update fun(self: softlove.ui.Widget, params: table<string, table>)
+---@field inside fun(self: softlove.ui.Widget, x: number, y: number): boolean
+---@field hooked fun(self: softlove.ui.Widget): table
 local Widget = {}
 
----@param parent ui.Bounds
----@param options? {debug: boolean, noise: number, target?: ui.Widget}
+---@param parent softlove.ui.Bounds
+---@param options? {debug: boolean, noise: number, target?: softlove.ui.Widget}
 function Widget:layout(parent, options)
 	if not self.active then
 		return
@@ -53,8 +53,8 @@ local function sort(children)
 	return order
 end
 
----@param theme ui.Theme
----@param options? {debug: boolean, noise: number, target?: ui.Widget}
+---@param theme softlove.ui.Theme
+---@param options? {debug: boolean, noise: number, target?: softlove.ui.Widget}
 function Widget:draw(theme, options)
 	if not self.active then
 		return
@@ -83,14 +83,14 @@ function Widget:update(params)
 	end
 end
 
----@param widget ui.Widget
+---@param widget softlove.ui.Widget
 ---@param x number
 ---@param y number
 local function inWidget(widget, x, y)
 	return widget.x < x and x < widget.x + widget.w and widget.y < y and y < widget.y + widget.h
 end
 
----@param widget ui.Widget
+---@param widget softlove.ui.Widget
 ---@param x number
 ---@param y number
 ---@param hooked table
@@ -111,10 +111,10 @@ local function focusWidget(widget, x, y, hooked)
 	return result
 end
 
----@param root ui.Widget
+---@param root softlove.ui.Widget
 ---@param x number
 ---@param y number
----@return ui.Widget? widget
+---@return softlove.ui.Widget? widget
 ---@return table? hooked
 function Widget.focus(root, x, y)
 	local hooked = {}
@@ -126,7 +126,7 @@ function Widget.focus(root, x, y)
 	end
 end
 
----@param root ui.Widget
+---@param root softlove.ui.Widget
 ---@param ... any
 ---@return table?
 function Widget.get(root, ...)

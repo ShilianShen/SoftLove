@@ -1,43 +1,43 @@
 local util = require("softlove.ui.util")
 local Widget = require("softlove.ui.Widget")
 
----@class ui.Page
----@field root ui.Widget
----@field get fun(self: ui.Page, ...: any): table?
+---@class softlove.ui.Page
+---@field root softlove.ui.Widget
+---@field get fun(self: softlove.ui.Page, ...: any): table?
 local Page = {
 	debug = false,
 	noise = 0.2,
 	target = nil,
 }
 
----@param page ui.Page
+---@param page softlove.ui.Page
 local function layoutPage(page, params)
 	assert(params ~= nil)
 	page.root:layout(params.window, Page)
 end
 
----@param page ui.Page
----@param theme ui.Theme
+---@param page softlove.ui.Page
+---@param theme softlove.ui.Theme
 local function drawPage(page, theme)
 	page.root:draw(theme, Page)
 end
 
----@param page ui.Page
+---@param page softlove.ui.Page
 local function updatePage(page, params)
 	page.root:update(params)
 end
 
----@param page ui.Page
+---@param page softlove.ui.Page
 local function focusPage(page, x, y)
 	return Widget.focus(page.root, x, y)
 end
 
----@param self ui.Page
+---@param self softlove.ui.Page
 local function get(self, ...)
 	return Widget.get(self.root, ...)
 end
 
----@param widget ui.Widget
+---@param widget softlove.ui.Widget
 ---@param subtasks table<string, softdep.declaration.Task>
 ---@param apis table<string, softdep.declaration.Api>
 ---@return softdep.declaration.Node
