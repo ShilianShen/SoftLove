@@ -1,4 +1,4 @@
-local util = require("src.util")
+local util = require("softlove.ui.util")
 
 ---@class ui.Widget: ui.Bounds
 ---@field z number

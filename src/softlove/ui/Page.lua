@@ -1,5 +1,5 @@
-local util = require("src.util")
-local Widget = require("src.ui.Widget")
+local util = require("softlove.ui.util")
+local Widget = require("softlove.ui.Widget")
 
 ---@class ui.Page
 ---@field root ui.Widget
@@ -42,9 +42,9 @@ end
 ---@param apis table<string, softdep.declaration.Api>
 ---@return softdep.declaration.Node
 function Page.Node(widget, subtasks, apis)
-	apis = util.copy.deepcopyDAGToTree(apis)
+	apis = util.deepcopyDAGToTree(apis)
 	---@type table<string, softdep.declaration.Task>
-	local tasks = util.copy.deepcopyDAGToTree(subtasks)
+	local tasks = util.deepcopyDAGToTree(subtasks)
 	local parents_c = {}
 	for k, task in pairs(tasks) do
 		parents_c[#parents_c + 1] = k

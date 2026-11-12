@@ -1,6 +1,6 @@
-local layout = require("src.ui.layout")
-local util = require("src.util")
-local Widget = require("src.ui.Widget")
+local layout = require("softlove.ui.layout")
+local util = require("softlove.ui.util")
+local Widget = require("softlove.ui.Widget")
 
 ---@type ui.Widget
 return {
