@@ -1,0 +1,24 @@
+---@class ui.Theme
+
+---@class ui.Bounds
+---@field x number
+---@field y number
+---@field w number
+---@field h number
+
+---@class ui.Patch
+---@field x? number
+---@field y? number
+---@field w? number
+---@field h? number
+---@field z? number
+---@field visible? boolean
+---@field ["public"]? boolean
+---@field active? boolean
+---@field state? table<string, any>
+---@field inside? fun(self: ui.Widget, x: number, y: number): boolean
+---@field children? table<any, ui.Widget>
+---@field _draw? fun(self: ui.Widget, theme: ui.Theme)
+---@field _layout? fun(self: ui.Widget, parent: ui.Bounds)
+---@field _update? fun(self: ui.Widget, params: table<string, table>)
+---@field hooked? fun(self: ui.Widget): table
