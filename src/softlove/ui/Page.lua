@@ -45,7 +45,7 @@ function Page.Node(widget, subtasks, apis)
 	apis = util.deepcopyDAGToTree(apis)
 	---@type table<string, softdep.declaration.Task>
 	local tasks = util.deepcopyDAGToTree(subtasks)
-	local parents_c = {}
+	local parents_c = { "_init" }
 	for k, task in pairs(tasks) do
 		parents_c[#parents_c + 1] = k
 		task.parents_c = task.parents_c or {}
