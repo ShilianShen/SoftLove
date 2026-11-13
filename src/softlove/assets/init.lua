@@ -10,7 +10,7 @@ local function check(self, obj)
 	return false
 end
 
-local function getNode(types)
+local function getNode(types, methods)
 	return {
 		tasks = {
 			init = {
@@ -18,6 +18,9 @@ local function getNode(types)
 					Cache.init(self)
 					self.check = check
 					self.types = types
+					for method, func in pairs(methods or {}) do
+						Cache.setMethod(self, method, func)
+					end
 				end,
 				atag = "writable",
 				back = false,
