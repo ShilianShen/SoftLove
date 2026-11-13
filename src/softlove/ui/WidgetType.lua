@@ -1,22 +1,7 @@
 local util = require("softlove.ui.util")
 local object = require("softlove.ui.object")
 
----@class softlove.ui.WidgetType
----@field x? number
----@field y? number
----@field w? number
----@field h? number
----@field z? number
----@field visible? boolean
----@field ["public"]? boolean
----@field active? boolean
----@field state? table<string, any>
----@field inside? fun(self: softlove.ui.Widget, x: number, y: number): boolean
----@field children? table<any, softlove.ui.Widget>
----@field _draw? fun(self: softlove.ui.Widget, theme: softlove.ui.Theme)
----@field _layout? fun(self: softlove.ui.Widget, parent: softlove.ui.Bounds)
----@field _update? fun(self: softlove.ui.Widget, params: table<string, table>)
----@field hooked? fun(self: softlove.ui.Widget): table
+---@class softlove.ui.WidgetType: softlove.ui.Patch
 local WidgetType = {}
 
 local typeMT = {
