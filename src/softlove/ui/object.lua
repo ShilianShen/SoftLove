@@ -1,4 +1,3 @@
-local layout = require("softlove.ui.layout")
 local util = require("softlove.ui.util")
 local Widget = require("softlove.ui.Widget")
 
@@ -17,7 +16,12 @@ return {
 		return true
 	end,
 	children = {},
-	_layout = layout.copy,
+	_layout = function(self, parent)
+		self.x = parent.x
+		self.y = parent.y
+		self.w = parent.w
+		self.h = parent.h
+	end,
 	_draw = util.pass,
 	_update = util.pass,
 	layout = Widget.layout,
