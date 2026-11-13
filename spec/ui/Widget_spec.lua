@@ -8,7 +8,7 @@ local function widget(patch)
 end
 
 describe("Widget traversal", function()
-	for _, method in ipairs({ "layout", "draw", "update", "focus" }) do
+	for _, method in ipairs({ "layout", "draw", "update", "hook" }) do
 		it("should process itself and recurse through child " .. method .. " methods", function()
 			local calls = {}
 			local context = { x = 0, y = 0, w = 100, h = 100 }
@@ -17,7 +17,7 @@ describe("Widget traversal", function()
 				calls[#calls + 1] = self.state.name
 				if method == "layout" then
 					assert.equals(self.state.name == "root" and context or self.state.parent, arg)
-				elseif method == "focus" then
+				elseif method == "hook" then
 					assert.equals(5, arg)
 					assert.equals(6, y)
 					return self, { [self.state.name] = true }
@@ -42,8 +42,8 @@ describe("Widget traversal", function()
 			})
 			root.children.child.state.parent = root
 			root.children.child.children.leaf.state.parent = root.children.child
-			if method == "focus" then
-				local hit, hooks = root:focus(5, 6)
+			if method == "hook" then
+				local hit, hooks = root:hook(5, 6)
 				assert.equals(root.children.child.children.leaf, hit)
 				assert.same({ root = true, child = true, leaf = true }, hooks)
 			else
@@ -86,7 +86,7 @@ describe("Widget traversal", function()
 		assert.is_true(root.children.child.active)
 	end)
 
-	it("should skip inactive subtrees during layout, drawing and focus", function()
+	it("should skip inactive subtrees during layout, drawing and hook", function()
 		local function unexpected()
 			error("inactive subtree was processed")
 		end
@@ -96,14 +96,14 @@ describe("Widget traversal", function()
 					active = false,
 					_layout = unexpected,
 					_draw = unexpected,
-					_focus = unexpected,
-					children = { leaf = widget({ _layout = unexpected, _draw = unexpected, _focus = unexpected }) },
+					_hook = unexpected,
+					children = { leaf = widget({ _layout = unexpected, _draw = unexpected, _hook = unexpected }) },
 				}),
 			},
 		})
 		root:layout({ x = 0, y = 0, w = 100, h = 100 })
 		root:draw({})
-		assert.equals(root, root:focus(5, 5))
+		assert.equals(root, root:hook(5, 5))
 	end)
 
 	it("should draw and hit children outside an invisible parent", function()
@@ -131,8 +131,8 @@ describe("Widget traversal", function()
 		})
 		root:draw({})
 		assert.same({ "child" }, drawn)
-		assert.equals(root.children.child, root:focus(25, 25))
-		assert.is_nil(root:focus(5, 5))
+		assert.equals(root.children.child, root:hook(25, 25))
+		assert.is_nil(root:hook(5, 5))
 	end)
 
 	it("should preserve z order and merge hooks from all hits without changing their source", function()
@@ -171,17 +171,17 @@ describe("Widget traversal", function()
 				}),
 			},
 		})
-		local hit, hooks = root:focus(5, 5)
+		local hit, hooks = root:hook(5, 5)
 		assert.equals(root.children.high, hit)
 		assert.same({ root = true, low = true, leaf = true, high = true, shared = "high" }, hooks)
 		assert.same({ root = true, shared = "root" }, ownHooks)
 	end)
 
-	it("should let a child override focus results and hooks", function()
+	it("should let a child override hook results and hooks", function()
 		local root = widget({
 			children = {
 				child = widget({
-					focus = function(self, x, y)
+					hook = function(self, x, y)
 						assert.equals(25, x)
 						assert.equals(30, y)
 						return self, { custom = true }
@@ -189,7 +189,7 @@ describe("Widget traversal", function()
 				}),
 			},
 		})
-		local hit, hooks = root:focus(25, 30)
+		local hit, hooks = root:hook(25, 30)
 		assert.equals(root.children.child, hit)
 		assert.same({ custom = true }, hooks)
 	end)
@@ -202,7 +202,7 @@ describe("Widget traversal", function()
 				return false
 			end,
 		})
-		local hit, hooks = root:focus(5, 5)
+		local hit, hooks = root:hook(5, 5)
 		assert.is_nil(hit)
 		assert.is_nil(hooks)
 	end)

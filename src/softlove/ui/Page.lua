@@ -24,8 +24,8 @@ local function updatePage(page, params)
 end
 
 ---@param page softlove.ui.Page
-local function focusPage(page, x, y)
-	return page.root:focus(x, y)
+local function hookPage(page, x, y)
+	return page.root:hook(x, y)
 end
 
 ---@param self softlove.ui.Page
@@ -75,8 +75,8 @@ function Page.Node(widget, subtasks, apis)
 		atag = "writable",
 		dirty = false,
 	}
-	apis.focus = {
-		func = focusPage,
+	apis.hook = {
+		func = hookPage,
 		atag = "writable",
 		dirty = false,
 	}

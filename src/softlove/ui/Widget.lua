@@ -10,8 +10,8 @@ local util = require("softlove.ui.util")
 ---@field _layout fun(self: softlove.ui.Widget, parent: softlove.ui.Bounds)
 ---@field _draw fun(self: softlove.ui.Widget, theme: softlove.ui.Theme)
 ---@field _update fun(self: softlove.ui.Widget, params: table<string, table>)
----@field _focus fun(self: softlove.ui.Widget, x: number, y: number): softlove.ui.Widget?, table?
----@field focus fun(self: softlove.ui.Widget, x: number, y: number): softlove.ui.Widget?, table?
+---@field _hook fun(self: softlove.ui.Widget, x: number, y: number): softlove.ui.Widget?, table?
+---@field hook fun(self: softlove.ui.Widget, x: number, y: number): softlove.ui.Widget?, table?
 ---@field inside fun(self: softlove.ui.Widget, x: number, y: number): boolean
 ---@field hooked fun(self: softlove.ui.Widget): table
 local Widget = {}
@@ -65,17 +65,17 @@ end
 ---@param y number
 ---@return softlove.ui.Widget? widget
 ---@return table? hooked
-function Widget:focus(x, y)
+function Widget:hook(x, y)
 	if not self.active then
 		return
 	end
-	local result, ownHooks = self:_focus(x, y)
+	local result, ownHooks = self:_hook(x, y)
 	local hooked = {}
 	for k, v in pairs(ownHooks or {}) do
 		hooked[k] = v
 	end
 	for _, child in ipairs(sort(self.children)) do
-		local childResult, childHooks = child:focus(x, y)
+		local childResult, childHooks = child:hook(x, y)
 		result = childResult or result
 		for k, v in pairs(childHooks or {}) do
 			hooked[k] = v

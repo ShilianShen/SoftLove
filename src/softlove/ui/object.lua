@@ -24,7 +24,7 @@ return {
 	end,
 	_draw = util.pass,
 	_update = util.pass,
-	_focus = function(self, x, y)
+	_hook = function(self, x, y)
 		if
 			self.visible
 			and self.x < x
@@ -39,7 +39,7 @@ return {
 	layout = Widget.layout,
 	draw = Widget.draw,
 	update = Widget.update,
-	focus = Widget.focus,
+	hook = Widget.hook,
 	hooked = function()
 		return {}
 	end,
