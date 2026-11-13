@@ -39,10 +39,21 @@ end
 
 function assets.getNodes()
 	return {
-		fonts = getNode({ "Font" }),
-		images = getNode({ "Image", "ImageData" }),
-		shaders = getNode({ "Shader" }),
-		source = getNode({ "Source", "SoundData" }),
+		fonts = getNode({ "Font" }, {
+			newFont = love.graphics.newFont,
+			newImageFont = love.graphics.newImageFont,
+		}),
+		images = getNode({ "Image", "ImageData" }, {
+			newImage = love.graphics.newImage,
+			newImageData = love.image.newImageData,
+		}),
+		shaders = getNode({ "Shader" }, {
+			newShader = love.graphics.newShader,
+		}),
+		source = getNode({ "Source", "SoundData" }, {
+			newSource = love.audio.newSource,
+			newSoundData = love.sound.newSoundData,
+		}),
 	}
 end
 
