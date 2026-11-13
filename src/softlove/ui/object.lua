@@ -27,6 +27,7 @@ return {
 	layout = Widget.layout,
 	draw = Widget.draw,
 	update = Widget.update,
+	focus = Widget.focus,
 	hooked = function()
 		return {}
 	end,

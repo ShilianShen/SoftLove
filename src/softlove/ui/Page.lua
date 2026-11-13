@@ -29,7 +29,7 @@ end
 
 ---@param page softlove.ui.Page
 local function focusPage(page, x, y)
-	return Widget.focus(page.root, x, y)
+	return page.root:focus(x, y)
 end
 
 ---@param self softlove.ui.Page

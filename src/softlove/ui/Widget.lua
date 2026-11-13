@@ -111,14 +111,13 @@ local function focusWidget(widget, x, y, hooked)
 	return result
 end
 
----@param root softlove.ui.Widget
 ---@param x number
 ---@param y number
 ---@return softlove.ui.Widget? widget
 ---@return table? hooked
-function Widget.focus(root, x, y)
+function Widget:focus(x, y)
 	local hooked = {}
-	local widget = focusWidget(root, x, y, hooked)
+	local widget = focusWidget(self, x, y, hooked)
 	if widget == nil then
 		return
 	else
