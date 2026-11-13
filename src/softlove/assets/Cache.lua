@@ -30,7 +30,7 @@ function Cache:init()
 end
 
 function Cache:setMethod(method, func)
-	self[method] = function(...)
+	self[method] = function(self, ...)
 		local key = getArrKey(method, ...)
 		if self.data[key] == nil then
 			local obj = func(...)
