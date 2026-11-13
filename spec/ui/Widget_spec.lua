@@ -74,12 +74,14 @@ describe("Widget traversal", function()
 			_update = function(self)
 				self.active = true
 			end,
-			children = { child = widget({
-				active = false,
-				_update = function(self)
-					self.active = true
-				end,
-			}) },
+			children = {
+				child = widget({
+					active = false,
+					_update = function(self)
+						self.active = true
+					end,
+				}),
+			},
 		})
 		root:update({})
 		assert.is_true(root.active)
@@ -205,5 +207,153 @@ describe("Widget traversal", function()
 		local hit, hooks = root:hook(5, 5)
 		assert.is_nil(hit)
 		assert.is_nil(hooks)
+	end)
+end)
+
+describe("Widget defaults", function()
+	it("should inherit parent bounds through multiple levels", function()
+		local root = widget({ children = { panel = widget({ children = { label = widget() } }) } })
+		root:layout({ x = 12, y = 34, w = 300, h = 200 })
+		for _, item in ipairs({ root, root.children.panel, root.children.panel.children.label }) do
+			assert.same({ 12, 34, 300, 200 }, { item.x, item.y, item.w, item.h })
+		end
+	end)
+
+	for _, method in ipairs({ "draw", "update" }) do
+		it("should process siblings in increasing z order during " .. method, function()
+			local calls = {}
+			local function child(name, z)
+				return widget({
+					z = z,
+					["_" .. method] = function()
+						calls[#calls + 1] = name
+					end,
+				})
+			end
+			local root = widget({
+				children = {
+					a = child("high", 10),
+					b = child("low", -10),
+					c = child("middle", 0),
+				},
+			})
+			root[method](root, {})
+			assert.same({ "low", "middle", "high" }, calls)
+		end)
+	end
+
+	-- Current bounds use strict inequalities: edges themselves are not hits.
+	for _, point in ipairs({
+		{ name = "left edge", x = 10, y = 30 },
+		{ name = "right edge", x = 110, y = 30 },
+		{ name = "top edge", x = 30, y = 20 },
+		{ name = "bottom edge", x = 30, y = 70 },
+		{ name = "outside", x = 111, y = 71 },
+	}) do
+		it("should not hook or request information at the " .. point.name, function()
+			local root = widget({
+				x = 10,
+				y = 20,
+				w = 100,
+				h = 50,
+				hooked = function()
+					error("information requested for a miss")
+				end,
+			})
+			local hit, info = root:hook(point.x, point.y)
+			assert.is_nil(hit)
+			assert.is_nil(info)
+		end)
+	end
+
+	it("should return information without executing functions contained in it", function()
+		local action = function()
+			error("UI executed an action")
+		end
+		local root = widget({
+			w = 100,
+			h = 100,
+			hooked = function()
+				return { id = 7, action = action }
+			end,
+		})
+		local hit, info = root:hook(50, 50)
+		assert.equals(root, hit)
+		assert.equals(7, info.id)
+		assert.equals(action, info.action)
+	end)
+
+	it("should return an empty information table for a default hit", function()
+		local root = widget({ w = 100, h = 100 })
+		local hit, info = root:hook(50, 50)
+		assert.equals(root, hit)
+		assert.same({}, info)
+	end)
+
+	it("should not reuse merged information between hook calls", function()
+		local root = widget({
+			w = 100,
+			h = 100,
+			children = {
+				child = widget({
+					w = 20,
+					h = 20,
+					hooked = function()
+						return { child = true }
+					end,
+				}),
+			},
+		})
+		local _, first = root:hook(10, 10)
+		first.extra = true
+		local hit, second = root:hook(50, 50)
+		assert.equals(root, hit)
+		assert.same({}, second)
+	end)
+end)
+
+describe("Widget public access", function()
+	it("should return nil for private widgets and missing paths", function()
+		local root = widget({ children = { private = widget() } })
+		assert.is_nil(Widget.get(root))
+		assert.is_nil(Widget.get(root, "private"))
+		assert.is_nil(Widget.get(root, "missing", "leaf"))
+	end)
+
+	it("should allow a public descendant beneath a private ancestor", function()
+		local root = widget({
+			children = { panel = widget({ children = {
+				label = widget({ public = true, w = 42 }),
+			} }) },
+		})
+		assert.is_nil(Widget.get(root, "panel"))
+		assert.equals(42, Widget.get(root, "panel", "label").w)
+	end)
+
+	it("should expose live scalar values while hiding tables and functions", function()
+		local root = widget({ public = true, w = 42, visible = false, title = "Label" })
+		local view = Widget.get(root)
+		assert.equals(42, view.w)
+		assert.is_false(view.visible)
+		assert.equals("Label", view.title)
+		assert.is_nil(view.state)
+		assert.is_nil(view.children)
+		assert.is_nil(view.draw)
+		assert.is_nil(view.hook)
+		root.w = 84
+		assert.equals(84, view.w)
+	end)
+
+	it("should reject replacing and adding fields through the public view", function()
+		local root = widget({ public = true, w = 42 })
+		local view = Widget.get(root)
+		assert.has_error(function()
+			view.w = 100
+		end, "attempt to modify a constant table (key = w)")
+		assert.has_error(function()
+			view.extra = true
+		end, "attempt to modify a constant table (key = extra)")
+		assert.equals(42, root.w)
+		assert.is_nil(root.extra)
 	end)
 end)
