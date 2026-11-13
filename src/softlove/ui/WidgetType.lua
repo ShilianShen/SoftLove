@@ -23,9 +23,11 @@ WidgetType.MT = {
 	__call = WidgetType.newWidget,
 }
 
+---@param parent softlove.ui.WidgetType|nil
 ---@param patch table|nil
-function WidgetType:newWidgetType(patch)
-	local widgetType = util.deepcopyDAGToTree(util.patch(self, patch or {}))
+---@return softlove.ui.WidgetType
+function WidgetType.newWidgetType(parent, patch)
+	local widgetType = util.deepcopyDAGToTree(util.patch(parent or {}, patch or {}))
 	return setmetatable(widgetType, WidgetType.MT)
 end
 
