@@ -15,27 +15,14 @@ local util = require("softlove.ui.util")
 local Widget = {}
 
 ---@param parent softlove.ui.Bounds
----@param options? {debug: boolean, noise: number, target?: softlove.ui.Widget}
-function Widget:layout(parent, options)
+function Widget:layout(parent)
 	if not self.active then
 		return
 	end
 	self:_layout(parent)
 	for _, child in pairs(self.children) do
 		if child.active then
-			if options and options.debug then
-				local dx = math.random(-options.noise, options.noise)
-				local dy = math.random(-options.noise, options.noise)
-				local a = {
-					x = self.x + dx,
-					y = self.y + dy,
-					w = self.w,
-					h = self.h,
-				}
-				child:layout(a, options)
-			else
-				child:layout(self, options)
-			end
+			child:layout(self)
 		end
 	end
 end
@@ -54,24 +41,15 @@ local function sort(children)
 end
 
 ---@param theme softlove.ui.Theme
----@param options? {debug: boolean, noise: number, target?: softlove.ui.Widget}
-function Widget:draw(theme, options)
+function Widget:draw(theme)
 	if not self.active then
 		return
 	end
 	if self.visible then
-		if options and options.debug and self == options.target then
-			love.graphics.setColor(math.random(), math.random(), math.random(), math.random() * 0.1)
-			love.graphics.rectangle("fill", self.x, self.y, self.w, self.h)
-		end
 		self:_draw(theme)
-		if options and options.debug and self == options.target then
-			love.graphics.setColor(math.random(), math.random(), math.random(), math.random())
-			love.graphics.rectangle("line", self.x, self.y, self.w, self.h)
-		end
 	end
 	for _, child in ipairs(sort(self.children)) do
-		child:draw(theme, options)
+		child:draw(theme)
 	end
 end
 

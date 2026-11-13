@@ -4,22 +4,18 @@ local Widget = require("softlove.ui.Widget")
 ---@class softlove.ui.Page
 ---@field root softlove.ui.Widget
 ---@field get fun(self: softlove.ui.Page, ...: any): table?
-local Page = {
-	debug = false,
-	noise = 0.2,
-	target = nil,
-}
+local Page = {}
 
 ---@param page softlove.ui.Page
 local function layoutPage(page, params)
 	assert(params ~= nil)
-	page.root:layout(params.window, Page)
+	page.root:layout(params.window)
 end
 
 ---@param page softlove.ui.Page
 ---@param theme softlove.ui.Theme
 local function drawPage(page, theme)
-	page.root:draw(theme, Page)
+	page.root:draw(theme)
 end
 
 ---@param page softlove.ui.Page
