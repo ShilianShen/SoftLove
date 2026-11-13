@@ -24,6 +24,18 @@ return {
 	end,
 	_draw = util.pass,
 	_update = util.pass,
+	_focus = function(self, x, y)
+		if
+			self.visible
+			and self.x < x
+			and x < self.x + self.w
+			and self.y < y
+			and y < self.y + self.h
+			and self:inside(x, y)
+		then
+			return self, self:hooked()
+		end
+	end,
 	layout = Widget.layout,
 	draw = Widget.draw,
 	update = Widget.update,

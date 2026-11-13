@@ -10,6 +10,8 @@ local util = require("softlove.ui.util")
 ---@field _layout fun(self: softlove.ui.Widget, parent: softlove.ui.Bounds)
 ---@field _draw fun(self: softlove.ui.Widget, theme: softlove.ui.Theme)
 ---@field _update fun(self: softlove.ui.Widget, params: table<string, table>)
+---@field _focus fun(self: softlove.ui.Widget, x: number, y: number): softlove.ui.Widget?, table?
+---@field focus fun(self: softlove.ui.Widget, x: number, y: number): softlove.ui.Widget?, table?
 ---@field inside fun(self: softlove.ui.Widget, x: number, y: number): boolean
 ---@field hooked fun(self: softlove.ui.Widget): table
 local Widget = {}
@@ -21,9 +23,7 @@ function Widget:layout(parent)
 	end
 	self:_layout(parent)
 	for _, child in pairs(self.children) do
-		if child.active then
-			child:layout(self)
-		end
+		child:layout(self)
 	end
 end
 
@@ -55,38 +55,10 @@ end
 
 ---@param params table<string, table>
 function Widget:update(params)
+	self:_update(params)
 	for _, child in ipairs(sort(self.children)) do
-		child:_update(params)
 		child:update(params)
 	end
-end
-
----@param widget softlove.ui.Widget
----@param x number
----@param y number
-local function inWidget(widget, x, y)
-	return widget.x < x and x < widget.x + widget.w and widget.y < y and y < widget.y + widget.h
-end
-
----@param widget softlove.ui.Widget
----@param x number
----@param y number
----@param hooked table
-local function focusWidget(widget, x, y, hooked)
-	if not widget.active then
-		return
-	end
-	local result = nil
-	if widget.visible and inWidget(widget, x, y) and widget:inside(x, y) then
-		for k, v in pairs(widget:hooked()) do
-			hooked[k] = v
-		end
-		result = widget
-	end
-	for _, child in ipairs(sort(widget.children)) do
-		result = focusWidget(child, x, y, hooked) or result
-	end
-	return result
 end
 
 ---@param x number
@@ -94,12 +66,23 @@ end
 ---@return softlove.ui.Widget? widget
 ---@return table? hooked
 function Widget:focus(x, y)
-	local hooked = {}
-	local widget = focusWidget(self, x, y, hooked)
-	if widget == nil then
+	if not self.active then
 		return
-	else
-		return widget, hooked
+	end
+	local result, ownHooks = self:_focus(x, y)
+	local hooked = {}
+	for k, v in pairs(ownHooks or {}) do
+		hooked[k] = v
+	end
+	for _, child in ipairs(sort(self.children)) do
+		local childResult, childHooks = child:focus(x, y)
+		result = childResult or result
+		for k, v in pairs(childHooks or {}) do
+			hooked[k] = v
+		end
+	end
+	if result then
+		return result, hooked
 	end
 end
 
