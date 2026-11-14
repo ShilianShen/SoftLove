@@ -1,7 +1,7 @@
 local util = require("softlove.ui.util")
+local WidgetType = require("softlove.ui.WidgetType")
 local ui = {
 	getPage = require("softlove.ui.getPage"),
-	WidgetType = require("softlove.ui.WidgetType"),
 }
 
 ---@class softlove.ui.Ui
@@ -82,7 +82,7 @@ function Ui.buildWidgetType(declaration, widgetTypes)
 		end
 	end
 	local parent = declaration.type and widgetTypes[declaration.type] or nil
-	return ui.WidgetType.newWidgetType(parent, patch)
+	return WidgetType.newWidgetType(parent, patch)
 end
 
 ---@param widgets table<string, softlove.ui.WidgetTypeDeclaration>
