@@ -1,7 +1,9 @@
-local Ui = {
+local ui = {
 	Page = require("softlove.ui.Page"),
 	WidgetType = require("softlove.ui.WidgetType"),
 }
+
+local Ui = {}
 
 ---@param widgetTypes table<string, softlove.ui.WidgetType>
 function Ui:init(widgetTypes)
@@ -33,7 +35,7 @@ end
 
 ---@param widgetTypes table<string, softlove.ui.WidgetType>
 ---@return softdep.declaration.Node
-function Ui.getNode(widgetTypes)
+function ui.getNode(widgetTypes)
 	return {
 		tasks = {
 			init = {
@@ -60,4 +62,4 @@ function Ui.getNode(widgetTypes)
 	}
 end
 
-return Ui
+return ui
