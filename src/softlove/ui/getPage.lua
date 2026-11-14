@@ -44,7 +44,7 @@ return function(subtasks, apis)
 	end
 	tasks._init = {
 		func = function(self)
-			self.get = get
+			self.get = Page.get
 			self.ui = true
 		end,
 		atag = "writable",
