@@ -16,6 +16,7 @@
 ---@field ["public"]? boolean
 ---@field active? boolean
 ---@field state? table<string, any>
+---@field setter? table<string, fun(self: softlove.ui.Widget, ...): ...>
 ---@field inside? fun(self: softlove.ui.Widget, x: number, y: number): boolean
 ---@field children? table<any, softlove.ui.Widget>
 ---@field _draw? fun(self: softlove.ui.Widget, theme: softlove.ui.Theme)

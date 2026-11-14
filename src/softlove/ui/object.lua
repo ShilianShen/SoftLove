@@ -12,6 +12,7 @@ return {
 	public = false,
 	active = true,
 	state = {},
+	setter = {},
 	inside = function()
 		return true
 	end,

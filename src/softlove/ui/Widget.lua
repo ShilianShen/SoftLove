@@ -6,6 +6,7 @@ local util = require("softlove.ui.util")
 ---@field ["public"] boolean
 ---@field active boolean
 ---@field state table<string, any>
+---@field setter table<string, fun(self: softlove.ui.Widget, ...): ...>
 ---@field children table<any, softlove.ui.Widget>
 ---@field _layout fun(self: softlove.ui.Widget, parent: softlove.ui.Bounds)
 ---@field _draw fun(self: softlove.ui.Widget, theme: softlove.ui.Theme)
