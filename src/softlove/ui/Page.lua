@@ -6,26 +6,22 @@ local Widget = require("softlove.ui.Widget")
 ---@field get fun(self: softlove.ui.Page, ...: any): table?
 local Page = {}
 
----@param page softlove.ui.Page
-local function layoutPage(page, params)
+function Page:layout(params)
 	assert(params ~= nil)
-	page.entry:layout(params.window)
+	self.entry:layout(params.window)
 end
 
----@param page softlove.ui.Page
 ---@param theme softlove.ui.Theme
-local function drawPage(page, theme)
-	page.entry:draw(theme)
+function Page:draw(theme)
+	self.entry:draw(theme)
 end
 
----@param page softlove.ui.Page
-local function updatePage(page, params)
-	page.entry:update(params)
+function Page:update(params)
+	self.entry:update(params)
 end
 
----@param page softlove.ui.Page
-local function hookPage(page, x, y)
-	return page.entry:hook(x, y)
+function Page:hook(x, y)
+	return self.entry:hook(x, y)
 end
 
 ---@param self softlove.ui.Page
@@ -56,26 +52,26 @@ function Page.Node(subtasks, apis)
 		back = false,
 	}
 	tasks._update = {
-		func = updatePage,
+		func = Page.update,
 		parents_c = parents_c,
 		parents_d = { fonts = "fonts", locales = "locales" },
 		atag = "writable",
 		back = false,
 	}
 	tasks._layout = {
-		func = layoutPage,
+		func = Page.layout,
 		parents_d = { window = "window" },
 		parents_c = { "_update" },
 		atag = "writable",
 		back = false,
 	}
 	apis.draw = {
-		func = drawPage,
+		func = Page.draw,
 		atag = "writable",
 		dirty = false,
 	}
 	apis.hook = {
-		func = hookPage,
+		func = Page.hook,
 		atag = "writable",
 		dirty = false,
 	}
