@@ -1,28 +1,44 @@
-local ui = {
+local Ui = {
 	Page = require("softlove.ui.Page"),
 	WidgetType = require("softlove.ui.WidgetType"),
 }
 
+---@param widgetTypes table<string, softlove.ui.WidgetType>
+function Ui:init(widgetTypes)
+	self.widgetTypes = {}
+	for name, widgetType in pairs(widgetTypes) do
+		Ui.register(self, name, widgetType)
+	end
+	self.newWidget = Ui.newWidget
+end
+
+---@param name string
+---@param widgetType softlove.ui.WidgetType
+function Ui:register(name, widgetType)
+	self.widgetTypes[name] = widgetType
+end
+
+---@param name string
+function Ui:unregister(name)
+	self.widgetTypes[name] = nil
+end
+
 ---@param name string
 ---@param patch softlove.ui.Patch|nil
 ---@return softlove.ui.Widget
-local function newWidget(self, name, patch)
+function Ui:newWidget(name, patch)
 	local widgetType = assert(self.widgetTypes[name], "unknown widget type: " .. tostring(name))
 	return widgetType:newWidget(patch)
 end
 
 ---@param widgetTypes table<string, softlove.ui.WidgetType>
 ---@return softdep.declaration.Node
-function ui.getNode(widgetTypes)
+function Ui.getNode(widgetTypes)
 	return {
 		tasks = {
 			init = {
 				func = function(self)
-					self.widgetTypes = {}
-					for name, widgetType in pairs(widgetTypes) do
-						self.widgetTypes[name] = widgetType
-					end
-					self.newWidget = newWidget
+					Ui.init(self, widgetTypes)
 				end,
 				atag = "writable",
 				back = false,
@@ -30,19 +46,12 @@ function ui.getNode(widgetTypes)
 		},
 		apis = {
 			register = {
-				---@param name string
-				---@param widgetType softlove.ui.WidgetType
-				func = function(self, name, widgetType)
-					self.widgetTypes[name] = widgetType
-				end,
+				func = Ui.register,
 				atag = "writable",
 				dirty = true,
 			},
 			unregister = {
-				---@param name string
-				func = function(self, name)
-					self.widgetTypes[name] = nil
-				end,
+				func = Ui.unregister,
 				atag = "writable",
 				dirty = true,
 			},
@@ -51,4 +60,4 @@ function ui.getNode(widgetTypes)
 	}
 end
 
-return ui
+return Ui

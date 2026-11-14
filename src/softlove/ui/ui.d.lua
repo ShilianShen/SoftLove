@@ -23,3 +23,7 @@
 ---@field _update? fun(self: softlove.ui.Widget, params: table<string, table>)
 ---@field _hook? fun(self: softlove.ui.Widget, x: number, y: number): softlove.ui.Widget?, table?
 ---@field hooked? fun(self: softlove.ui.Widget): table
+
+---@class softlove.ui.WidgetTypeDeclaration: softlove.ui.Patch
+---@field type? string
+---@field children? table<any, softlove.ui.WidgetTypeDeclaration>
