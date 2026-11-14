@@ -1,8 +1,11 @@
+local util = require("src.softlove.ui.util")
 local ui = {
 	Page = require("softlove.ui.Page"),
 	WidgetType = require("softlove.ui.WidgetType"),
 }
 
+---@class softlove.ui.Ui
+---@field widgetTypes table<string, softlove.ui.WidgetType>
 local Ui = {}
 
 ---@param widgetTypes table<string, softlove.ui.WidgetType>
