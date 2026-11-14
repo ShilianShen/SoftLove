@@ -26,7 +26,9 @@ describe("WidgetType", function()
 		assert.equals(100, widget.w)
 		assert.is_false(widget.visible)
 		assert.is_true(widget.active)
-		assert.same({}, widget.state)
+		assert.same({}, widget.userData)
+		assert.same({}, widget.loveData)
+		assert.is_nil(widget.state)
 		assert.same({}, widget.children)
 		assert.equals(Widget.layout, widget.layout)
 		assert.equals(Widget.draw, widget.draw)
@@ -39,31 +41,52 @@ describe("WidgetType", function()
 		assert.is_nil(widget.MT)
 	end)
 
+	it("should isolate user inputs and derived rendering data across instances", function()
+		local inputs = { value = 3 }
+		local panel = WidgetType.newWidgetType(nil, {
+			userData = inputs,
+			_update = function(self)
+				self.loveData.text = tostring(self.userData.value * 2)
+			end,
+		})
+		local first, second = panel(), panel()
+		first:update({})
+		assert.same({ value = 3 }, inputs)
+		assert.same({ value = 3 }, first.userData)
+		assert.same({ text = "6" }, first.loveData)
+		assert.same({}, second.loveData)
+		first.userData.value = 4
+		first:update({})
+		assert.equals("8", first.loveData.text)
+		assert.equals(3, second.userData.value)
+		assert.is_nil(panel.loveData)
+	end)
+
 	it("should isolate parent types, derived types and instances", function()
-		local config = { state = { count = 1 }, children = { label = { state = { text = "a" } } } }
+		local config = { userData = { count = 1 }, children = { label = { userData = { text = "a" } } } }
 		local parent = WidgetType.newWidgetType(nil, config)
 		local child = parent:newWidgetType()
 		local first = child:newWidget()
 		local second = child:newWidget()
 
-		config.state.count = 2
-		parent.state.count = 3
-		first.state.count = 4
-		first.children.label.state.text = "b"
+		config.userData.count = 2
+		parent.userData.count = 3
+		first.userData.count = 4
+		first.children.label.userData.text = "b"
 
-		assert.equals(1, child.state.count)
-		assert.equals(1, second.state.count)
-		assert.equals("a", child.children.label.state.text)
-		assert.equals("a", second.children.label.state.text)
+		assert.equals(1, child.userData.count)
+		assert.equals(1, second.userData.count)
+		assert.equals("a", child.children.label.userData.text)
+		assert.equals("a", second.children.label.userData.text)
 	end)
 
 	it("should replace nested fields as a whole", function()
-		local parent = WidgetType.newWidgetType(nil, { state = { a = 1, b = 2 } })
-		local child = parent:newWidgetType({ state = { a = 3 } })
-		local widget = child:newWidget({ state = { c = 4 } })
+		local parent = WidgetType.newWidgetType(nil, { userData = { a = 1, b = 2 } })
+		local child = parent:newWidgetType({ userData = { a = 3 } })
+		local widget = child:newWidget({ userData = { c = 4 } })
 
-		assert.same({ a = 3 }, child.state)
-		assert.same({ c = 4 }, widget.state)
+		assert.same({ a = 3 }, child.userData)
+		assert.same({ c = 4 }, widget.userData)
 	end)
 
 	it("should support callable types from the WidgetType module", function()
@@ -74,22 +97,22 @@ describe("WidgetType", function()
 	end)
 
 	it("should isolate sibling children created from a shared widget", function()
-		local label = WidgetType.newWidgetType(nil, { state = { text = "Original" } })()
+		local label = WidgetType.newWidgetType(nil, { userData = { text = "Original" } })()
 		local panel = WidgetType.newWidgetType(nil, { children = { first = label, second = label } })()
-		panel.children.first.state.text = "Changed"
-		assert.equals("Original", panel.children.second.state.text)
-		assert.equals("Original", label.state.text)
+		panel.children.first.userData.text = "Changed"
+		assert.equals("Original", panel.children.second.userData.text)
+		assert.equals("Original", label.userData.text)
 	end)
 
 	it("should reject cyclic patches at both type and instance construction", function()
-		local patch = { state = {} }
-		patch.state.self = patch.state
+		local patch = { userData = {} }
+		patch.userData.self = patch.userData
 		assert.has_error(function()
 			WidgetType.newWidgetType(nil, patch)
-		end, "deepcopyDAGToTree: cycle detected at root[state][self]")
+		end, "deepcopyDAGToTree: cycle detected at root[userData][self]")
 		local widgetType = WidgetType.newWidgetType()
 		assert.has_error(function()
 			widgetType(patch)
-		end, "deepcopyDAGToTree: cycle detected at root[state][self]")
+		end, "deepcopyDAGToTree: cycle detected at root[userData][self]")
 	end)
 end)

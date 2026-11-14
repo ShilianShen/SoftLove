@@ -15,7 +15,8 @@
 ---@field visible? boolean
 ---@field ["public"]? boolean
 ---@field active? boolean
----@field state? table<string, any>
+---@field userData? table<string, any> User-provided inputs.
+---@field loveData? table<string, any> Data derived for rendering.
 ---@field setter? table<string, fun(self: softlove.ui.Widget, ...): ...>
 ---@field inside? fun(self: softlove.ui.Widget, x: number, y: number): boolean
 ---@field children? table<any, softlove.ui.Widget>

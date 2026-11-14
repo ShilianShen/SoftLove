@@ -11,7 +11,8 @@ return {
 	visible = true,
 	public = false,
 	active = true,
-	state = {},
+	userData = {},
+	loveData = {},
 	setter = {},
 	inside = function()
 		return true

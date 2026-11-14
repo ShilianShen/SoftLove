@@ -5,7 +5,8 @@ local util = require("softlove.ui.util")
 ---@field visible boolean
 ---@field ["public"] boolean
 ---@field active boolean
----@field state table<string, any>
+---@field userData table<string, any> User-provided inputs.
+---@field loveData table<string, any> Data derived for rendering.
 ---@field setter table<string, fun(self: softlove.ui.Widget, ...): ...>
 ---@field children table<any, softlove.ui.Widget>
 ---@field _layout fun(self: softlove.ui.Widget, parent: softlove.ui.Bounds)

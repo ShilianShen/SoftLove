@@ -33,7 +33,7 @@ describe("getPage", function()
 		local calls = {}
 		local root = widget({
 			_update = function(self, params)
-				assert.equals("Ready", self.state.text)
+				assert.equals("Ready", self.userData.text)
 				assert.equals("font source", params.fonts)
 				assert.equals("locale source", params.locales)
 				calls[#calls + 1] = "update"
@@ -50,7 +50,7 @@ describe("getPage", function()
 				parents_c = { "init" },
 				func = function(page)
 					assert.equals(root, page.entry)
-					page.entry.state.text = "Ready"
+					page.entry.userData.text = "Ready"
 					calls[#calls + 1] = "content"
 				end,
 			},
@@ -141,7 +141,7 @@ describe("getPage", function()
 		local apis = {
 			set = {
 				func = function(page, text)
-					page.entry.state.text = text
+					page.entry.userData.text = text
 				end,
 				ttag = "content",
 				atag = "writable",
@@ -155,7 +155,7 @@ describe("getPage", function()
 		node.tasks._init.func(page)
 		node.tasks.content.func(page)
 		node.apis.set.func(page, "Updated")
-		assert.equals("Updated", page.entry.state.text)
+		assert.equals("Updated", page.entry.userData.text)
 		assert.equals("content", node.apis.set.ttag)
 		assert.is_true(node.apis.set.dirty)
 		node.apis.set.ttag = "changed"

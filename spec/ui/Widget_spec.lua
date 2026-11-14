@@ -14,34 +14,34 @@ describe("Widget traversal", function()
 			local context = { x = 0, y = 0, w = 100, h = 100 }
 			local hook = "_" .. method
 			local function process(self, arg, y)
-				calls[#calls + 1] = self.state.name
+				calls[#calls + 1] = self.userData.name
 				if method == "layout" then
-					assert.equals(self.state.name == "root" and context or self.state.parent, arg)
+					assert.equals(self.userData.name == "root" and context or self.userData.parent, arg)
 				elseif method == "hook" then
 					assert.equals(5, arg)
 					assert.equals(6, y)
-					return self, { [self.state.name] = true }
+					return self, { [self.userData.name] = true }
 				else
 					assert.equals(context, arg)
 				end
 			end
 			local root = widget({
-				state = { name = "root" },
+				userData = { name = "root" },
 				[hook] = process,
 				children = {
 					child = widget({
-						state = { name = "child" },
+						userData = { name = "child" },
 						[hook] = process,
 						[method] = function(self, ...)
 							calls[#calls + 1] = "child entry"
 							return Widget[method](self, ...)
 						end,
-						children = { leaf = widget({ state = { name = "leaf" }, [hook] = process }) },
+						children = { leaf = widget({ userData = { name = "leaf" }, [hook] = process }) },
 					}),
 				},
 			})
-			root.children.child.state.parent = root
-			root.children.child.children.leaf.state.parent = root.children.child
+			root.children.child.userData.parent = root
+			root.children.child.children.leaf.userData.parent = root.children.child
 			if method == "hook" then
 				local hit, hooks = root:hook(5, 6)
 				assert.equals(root.children.child.children.leaf, hit)
@@ -55,7 +55,7 @@ describe("Widget traversal", function()
 
 	it("should update a subtree root exactly once without updating its parent", function()
 		local function count(self)
-			self.state.count = (self.state.count or 0) + 1
+			self.loveData.count = (self.loveData.count or 0) + 1
 		end
 		local root = widget({
 			_update = count,
@@ -63,9 +63,9 @@ describe("Widget traversal", function()
 		})
 		root:update({})
 		root.children.child:update({})
-		assert.equals(1, root.state.count)
-		assert.equals(2, root.children.child.state.count)
-		assert.equals(2, root.children.child.children.leaf.state.count)
+		assert.equals(1, root.loveData.count)
+		assert.equals(2, root.children.child.loveData.count)
+		assert.equals(2, root.children.child.children.leaf.loveData.count)
 	end)
 
 	it("should preserve updates for inactive widgets so they can reactivate", function()
@@ -336,7 +336,8 @@ describe("Widget public access", function()
 		assert.equals(42, view.w)
 		assert.is_false(view.visible)
 		assert.equals("Label", view.title)
-		assert.is_nil(view.state)
+		assert.is_nil(view.userData)
+		assert.is_nil(view.loveData)
 		assert.is_nil(view.children)
 		assert.is_nil(view.draw)
 		assert.is_nil(view.hook)

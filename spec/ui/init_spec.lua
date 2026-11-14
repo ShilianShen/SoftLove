@@ -43,7 +43,7 @@ describe("ui declaration registry", function()
 					},
 				},
 			},
-			zLabel = { type = "base", state = { text = "Hello" } },
+			zLabel = { type = "base", userData = { text = "Hello" } },
 			base = { w = 100, h = 20 },
 		})
 		local group = data:newWidget("aPage").children.group
@@ -51,7 +51,7 @@ describe("ui declaration registry", function()
 		local label = group.children[1]
 		assert.equals(50, label.w)
 		assert.equals(20, label.h)
-		assert.equals("Hello", label.state.text)
+		assert.equals("Hello", label.userData.text)
 		assert.is_function(label.layout)
 		assert.is_nil(label.type)
 	end)
@@ -71,29 +71,29 @@ describe("ui declaration registry", function()
 
 	it("should preserve whole-field overrides and inherit omitted children", function()
 		local data = initialize({
-			base = { state = { a = 1, b = 2 }, children = { label = { w = 40 } } },
-			derived = { type = "base", state = { a = 3 } },
+			base = { userData = { a = 1, b = 2 }, children = { label = { w = 40 } } },
+			derived = { type = "base", userData = { a = 3 } },
 			empty = { type = "base", children = {} },
 		})
 		local widget = data:newWidget("derived")
-		assert.same({ a = 3 }, widget.state)
+		assert.same({ a = 3 }, widget.userData)
 		assert.equals(40, widget.children.label.w)
 		assert.same({}, data:newWidget("empty").children)
 	end)
 
 	it("should isolate declarations, repeated children, instances and registry initializations", function()
-		local child = { state = { text = "Original" } }
+		local child = { userData = { text = "Original" } }
 		local widgets = { page = { children = { first = child, second = child } } }
 		local node = ui.getNode(widgets)
 		local first, second = {}, {}
 		node.tasks.init.func(first)
 		node.tasks.init.func(second)
-		first.widgetTypes.page.children.first.state.text = "Type changed"
+		first.widgetTypes.page.children.first.userData.text = "Type changed"
 		local a, b = second:newWidget("page"), second:newWidget("page")
-		a.children.first.state.text = "Instance changed"
-		assert.equals("Original", a.children.second.state.text)
-		assert.equals("Original", b.children.first.state.text)
-		assert.equals("Original", child.state.text)
+		a.children.first.userData.text = "Instance changed"
+		assert.equals("Original", a.children.second.userData.text)
+		assert.equals("Original", b.children.first.userData.text)
+		assert.equals("Original", child.userData.text)
 		assert.is_nil(child.active)
 	end)
 

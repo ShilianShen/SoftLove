@@ -11,13 +11,13 @@ describe("UI copying utilities", function()
 	end)
 
 	it("should expand shared tables into independently writable branches", function()
-		local shared = { state = { value = 1 } }
+		local shared = { userData = { value = 1 } }
 		local copy = util.deepcopyDAGToTree({ first = shared, second = shared })
 		assert.is_not.equal(shared, copy.first)
 		assert.is_not.equal(copy.first, copy.second)
-		copy.first.state.value = 2
-		assert.equals(1, copy.second.state.value)
-		assert.equals(1, shared.state.value)
+		copy.first.userData.value = 2
+		assert.equals(1, copy.second.userData.value)
+		assert.equals(1, shared.userData.value)
 	end)
 
 	it("should copy table keys without retaining source references", function()
