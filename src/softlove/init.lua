@@ -6,6 +6,9 @@ local softlove = {
 	Scope = require("softlove.Scope"),
 	TimeProfiler = require("softlove.TimeProfiler"),
 	ui = require("softlove.ui"),
+	input = require("softlove.input"),
+	system = require("softlove.system"),
+	assets = require("softlove.assets"),
 }
 
 local function union(...)
