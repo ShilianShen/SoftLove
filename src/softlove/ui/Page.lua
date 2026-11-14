@@ -2,42 +2,42 @@ local util = require("softlove.ui.util")
 local Widget = require("softlove.ui.Widget")
 
 ---@class softlove.ui.Page
----@field root softlove.ui.Widget
+---@field entry softlove.ui.Widget
 ---@field get fun(self: softlove.ui.Page, ...: any): table?
 local Page = {}
 
 ---@param page softlove.ui.Page
 local function layoutPage(page, params)
 	assert(params ~= nil)
-	page.root:layout(params.window)
+	page.entry:layout(params.window)
 end
 
 ---@param page softlove.ui.Page
 ---@param theme softlove.ui.Theme
 local function drawPage(page, theme)
-	page.root:draw(theme)
+	page.entry:draw(theme)
 end
 
 ---@param page softlove.ui.Page
 local function updatePage(page, params)
-	page.root:update(params)
+	page.entry:update(params)
 end
 
 ---@param page softlove.ui.Page
 local function hookPage(page, x, y)
-	return page.root:hook(x, y)
+	return page.entry:hook(x, y)
 end
 
 ---@param self softlove.ui.Page
 local function get(self, ...)
-	return Widget.get(self.root, ...)
+	return Widget.get(self.entry, ...)
 end
 
----@param widget softlove.ui.Widget
+---User subtasks must assign self.entry before _update runs.
 ---@param subtasks table<string, softdep.declaration.Task>
 ---@param apis table<string, softdep.declaration.Api>
 ---@return softdep.declaration.Node
-function Page.Node(widget, subtasks, apis)
+function Page.Node(subtasks, apis)
 	apis = util.deepcopyDAGToTree(apis)
 	---@type table<string, softdep.declaration.Task>
 	local tasks = util.deepcopyDAGToTree(subtasks)
@@ -49,7 +49,6 @@ function Page.Node(widget, subtasks, apis)
 	end
 	tasks._init = {
 		func = function(self)
-			self.root = widget
 			self.get = get
 			self.ui = true
 		end,

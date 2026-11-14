@@ -10,11 +10,15 @@ end
 describe("Page", function()
 	it("should initialize a page and expose public descendants through get", function()
 		local root = widget({ children = { label = widget({ public = true, w = 42 }) } })
-		local node = Page.Node(root, {}, {})
+		local node = Page.Node({
+			init = { func = function(page) page.entry = root end },
+		}, {})
 		local page = {}
 		node.tasks._init.func(page)
+		assert.is_nil(page.entry)
+		node.tasks.init.func(page)
 
-		assert.equals(root, page.root)
+		assert.equals(root, page.entry)
 		assert.is_true(page.ui)
 		assert.equals(42, page:get("label").w)
 		assert.is_nil(page:get("missing"))
@@ -35,27 +39,30 @@ describe("Page", function()
 				calls[#calls + 1] = "layout"
 			end,
 		})
-		local node = Page.Node(root, {
+		local node = Page.Node({
+			init = { func = function(page) page.entry = root end },
 			content = {
+				parents_c = { "init" },
 				func = function(page)
-					assert.equals(root, page.root)
-					page.root.state.text = "Ready"
+					assert.equals(root, page.entry)
+					page.entry.state.text = "Ready"
 					calls[#calls + 1] = "content"
 				end,
 			},
 		}, {})
-		assert.same({ "_init" }, node.tasks.content.parents_c)
+		assert.same({ "init", "_init" }, node.tasks.content.parents_c)
 		local updateParents = {}
 		for _, parent in ipairs(node.tasks._update.parents_c) do
 			updateParents[parent] = true
 		end
-		assert.same({ _init = true, content = true }, updateParents)
+		assert.same({ _init = true, init = true, content = true }, updateParents)
 		assert.same({ fonts = "fonts", locales = "locales" }, node.tasks._update.parents_d)
 		assert.same({ "_update" }, node.tasks._layout.parents_c)
 		assert.same({ window = "window" }, node.tasks._layout.parents_d)
 
 		local page = {}
 		node.tasks._init.func(page)
+		node.tasks.init.func(page)
 		node.tasks.content.func(page)
 		node.tasks._update.func(page, { fonts = "font source", locales = "locale source" })
 		node.tasks._layout.func(page, { window = { x = 10, y = 20, w = 300, h = 200 } })
@@ -68,7 +75,7 @@ describe("Page", function()
 			first = { func = function() end },
 			second = { parents_c = { "first" } },
 		}
-		local node = Page.Node(widget(), subtasks, {})
+		local node = Page.Node(subtasks, {})
 		assert.same({ "first", "_init" }, node.tasks.second.parents_c)
 		assert.same({ "first" }, subtasks.second.parents_c)
 		assert.is_nil(subtasks.first.parents_c)
@@ -79,18 +86,21 @@ describe("Page", function()
 	it("should forward the theme through draw without scheduling an update", function()
 		local theme = { accent = "blue" }
 		local draws = 0
-		local node = Page.Node(
-			widget({
-				_draw = function(_, actual)
-					assert.equals(theme, actual)
-					draws = draws + 1
+		local node = Page.Node({
+			init = {
+				func = function(page)
+					page.entry = widget({
+						_draw = function(_, actual)
+							assert.equals(theme, actual)
+							draws = draws + 1
+						end,
+					})
 				end,
-			}),
-			{},
-			{}
-		)
+			},
+		}, {})
 		local page = {}
 		node.tasks._init.func(page)
+		node.tasks.init.func(page)
 		node.apis.draw.func(page, theme)
 		assert.equals(1, draws)
 		assert.is_false(node.apis.draw.dirty)
@@ -105,9 +115,12 @@ describe("Page", function()
 				return { id = "root" }
 			end,
 		})
-		local node = Page.Node(root, {}, {})
+		local node = Page.Node({
+			init = { func = function(page) page.entry = root end },
+		}, {})
 		local page = {}
 		node.tasks._init.func(page)
+		node.tasks.init.func(page)
 		local hit, info = node.apis.hook.func(page, 5, 6)
 		assert.equals(root, hit)
 		assert.same({ id = "root" }, info)
@@ -123,18 +136,21 @@ describe("Page", function()
 		local apis = {
 			set = {
 				func = function(page, text)
-					page.root.state.text = text
+					page.entry.state.text = text
 				end,
 				ttag = "content",
 				atag = "writable",
 				dirty = true,
 			},
 		}
-		local node = Page.Node(widget(), { content = {} }, apis)
+		local node = Page.Node({
+			content = { func = function(page) page.entry = widget() end },
+		}, apis)
 		local page = {}
 		node.tasks._init.func(page)
+		node.tasks.content.func(page)
 		node.apis.set.func(page, "Updated")
-		assert.equals("Updated", page.root.state.text)
+		assert.equals("Updated", page.entry.state.text)
 		assert.equals("content", node.apis.set.ttag)
 		assert.is_true(node.apis.set.dirty)
 		node.apis.set.ttag = "changed"
@@ -145,8 +161,8 @@ describe("Page", function()
 
 	it("should keep declarations independent when reused for multiple pages", function()
 		local tasks, apis = { content = {} }, { set = { dirty = true } }
-		local first = Page.Node(widget(), tasks, apis)
-		local second = Page.Node(widget(), tasks, apis)
+		local first = Page.Node(tasks, apis)
+		local second = Page.Node(tasks, apis)
 		first.tasks.content.parents_c[1] = "changed"
 		first.apis.set.dirty = false
 		assert.same({ "_init" }, second.tasks.content.parents_c)
