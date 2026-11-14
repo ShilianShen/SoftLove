@@ -3,7 +3,6 @@ local Widget = require("softlove.ui.Widget")
 
 ---@class softlove.ui.Page
 ---@field entry softlove.ui.Widget
----@field get fun(self: softlove.ui.Page, ...: any): table?
 local Page = {}
 
 function Page:layout(params)
@@ -25,7 +24,7 @@ function Page:hook(x, y)
 end
 
 ---@param self softlove.ui.Page
-local function get(self, ...)
+function Page:get(...)
 	return Widget.get(self.entry, ...)
 end
 
@@ -33,7 +32,7 @@ end
 ---@param subtasks table<string, softdep.declaration.Task>
 ---@param apis table<string, softdep.declaration.Api>
 ---@return softdep.declaration.Node
-function Page.Node(subtasks, apis)
+return function(subtasks, apis)
 	apis = util.deepcopyDAGToTree(apis)
 	---@type table<string, softdep.declaration.Task>
 	local tasks = util.deepcopyDAGToTree(subtasks)
@@ -81,5 +80,3 @@ function Page.Node(subtasks, apis)
 		atag = "readonly",
 	}
 end
-
-return Page

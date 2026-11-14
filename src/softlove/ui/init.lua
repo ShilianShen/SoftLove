@@ -1,6 +1,6 @@
 local util = require("softlove.ui.util")
 local ui = {
-	Page = require("softlove.ui.Page"),
+	getPage = require("softlove.ui.getPage"),
 	WidgetType = require("softlove.ui.WidgetType"),
 }
 
