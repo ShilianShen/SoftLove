@@ -11,13 +11,17 @@ local function newWidget(self, name, patch)
 	return widgetType:newWidget(patch)
 end
 
+---@param widgetTypes table<string, softlove.ui.WidgetType>
 ---@return softdep.declaration.Node
-function ui.getNode()
+function ui.getNode(widgetTypes)
 	return {
 		tasks = {
 			init = {
 				func = function(self)
 					self.widgetTypes = {}
+					for name, widgetType in pairs(widgetTypes) do
+						self.widgetTypes[name] = widgetType
+					end
 					self.newWidget = newWidget
 				end,
 				atag = "writable",
