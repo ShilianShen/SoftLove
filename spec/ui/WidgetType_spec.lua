@@ -66,8 +66,7 @@ describe("WidgetType", function()
 		assert.same({ c = 4 }, widget.state)
 	end)
 
-	it("should expose the factory through ui and support callable types", function()
-		assert.equals(WidgetType, require("softlove.ui").WidgetType)
+	it("should support callable types from the WidgetType module", function()
 		local panel = WidgetType.newWidgetType(nil, { w = 200 })
 
 		assert.same(panel:newWidget({ x = 20 }), panel({ x = 20 }))

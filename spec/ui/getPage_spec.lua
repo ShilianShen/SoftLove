@@ -1,16 +1,21 @@
 package.path = "src/?.lua;" .. "src/?/init.lua;" .. package.path
 local assert = require("luassert")
-local Page = require("softlove.ui.Page")
+local getPage = require("softlove.ui").getPage
 local WidgetType = require("softlove.ui.WidgetType")
 
 local function widget(patch)
 	return WidgetType.newWidgetType(nil, patch)()
 end
 
-describe("Page", function()
+describe("getPage", function()
+	it("should expose the page factory through ui", function()
+		assert.is_function(getPage)
+		assert.equals(require("softlove.ui.getPage"), getPage)
+	end)
+
 	it("should initialize a page and expose public descendants through get", function()
 		local root = widget({ children = { label = widget({ public = true, w = 42 }) } })
-		local node = Page.Node({
+		local node = getPage({
 			init = { func = function(page) page.entry = root end },
 		}, {})
 		local page = {}
@@ -39,7 +44,7 @@ describe("Page", function()
 				calls[#calls + 1] = "layout"
 			end,
 		})
-		local node = Page.Node({
+		local node = getPage({
 			init = { func = function(page) page.entry = root end },
 			content = {
 				parents_c = { "init" },
@@ -75,7 +80,7 @@ describe("Page", function()
 			first = { func = function() end },
 			second = { parents_c = { "first" } },
 		}
-		local node = Page.Node(subtasks, {})
+		local node = getPage(subtasks, {})
 		assert.same({ "first", "_init" }, node.tasks.second.parents_c)
 		assert.same({ "first" }, subtasks.second.parents_c)
 		assert.is_nil(subtasks.first.parents_c)
@@ -86,7 +91,7 @@ describe("Page", function()
 	it("should forward the theme through draw without scheduling an update", function()
 		local theme = { accent = "blue" }
 		local draws = 0
-		local node = Page.Node({
+		local node = getPage({
 			init = {
 				func = function(page)
 					page.entry = widget({
@@ -115,7 +120,7 @@ describe("Page", function()
 				return { id = "root" }
 			end,
 		})
-		local node = Page.Node({
+		local node = getPage({
 			init = { func = function(page) page.entry = root end },
 		}, {})
 		local page = {}
@@ -143,7 +148,7 @@ describe("Page", function()
 				dirty = true,
 			},
 		}
-		local node = Page.Node({
+		local node = getPage({
 			content = { func = function(page) page.entry = widget() end },
 		}, apis)
 		local page = {}
@@ -161,8 +166,8 @@ describe("Page", function()
 
 	it("should keep declarations independent when reused for multiple pages", function()
 		local tasks, apis = { content = {} }, { set = { dirty = true } }
-		local first = Page.Node(tasks, apis)
-		local second = Page.Node(tasks, apis)
+		local first = getPage(tasks, apis)
+		local second = getPage(tasks, apis)
 		first.tasks.content.parents_c[1] = "changed"
 		first.apis.set.dirty = false
 		assert.same({ "_init" }, second.tasks.content.parents_c)
