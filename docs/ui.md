@@ -27,7 +27,9 @@ Widget 使用两个独立的表保存数据，默认均为空表：
 
 `_draw` 的签名为 `function(userData, loveData, bounds, themes)`，由 `Widget:draw` 按这个顺序传入当前 widget 的数据、边界及主题，不再传入 widget 本身。
 
-`_update` 的签名为 `function(userData, loveData, params, children)`，由 `Widget:update` 按这个顺序传入当前 widget 的输入、绘制数据、更新参数及子组件表。回调可以根据输入和更新参数生成 `loveData`，不再接收 widget 本身。
+`_update` 的签名为 `function(userData, loveData, params, children)`，由 `Widget:update` 按这个顺序传入当前 widget 的输入、绘制数据、更新参数及子组件数据映射。这里的 `children[key]` 是对应子组件的 `userData`，保留原来的键，直接使用 `children.label.text` 或 `children.label:method(...)`。映射表每次调用重新构建，其中的数据表引用与子组件共享；替换映射项不会替换实际子组件。
+
+`_update` 可以生成 `loveData`，也可以给子组件传递输入，但不再接收 widget 对象。组件的 `active` 等顶层属性由应用管理；示例在更新前的 `prepare` 任务中设置详情面板的启用状态。
 
 ## 渲染反馈与动作执行
 

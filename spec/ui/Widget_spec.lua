@@ -335,7 +335,7 @@ describe("Widget traversal", function()
 end)
 
 describe("Widget defaults", function()
-	it("should pass each widget's userData, loveData, children and the shared params to update", function()
+	it("should pass each widget's data, child userData map and the shared params to update", function()
 		local calls = {}
 		local function process(...)
 			assert.equals(4, select("#", ...))
@@ -343,26 +343,62 @@ describe("Widget defaults", function()
 			calls[#calls + 1] = { ... }
 			loveData.text = userData.text .. params.locales.suffix
 			if children.child then
-				children.child.userData.text = userData.text .. "/child"
+				children.child.text = userData.text .. "/child"
 			end
 		end
 		local root = widget({
 			userData = { text = "root" },
 			_update = process,
-			children = { child = widget({ userData = { text = "child" }, _update = process }) },
+			children = {
+				child = widget({ userData = { text = "child" }, _update = process }),
+				[2] = widget({ z = 1, userData = { text = "numeric" }, _update = process }),
+			},
 		})
 		local params = { locales = { suffix = "!" } }
 		root:sort()
 		root:update(params)
-		assert.equals(2, #calls)
-		for i, item in ipairs({ root, root.children.child }) do
+		assert.equals(3, #calls)
+		for i, item in ipairs({ root, root.children.child, root.children[2] }) do
 			assert.equals(item.userData, calls[i][1])
 			assert.equals(item.loveData, calls[i][2])
 			assert.equals(params, calls[i][3])
-			assert.equals(item.children, calls[i][4])
+			assert.is_false(item.children == calls[i][4])
+			local expected = {}
+			for key, child in pairs(item.children) do
+				assert.equals(child.userData, calls[i][4][key])
+				expected[key] = child.userData
+			end
+			assert.same(expected, calls[i][4])
 			assert.equals(item.userData.text .. "!", item.loveData.text)
 		end
 		assert.equals("root/child!", root.children.child.loveData.text)
+	end)
+
+	it("should share child data while keeping edits to the temporary map separate from actual children", function()
+		local maps = {}
+		local root = widget({
+			_update = function(userData, loveData, params, children)
+				assert.is_nil(children.extra)
+				maps[#maps + 1] = children
+				children.child.count = (children.child.count or 0) + 1
+				children.child = { count = -1 }
+				children.extra = {}
+			end,
+			children = {
+				child = widget({
+					_update = function(userData, loveData)
+						loveData.count = userData.count
+					end,
+				}),
+			},
+		})
+		root:sort()
+		root:update({})
+		root:update({})
+		assert.is_false(maps[1] == maps[2])
+		assert.is_nil(root.children.extra)
+		assert.equals(2, root.children.child.userData.count)
+		assert.equals(2, root.children.child.loveData.count)
 	end)
 
 	it("should pass exactly each widget's userData, loveData, bounds and the shared themes to draw", function()
