@@ -20,7 +20,6 @@
 ---@field active? boolean
 ---@field userData? table User-provided inputs.
 ---@field loveData? table Data derived for rendering.
----@field setter? table<string, fun(self: softlove.ui.Widget, ...): ...>
 ---@field inside? fun(self: softlove.ui.Widget, x: number, y: number): boolean
 ---@field children? table<any, softlove.ui.Widget>
 ---@field _draw? fun(userData: table, loveData: table, bounds: softlove.ui.Bounds, themes: softlove.ui.Theme)

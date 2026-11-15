@@ -21,6 +21,8 @@ Widget 使用两个独立的表保存数据，默认均为空表：
 - `userData`：用户给出的输入，例如原始文本、字体、布局参数和业务数据。
 - `loveData`：为了绘制而产生的数据，例如格式化后的显示文本、选中样式和根据输入计算出的显示参数。
 
+修改输入的方法直接放在 `userData` 中，使用 `widget.userData:method(...)` 调用，其中 `self` 是 `userData`。Widget 不再提供独立的 `setter` 字段。应用负责命中检测，再调用对应的数据方法。
+
 组件根据 `userData` 生成 `loveData`，绘制时使用相应数据。生成显示结果时应将结果写入 `loveData`，保留 `userData` 中的原始输入。原来的 `state` 字段已移除，调用方需要按用途迁移到这两个字段。
 
 `_draw` 的签名为 `function(userData, loveData, bounds, themes)`，由 `Widget:draw` 按这个顺序传入当前 widget 的数据、边界及主题，不再传入 widget 本身。

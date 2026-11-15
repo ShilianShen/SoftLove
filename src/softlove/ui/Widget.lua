@@ -8,7 +8,6 @@ local util = require("softlove.ui.util")
 ---@field active boolean
 ---@field userData table User-provided inputs.
 ---@field loveData table Data derived for rendering.
----@field setter table<string, fun(self: softlove.ui.Widget, ...): ...>
 ---@field children table<any, softlove.ui.Widget>
 ---@field order softlove.ui.Widget[]
 ---@field _layout fun(self: softlove.ui.Widget, bounds: softlove.ui.Bounds)

@@ -10,7 +10,6 @@ return {
 	active = true,
 	userData = {},
 	loveData = {},
-	setter = {},
 	inside = function()
 		return true
 	end,
