@@ -3,7 +3,7 @@ local Widget = require("softlove.ui.Widget")
 
 ---@type softlove.ui.Widget
 return {
-	border = { x = 0, y = 0, w = 0, h = 0 },
+	bounds = { x = 0, y = 0, w = 0, h = 0 },
 	z = 0,
 	visible = true,
 	public = false,
@@ -16,20 +16,20 @@ return {
 	end,
 	children = {},
 	_layout = function(self, parent)
-		self.border.x = parent.x
-		self.border.y = parent.y
-		self.border.w = parent.w
-		self.border.h = parent.h
+		self.bounds.x = parent.x
+		self.bounds.y = parent.y
+		self.bounds.w = parent.w
+		self.bounds.h = parent.h
 	end,
 	_draw = util.pass,
 	_update = util.pass,
 	_hook = function(self, x, y)
 		if
 			self.visible
-			and self.border.x < x
-			and x < self.border.x + self.border.w
-			and self.border.y < y
-			and y < self.border.y + self.border.h
+			and self.bounds.x < x
+			and x < self.bounds.x + self.bounds.w
+			and self.bounds.y < y
+			and y < self.bounds.y + self.bounds.h
 			and self:inside(x, y)
 		then
 			return self, self:hooked()

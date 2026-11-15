@@ -40,7 +40,7 @@ describe("getPage", function()
 			end,
 			_layout = function(self, parent)
 				assert.equals("update", calls[#calls])
-				self.border.x, self.border.y, self.border.w, self.border.h = parent.x, parent.y, parent.w, parent.h
+				self.bounds.x, self.bounds.y, self.bounds.w, self.bounds.h = parent.x, parent.y, parent.w, parent.h
 				calls[#calls + 1] = "layout"
 			end,
 		})
@@ -72,7 +72,7 @@ describe("getPage", function()
 		node.tasks._update.func(page, { fonts = "font source", locales = "locale source" })
 		node.tasks._layout.func(page, { window = { x = 10, y = 20, w = 300, h = 200 } })
 		assert.same({ "content", "update", "layout" }, calls)
-		assert.same({ 10, 20, 300, 200 }, { root.border.x, root.border.y, root.border.w, root.border.h })
+		assert.same({ 10, 20, 300, 200 }, { root.bounds.x, root.bounds.y, root.bounds.w, root.bounds.h })
 	end)
 
 	it("should preserve existing subtask dependencies without modifying caller declarations", function()
@@ -114,7 +114,7 @@ describe("getPage", function()
 
 	it("should expose hook and return both the hit widget and information", function()
 		local root = widget({
-			border = {
+			bounds = {
 				w = 100,
 				h = 100,
 			},

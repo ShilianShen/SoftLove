@@ -1,7 +1,7 @@
 local util = require("softlove.ui.util")
 
 ---@class softlove.ui.Widget
----@field border softlove.ui.Bounds
+---@field bounds softlove.ui.Bounds
 ---@field z number
 ---@field visible boolean
 ---@field ["public"] boolean
@@ -26,7 +26,7 @@ function Widget:layout(parent)
 	end
 	self:_layout(parent)
 	for _, child in pairs(self.children) do
-		child:layout(self.border)
+		child:layout(self.bounds)
 	end
 end
 

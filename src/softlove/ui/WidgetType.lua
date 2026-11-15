@@ -16,7 +16,7 @@ local typeMT = {
 ---@return softlove.ui.WidgetType
 function WidgetType.newWidgetType(parent, patch)
 	local fields = util.patch(patch or {}, parent or {})
-	fields.border = util.patch(patch and patch.border or {}, parent and parent.border or {})
+	fields.bounds = util.patch(patch and patch.bounds or {}, parent and parent.bounds or {})
 	local widgetType = util.deepcopyDAGToTree(fields)
 	return setmetatable(widgetType, typeMT)
 end
@@ -25,7 +25,7 @@ end
 ---@return softlove.ui.Widget
 function WidgetType:newWidget(patch)
 	local fields = util.patch(patch or {}, self, object)
-	fields.border = util.patch(patch and patch.border or {}, self.border or {}, object.border)
+	fields.bounds = util.patch(patch and patch.bounds or {}, self.bounds or {}, object.bounds)
 	local widget = util.deepcopyDAGToTree(fields)
 	return widget
 end

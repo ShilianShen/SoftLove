@@ -6,14 +6,14 @@
 ---@field w number
 ---@field h number
 
----@class softlove.ui.BorderPatch
+---@class softlove.ui.BoundsPatch
 ---@field x? number
 ---@field y? number
 ---@field w? number
 ---@field h? number
 
 ---@class softlove.ui.Patch
----@field border? softlove.ui.BorderPatch
+---@field bounds? softlove.ui.BoundsPatch
 ---@field z? number
 ---@field visible? boolean
 ---@field ["public"]? boolean

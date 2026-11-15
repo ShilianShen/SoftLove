@@ -16,7 +16,7 @@ describe("Widget traversal", function()
 			local function process(self, arg, y)
 				calls[#calls + 1] = self.userData.name
 				if method == "layout" then
-					assert.equals(self.userData.name == "root" and context or self.userData.parent.border, arg)
+					assert.equals(self.userData.name == "root" and context or self.userData.parent.bounds, arg)
 				elseif method == "hook" then
 					assert.equals(5, arg)
 					assert.equals(6, y)
@@ -111,7 +111,7 @@ describe("Widget traversal", function()
 	it("should draw and hit children outside an invisible parent", function()
 		local drawn = {}
 		local root = widget({
-			border = {
+			bounds = {
 				x = 0,
 				y = 0,
 				w = 10,
@@ -123,7 +123,7 @@ describe("Widget traversal", function()
 			end,
 			children = {
 				child = widget({
-					border = {
+					bounds = {
 						x = 20,
 						y = 20,
 						w = 10,
@@ -144,7 +144,7 @@ describe("Widget traversal", function()
 	it("should preserve z order and merge hooks from all hits without changing their source", function()
 		local ownHooks = { root = true, shared = "root" }
 		local root = widget({
-			border = {
+			bounds = {
 				w = 100,
 				h = 100,
 			},
@@ -154,7 +154,7 @@ describe("Widget traversal", function()
 			children = {
 				high = widget({
 					z = 2,
-					border = {
+					bounds = {
 						w = 100,
 						h = 100,
 					},
@@ -164,7 +164,7 @@ describe("Widget traversal", function()
 				}),
 				low = widget({
 					z = 1,
-					border = {
+					bounds = {
 						w = 100,
 						h = 100,
 					},
@@ -173,7 +173,7 @@ describe("Widget traversal", function()
 					end,
 					children = {
 						leaf = widget({
-							border = {
+							bounds = {
 								w = 100,
 								h = 100,
 							},
@@ -210,7 +210,7 @@ describe("Widget traversal", function()
 
 	it("should respect inside and return no hooks when nothing is hit", function()
 		local root = widget({
-			border = {
+			bounds = {
 				w = 100,
 				h = 100,
 			},
@@ -229,7 +229,7 @@ describe("Widget defaults", function()
 		local root = widget({ children = { panel = widget({ children = { label = widget() } }) } })
 		root:layout({ x = 12, y = 34, w = 300, h = 200 })
 		for _, item in ipairs({ root, root.children.panel, root.children.panel.children.label }) do
-			assert.same({ 12, 34, 300, 200 }, { item.border.x, item.border.y, item.border.w, item.border.h })
+			assert.same({ 12, 34, 300, 200 }, { item.bounds.x, item.bounds.y, item.bounds.w, item.bounds.h })
 		end
 	end)
 
@@ -266,7 +266,7 @@ describe("Widget defaults", function()
 	}) do
 		it("should not hook or request information at the " .. point.name, function()
 			local root = widget({
-				border = {
+				bounds = {
 					x = 10,
 					y = 20,
 					w = 100,
@@ -287,7 +287,7 @@ describe("Widget defaults", function()
 			error("UI executed an action")
 		end
 		local root = widget({
-			border = {
+			bounds = {
 				w = 100,
 				h = 100,
 			},
@@ -302,7 +302,7 @@ describe("Widget defaults", function()
 	end)
 
 	it("should return an empty information table for a default hit", function()
-		local root = widget({ border = { w = 100, h = 100 } })
+		local root = widget({ bounds = { w = 100, h = 100 } })
 		local hit, info = root:hook(50, 50)
 		assert.equals(root, hit)
 		assert.same({}, info)
@@ -310,13 +310,13 @@ describe("Widget defaults", function()
 
 	it("should not reuse merged information between hook calls", function()
 		local root = widget({
-			border = {
+			bounds = {
 				w = 100,
 				h = 100,
 			},
 			children = {
 				child = widget({
-					border = {
+					bounds = {
 						w = 20,
 						h = 20,
 					},
@@ -358,7 +358,7 @@ describe("Widget public access", function()
 		assert.equals(42, view.z)
 		assert.is_false(view.visible)
 		assert.equals("Label", view.title)
-		assert.is_nil(view.border)
+		assert.is_nil(view.bounds)
 		assert.is_nil(view.userData)
 		assert.is_nil(view.loveData)
 		assert.is_nil(view.children)
