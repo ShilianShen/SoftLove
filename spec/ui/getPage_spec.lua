@@ -40,7 +40,7 @@ describe("getPage", function()
 				assert.equals(self.children.label, self.order[1])
 				calls[#calls + 1] = "sort"
 			end,
-			_update = function(userData, loveData, params)
+			_update = function(userData, loveData, params, children)
 				assert.equals("sort", calls[#calls])
 				assert.equals("Ready", userData.text)
 				assert.equals("font source", params.fonts)

@@ -335,13 +335,16 @@ describe("Widget traversal", function()
 end)
 
 describe("Widget defaults", function()
-	it("should pass each widget's userData, loveData and the shared params to update", function()
+	it("should pass each widget's userData, loveData, children and the shared params to update", function()
 		local calls = {}
 		local function process(...)
-			assert.equals(3, select("#", ...))
-			local userData, loveData, params = ...
+			assert.equals(4, select("#", ...))
+			local userData, loveData, params, children = ...
 			calls[#calls + 1] = { ... }
 			loveData.text = userData.text .. params.locales.suffix
+			if children.child then
+				children.child.userData.text = userData.text .. "/child"
+			end
 		end
 		local root = widget({
 			userData = { text = "root" },
@@ -356,8 +359,10 @@ describe("Widget defaults", function()
 			assert.equals(item.userData, calls[i][1])
 			assert.equals(item.loveData, calls[i][2])
 			assert.equals(params, calls[i][3])
+			assert.equals(item.children, calls[i][4])
 			assert.equals(item.userData.text .. "!", item.loveData.text)
 		end
+		assert.equals("root/child!", root.children.child.loveData.text)
 	end)
 
 	it("should pass exactly each widget's userData, loveData, bounds and the shared themes to draw", function()

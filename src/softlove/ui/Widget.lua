@@ -13,7 +13,7 @@ local util = require("softlove.ui.util")
 ---@field order softlove.ui.Widget[]
 ---@field _layout fun(self: softlove.ui.Widget, bounds: softlove.ui.Bounds)
 ---@field _draw fun(userData: table, loveData: table, bounds: softlove.ui.Bounds, themes: softlove.ui.Theme)
----@field _update fun(userData: table, loveData: table, params: table<string, table>)
+---@field _update fun(userData: table, loveData: table, params: table<string, table>, children: table<any, softlove.ui.Widget>)
 ---@field _hook fun(self: softlove.ui.Widget, x: number, y: number): softlove.ui.Widget?, table?
 ---@field hook fun(self: softlove.ui.Widget, x: number, y: number): softlove.ui.Widget?, table?
 ---@field inside fun(self: softlove.ui.Widget, x: number, y: number): boolean
@@ -60,7 +60,7 @@ end
 ---@param params table<string, table>
 function Widget:update(params)
 	if self.active then
-		self._update(self.userData, self.loveData, params)
+		self._update(self.userData, self.loveData, params, self.children)
 		for _, child in ipairs(self.order) do
 			child:update(params)
 		end

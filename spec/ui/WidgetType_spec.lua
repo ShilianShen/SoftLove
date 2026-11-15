@@ -81,7 +81,7 @@ describe("WidgetType", function()
 		local inputs = { value = 3 }
 		local panel = WidgetType.newWidgetType(nil, {
 			userData = inputs,
-			_update = function(userData, loveData, params)
+			_update = function(userData, loveData, params, children)
 				loveData.text = tostring(userData.value * 2)
 			end,
 		})
