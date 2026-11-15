@@ -15,6 +15,7 @@ return {
 		return true
 	end,
 	children = {},
+	order = {},
 	_layout = function(self, parent)
 		self.bounds.x = parent.x
 		self.bounds.y = parent.y
@@ -39,6 +40,7 @@ return {
 	draw = Widget.draw,
 	update = Widget.update,
 	hook = Widget.hook,
+	sort = Widget.sort,
 	hooked = function()
 		return {}
 	end,

@@ -10,6 +10,10 @@ function Page:layout(params)
 	self.entry:layout(params.window)
 end
 
+function Page:sort()
+	self.entry:sort()
+end
+
 ---@param theme softlove.ui.Theme
 function Page:draw(theme)
 	self.entry:draw(theme)
@@ -50,9 +54,16 @@ return function(subtasks, apis)
 		atag = "writable",
 		back = false,
 	}
+	tasks._sort = {
+		func = Page.sort,
+		parents_c = parents_c,
+		parents_d = { fonts = "fonts", locales = "locales" },
+		atag = "writable",
+		back = false,
+	}
 	tasks._update = {
 		func = Page.update,
-		parents_c = parents_c,
+		parents_c = { "_sort" },
 		parents_d = { fonts = "fonts", locales = "locales" },
 		atag = "writable",
 		back = false,

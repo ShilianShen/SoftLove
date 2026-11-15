@@ -10,6 +10,7 @@ local util = require("softlove.ui.util")
 ---@field loveData table<string, any> Data derived for rendering.
 ---@field setter table<string, fun(self: softlove.ui.Widget, ...): ...>
 ---@field children table<any, softlove.ui.Widget>
+---@field order softlove.ui.Widget[]
 ---@field _layout fun(self: softlove.ui.Widget, parent: softlove.ui.Bounds)
 ---@field _draw fun(self: softlove.ui.Widget, theme: softlove.ui.Theme)
 ---@field _update fun(self: softlove.ui.Widget, params: table<string, table>)
@@ -40,6 +41,13 @@ local function sort(children)
 	end
 	table.sort(order, compare)
 	return order
+end
+
+function Widget:sort()
+	self.order = sort(self.children)
+    for _, child in ipairs(self.order) do
+        child:sort()
+    end
 end
 
 ---@param theme softlove.ui.Theme
