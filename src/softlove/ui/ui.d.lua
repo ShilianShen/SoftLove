@@ -18,12 +18,12 @@
 ---@field visible? boolean
 ---@field ["public"]? boolean
 ---@field active? boolean
----@field userData? table<string, any> User-provided inputs.
----@field loveData? table<string, any> Data derived for rendering.
+---@field userData? table User-provided inputs.
+---@field loveData? table Data derived for rendering.
 ---@field setter? table<string, fun(self: softlove.ui.Widget, ...): ...>
 ---@field inside? fun(self: softlove.ui.Widget, x: number, y: number): boolean
 ---@field children? table<any, softlove.ui.Widget>
----@field _draw? fun(userData: table<string, any>, loveData: table<string, any>, bounds: softlove.ui.Bounds, themes: softlove.ui.Theme)
+---@field _draw? fun(userData: table, loveData: table, bounds: softlove.ui.Bounds, themes: softlove.ui.Theme)
 ---@field _layout? fun(self: softlove.ui.Widget, bounds: softlove.ui.Bounds)
 ---@field _update? fun(self: softlove.ui.Widget, params: table<string, table>)
 ---@field _hook? fun(self: softlove.ui.Widget, x: number, y: number): softlove.ui.Widget?, table?
