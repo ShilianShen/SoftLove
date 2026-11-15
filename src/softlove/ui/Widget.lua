@@ -19,14 +19,13 @@ local util = require("softlove.ui.util")
 ---@field hooked fun(self: softlove.ui.Widget): table
 local Widget = {}
 
----@param parent softlove.ui.Bounds
-function Widget:layout(parent)
-	if not self.active then
-		return
-	end
-	self:_layout(parent)
-	for _, child in pairs(self.children) do
-		child:layout(self.bounds)
+---@param bounds softlove.ui.Bounds
+function Widget:layout(bounds)
+	if self.active then
+		self:_layout(bounds)
+		for _, child in pairs(self.children) do
+			child:layout(self.bounds)
+		end
 	end
 end
 
@@ -45,22 +44,23 @@ end
 
 ---@param theme softlove.ui.Theme
 function Widget:draw(theme)
-	if not self.active then
-		return
-	end
-	if self.visible then
-		self:_draw(theme)
-	end
-	for _, child in ipairs(sort(self.children)) do
-		child:draw(theme)
+	if self.active then
+		if self.visible then
+			self:_draw(theme)
+		end
+		for _, child in ipairs(sort(self.children)) do
+			child:draw(theme)
+		end
 	end
 end
 
 ---@param params table<string, table>
 function Widget:update(params)
-	self:_update(params)
-	for _, child in ipairs(sort(self.children)) do
-		child:update(params)
+	if self.active then
+		self:_update(params)
+		for _, child in ipairs(sort(self.children)) do
+			child:update(params)
+		end
 	end
 end
 
@@ -69,23 +69,22 @@ end
 ---@return softlove.ui.Widget? widget
 ---@return table? hooked
 function Widget:hook(x, y)
-	if not self.active then
-		return
-	end
-	local result, ownHooks = self:_hook(x, y)
-	local hooked = {}
-	for k, v in pairs(ownHooks or {}) do
-		hooked[k] = v
-	end
-	for _, child in ipairs(sort(self.children)) do
-		local childResult, childHooks = child:hook(x, y)
-		result = childResult or result
-		for k, v in pairs(childHooks or {}) do
+	if self.active then
+		local result, ownHooks = self:_hook(x, y)
+		local hooked = {}
+		for k, v in pairs(ownHooks or {}) do
 			hooked[k] = v
 		end
-	end
-	if result then
-		return result, hooked
+		for _, child in ipairs(sort(self.children)) do
+			local childResult, childHooks = child:hook(x, y)
+			result = childResult or result
+			for k, v in pairs(childHooks or {}) do
+				hooked[k] = v
+			end
+		end
+		if result then
+			return result, hooked
+		end
 	end
 end
 
