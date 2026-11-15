@@ -20,7 +20,6 @@
 ---@field bounds? softlove.ui.BoundsPatch
 ---@field depth? number
 ---@field visible? boolean
----@field ["public"]? boolean
 ---@field active? boolean
 ---@field userData? table User-provided inputs.
 ---@field loveData? table Data derived for rendering.

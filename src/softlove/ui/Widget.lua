@@ -1,10 +1,7 @@
-local util = require("softlove.ui.util")
-
 ---@class softlove.ui.Widget
 ---@field bounds softlove.ui.Bounds
 ---@field depth number Larger values are deeper.
 ---@field visible boolean
----@field ["public"] boolean
 ---@field active boolean
 ---@field userData table User-provided inputs.
 ---@field loveData table Data derived for rendering.
@@ -90,22 +87,6 @@ function Widget:hook(x, y)
 		if result then
 			return result, hooked
 		end
-	end
-end
-
----@param root softlove.ui.Widget
----@param ... any
-function Widget.get(root, ...)
-	local args = { ... }
-	local widget = root
-	for _, arg in ipairs(args) do
-		widget = widget.children[arg]
-		if widget == nil then
-			return
-		end
-	end
-	if widget.public then
-		return util.const(widget)
 	end
 end
 

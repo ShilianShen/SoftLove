@@ -14,8 +14,8 @@ describe("getPage", function()
 		assert.equals(require("softlove.ui.getPage"), getPage)
 	end)
 
-	it("should initialize a page and expose public descendants through get", function()
-		local root = widget({ children = { label = widget({ public = true, depth = 42 }) } })
+	it("should initialize a page", function()
+		local root = widget({ children = { label = widget({ depth = 42 }) } })
 		local node = getPage({
 			init = { func = function(page) page.entry = root end },
 		}, {})
@@ -26,8 +26,6 @@ describe("getPage", function()
 
 		assert.equals(root, page.entry)
 		assert.is_true(page.ui)
-		assert.equals(42, page:get("label").depth)
-		assert.is_nil(page:get("missing"))
 	end)
 
 	it("should run content, sort, update and layout using their declared dependencies", function()

@@ -1,5 +1,4 @@
 local util = require("softlove.ui.util")
-local Widget = require("softlove.ui.Widget")
 
 ---@class softlove.ui.Page
 ---@field entry softlove.ui.Widget
@@ -32,11 +31,6 @@ function Page:hook(x, y)
 	return self.entry:hook(x, y)
 end
 
----@param ... any
-function Page:get(...)
-	return Widget.get(self.entry, ...)
-end
-
 ---User subtasks must assign self.entry before _sort runs.
 ---@param subtasks table<string, softdep.declaration.Task>
 ---@param apis table<string, softdep.declaration.Api>
@@ -53,7 +47,6 @@ return function(subtasks, apis)
 	end
 	tasks._init = {
 		func = function(self)
-			self.get = Page.get
 			self.ui = true
 		end,
 		atag = "writable",
