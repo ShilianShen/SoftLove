@@ -47,9 +47,9 @@ describe("getPage", function()
 				assert.equals("locale source", params.locales)
 				calls[#calls + 1] = "update"
 			end,
-			_layout = function(self, parent)
+			_layout = function(self, bounds)
 				assert.equals("update", calls[#calls])
-				self.bounds.x, self.bounds.y, self.bounds.w, self.bounds.h = parent.x, parent.y, parent.w, parent.h
+				self.bounds.x, self.bounds.y, self.bounds.w, self.bounds.h = bounds.x, bounds.y, bounds.w, bounds.h
 				calls[#calls + 1] = "layout"
 			end,
 		})

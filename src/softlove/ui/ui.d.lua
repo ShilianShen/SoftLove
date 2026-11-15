@@ -24,7 +24,7 @@
 ---@field inside? fun(self: softlove.ui.Widget, x: number, y: number): boolean
 ---@field children? table<any, softlove.ui.Widget>
 ---@field _draw? fun(self: softlove.ui.Widget, theme: softlove.ui.Theme)
----@field _layout? fun(self: softlove.ui.Widget, parent: softlove.ui.Bounds)
+---@field _layout? fun(self: softlove.ui.Widget, bounds: softlove.ui.Bounds)
 ---@field _update? fun(self: softlove.ui.Widget, params: table<string, table>)
 ---@field _hook? fun(self: softlove.ui.Widget, x: number, y: number): softlove.ui.Widget?, table?
 ---@field hooked? fun(self: softlove.ui.Widget): table

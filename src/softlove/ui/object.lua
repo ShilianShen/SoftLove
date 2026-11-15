@@ -16,11 +16,11 @@ return {
 	end,
 	children = {},
 	order = {},
-	_layout = function(self, parent)
-		self.bounds.x = parent.x
-		self.bounds.y = parent.y
-		self.bounds.w = parent.w
-		self.bounds.h = parent.h
+	_layout = function(self, bounds)
+		self.bounds.x = bounds.x
+		self.bounds.y = bounds.y
+		self.bounds.w = bounds.w
+		self.bounds.h = bounds.h
 	end,
 	_draw = util.pass,
 	_update = util.pass,
