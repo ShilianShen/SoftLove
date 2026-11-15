@@ -18,7 +18,6 @@ local function sortedKeys(values)
 end
 
 ---@param widgets table<string, softlove.ui.WidgetTypeDeclaration>
----@return string[]
 function Ui.sortWidgets(widgets)
 	local dependencies = {}
 	local function collect(declaration, parents, path)
@@ -67,7 +66,6 @@ end
 
 ---@param declaration softlove.ui.WidgetTypeDeclaration
 ---@param widgetTypes table<string, softlove.ui.WidgetType>
----@return softlove.ui.WidgetType
 function Ui.buildWidgetType(declaration, widgetTypes)
 	local patch = {}
 	for key, value in pairs(declaration) do
@@ -110,8 +108,7 @@ function Ui:unregister(name)
 end
 
 ---@param name string
----@param patch softlove.ui.Patch|nil
----@return softlove.ui.Widget
+---@param patch? softlove.ui.Patch
 function Ui:newWidget(name, patch)
 	local widgetType = assert(self.widgetTypes[name], "unknown widget type: " .. tostring(name))
 	return widgetType:newWidget(patch)

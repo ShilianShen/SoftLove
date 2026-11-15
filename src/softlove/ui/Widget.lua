@@ -12,9 +12,8 @@ local util = require("softlove.ui.util")
 ---@field order softlove.ui.Widget[]
 ---@field _layout fun(self: softlove.ui.Widget, bounds: softlove.ui.Bounds)
 ---@field _draw fun(userData: table, loveData: table, bounds: softlove.ui.Bounds, themes: softlove.ui.Theme)
----@field _update fun(userData: table, loveData: table, params: table<string, table>, children: table<any, table>)
+---@field _update fun(userData: table, loveData: table, params: table, children: table<any, table>)
 ---@field _hook fun(self: softlove.ui.Widget, x: number, y: number): softlove.ui.Widget?, table?
----@field hook fun(self: softlove.ui.Widget, x: number, y: number): softlove.ui.Widget?, table?
 ---@field inside fun(self: softlove.ui.Widget, x: number, y: number): boolean
 ---@field hooked fun(self: softlove.ui.Widget): table
 local Widget = {}
@@ -56,7 +55,7 @@ function Widget:draw(theme)
 	end
 end
 
----@param params table<string, table>
+---@param params table
 function Widget:update(params)
 	if self.active then
 		local children = {}
@@ -96,7 +95,6 @@ end
 
 ---@param root softlove.ui.Widget
 ---@param ... any
----@return table?
 function Widget.get(root, ...)
 	local args = { ... }
 	local widget = root

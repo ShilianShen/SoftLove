@@ -3,8 +3,10 @@ local Widget = require("softlove.ui.Widget")
 
 ---@class softlove.ui.Page
 ---@field entry softlove.ui.Widget
+---@field ui boolean
 local Page = {}
 
+---@param params { window: softlove.ui.Bounds }
 function Page:layout(params)
 	assert(params ~= nil)
 	self.entry:layout(params.window)
@@ -19,20 +21,23 @@ function Page:draw(theme)
 	self.entry:draw(theme)
 end
 
+---@param params table
 function Page:update(params)
 	self.entry:update(params)
 end
 
+---@param x number
+---@param y number
 function Page:hook(x, y)
 	return self.entry:hook(x, y)
 end
 
----@param self softlove.ui.Page
+---@param ... any
 function Page:get(...)
 	return Widget.get(self.entry, ...)
 end
 
----User subtasks must assign self.entry before _update runs.
+---User subtasks must assign self.entry before _sort runs.
 ---@param subtasks table<string, softdep.declaration.Task>
 ---@param apis table<string, softdep.declaration.Api>
 ---@return softdep.declaration.Node

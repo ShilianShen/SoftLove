@@ -2,6 +2,7 @@ local util = require("softlove.ui.util")
 local object = require("softlove.ui.object")
 
 ---@class softlove.ui.WidgetType: softlove.ui.Patch
+---@operator call(softlove.ui.Patch?): softlove.ui.Widget
 local WidgetType = {}
 
 local typeMT = {
@@ -11,8 +12,8 @@ local typeMT = {
 	end,
 }
 
----@param parent softlove.ui.WidgetType|nil
----@param patch softlove.ui.Patch|nil
+---@param parent? softlove.ui.WidgetType
+---@param patch? softlove.ui.Patch
 ---@return softlove.ui.WidgetType
 function WidgetType.newWidgetType(parent, patch)
 	local fields = util.patch(patch or {}, parent or {})
@@ -21,7 +22,7 @@ function WidgetType.newWidgetType(parent, patch)
 	return setmetatable(widgetType, typeMT)
 end
 
----@param patch softlove.ui.Patch|nil
+---@param patch? softlove.ui.Patch
 ---@return softlove.ui.Widget
 function WidgetType:newWidget(patch)
 	local fields = util.patch(patch or {}, self, object)
