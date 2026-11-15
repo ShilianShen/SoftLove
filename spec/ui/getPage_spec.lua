@@ -15,7 +15,7 @@ describe("getPage", function()
 	end)
 
 	it("should initialize a page and expose public descendants through get", function()
-		local root = widget({ children = { label = widget({ public = true, z = 42 }) } })
+		local root = widget({ children = { label = widget({ public = true, depth = 42 }) } })
 		local node = getPage({
 			init = { func = function(page) page.entry = root end },
 		}, {})
@@ -26,7 +26,7 @@ describe("getPage", function()
 
 		assert.equals(root, page.entry)
 		assert.is_true(page.ui)
-		assert.equals(42, page:get("label").z)
+		assert.equals(42, page:get("label").depth)
 		assert.is_nil(page:get("missing"))
 	end)
 

@@ -4,7 +4,7 @@ local Widget = require("softlove.ui.Widget")
 ---@type softlove.ui.Widget
 return {
 	bounds = { x = 0, y = 0, w = 0, h = 0 },
-	z = 0,
+	depth = 0,
 	visible = true,
 	public = false,
 	active = true,

@@ -2,7 +2,7 @@ local util = require("softlove.ui.util")
 
 ---@class softlove.ui.Widget
 ---@field bounds softlove.ui.Bounds
----@field z number Larger values are deeper.
+---@field depth number Larger values are deeper.
 ---@field visible boolean
 ---@field ["public"] boolean
 ---@field active boolean
@@ -20,7 +20,7 @@ local util = require("softlove.ui.util")
 local Widget = {}
 
 local function compare(widget1, widget2)
-	return widget1.z > widget2.z
+	return widget1.depth > widget2.depth
 end
 
 ---@param bounds softlove.ui.Bounds

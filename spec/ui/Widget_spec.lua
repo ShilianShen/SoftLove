@@ -8,15 +8,15 @@ local function widget(patch)
 end
 
 describe("Widget sorting", function()
-	it("should recursively sort all children by z and retain the actual child instances", function()
+	it("should recursively sort all children by depth and retain the actual child instances", function()
 		local root = widget({
 			active = false,
 			children = {
-				high = widget({ z = 10, visible = false }),
+				high = widget({ depth = 10, visible = false }),
 				low = widget({
-					z = -10,
+					depth = -10,
 					active = false,
-					children = { high = widget({ z = 2 }), low = widget({ z = 1 }) },
+					children = { high = widget({ depth = 2 }), low = widget({ depth = 1 }) },
 				}),
 			},
 		})
@@ -31,8 +31,8 @@ describe("Widget sorting", function()
 		assert.same({}, low.children.low.order)
 	end)
 
-	it("should keep every child with equal z without requiring a tie order", function()
-		local root = widget({ children = { first = widget({ z = 1 }), second = widget({ z = 1 }) } })
+	it("should keep every child with equal depth without requiring a tie order", function()
+		local root = widget({ children = { first = widget({ depth = 1 }), second = widget({ depth = 1 }) } })
 		root:sort()
 		assert.equals(2, #root.order)
 		local found = {}
@@ -49,12 +49,12 @@ describe("Widget sorting", function()
 	for _, method in ipairs({ "draw", "update", "hook" }) do
 		it("should use cached order until sort is called again during " .. method, function()
 			local calls = {}
-			local function child(name, z)
+			local function child(name, depth)
 				local function process(self)
 					calls[#calls + 1] = name
 					return self, {}
 				end
-				return widget({ z = z, _draw = process, _update = process, _hook = process })
+				return widget({ depth = depth, _draw = process, _update = process, _hook = process })
 			end
 			local root = widget({ children = { low = child("low", -1), high = child("high", 1) } })
 			root[method](root, 5, 5)
@@ -62,8 +62,8 @@ describe("Widget sorting", function()
 			root:sort()
 			local cached = root.order
 			local low = root.children.low
-			root.children.low.z = 10
-			root.children.high.z = -10
+			root.children.low.depth = 10
+			root.children.high.depth = -10
 			root.children.low = nil
 			root.children.middle = child("middle", 0)
 			local hit = root[method](root, 5, 5)
@@ -250,7 +250,7 @@ describe("Widget traversal", function()
 		assert.is_nil(root:hook(5, 5))
 	end)
 
-	it("should preserve z order and merge hooks from all hits without changing their source", function()
+	it("should preserve depth order and merge hooks from all hits without changing their source", function()
 		local ownHooks = { root = true, shared = "root" }
 		local root = widget({
 			bounds = {
@@ -262,7 +262,7 @@ describe("Widget traversal", function()
 			end,
 			children = {
 				high = widget({
-					z = 2,
+					depth = 2,
 					bounds = {
 						w = 100,
 						h = 100,
@@ -272,7 +272,7 @@ describe("Widget traversal", function()
 					end,
 				}),
 				low = widget({
-					z = 1,
+					depth = 1,
 					bounds = {
 						w = 100,
 						h = 100,
@@ -352,7 +352,7 @@ describe("Widget defaults", function()
 			_update = process,
 			children = {
 				child = widget({ userData = { text = "child" }, _update = process }),
-				[2] = widget({ z = 1, userData = { text = "numeric" }, _update = process }),
+				[2] = widget({ depth = 1, userData = { text = "numeric" }, _update = process }),
 			},
 		})
 		local params = { locales = { suffix = "!" } }
@@ -437,11 +437,11 @@ describe("Widget defaults", function()
 	end)
 
 	for _, method in ipairs({ "draw", "update" }) do
-		it("should process deeper siblings first in decreasing z order during " .. method, function()
+		it("should process deeper siblings first in decreasing depth order during " .. method, function()
 			local calls = {}
-			local function child(name, z)
+			local function child(name, depth)
 				return widget({
-					z = z,
+					depth = depth,
 					["_" .. method] = function()
 						calls[#calls + 1] = name
 					end,
@@ -550,17 +550,17 @@ describe("Widget public access", function()
 	it("should allow a public descendant beneath a private ancestor", function()
 		local root = widget({
 			children = { panel = widget({ children = {
-				label = widget({ public = true, z = 42 }),
+				label = widget({ public = true, depth = 42 }),
 			} }) },
 		})
 		assert.is_nil(Widget.get(root, "panel"))
-		assert.equals(42, Widget.get(root, "panel", "label").z)
+		assert.equals(42, Widget.get(root, "panel", "label").depth)
 	end)
 
 	it("should expose live scalar values while hiding tables and functions", function()
-		local root = widget({ public = true, z = 42, visible = false, title = "Label" })
+		local root = widget({ public = true, depth = 42, visible = false, title = "Label" })
 		local view = Widget.get(root)
-		assert.equals(42, view.z)
+		assert.equals(42, view.depth)
 		assert.is_false(view.visible)
 		assert.equals("Label", view.title)
 		assert.is_nil(view.bounds)
@@ -569,20 +569,20 @@ describe("Widget public access", function()
 		assert.is_nil(view.children)
 		assert.is_nil(view.draw)
 		assert.is_nil(view.hook)
-		root.z = 84
-		assert.equals(84, view.z)
+		root.depth = 84
+		assert.equals(84, view.depth)
 	end)
 
 	it("should reject replacing and adding fields through the public view", function()
-		local root = widget({ public = true, z = 42 })
+		local root = widget({ public = true, depth = 42 })
 		local view = Widget.get(root)
 		assert.has_error(function()
-			view.z = 100
-		end, "attempt to modify a constant table (key = z)")
+			view.depth = 100
+		end, "attempt to modify a constant table (key = depth)")
 		assert.has_error(function()
 			view.extra = true
 		end, "attempt to modify a constant table (key = extra)")
-		assert.equals(42, root.z)
+		assert.equals(42, root.depth)
 		assert.is_nil(root.extra)
 	end)
 end)

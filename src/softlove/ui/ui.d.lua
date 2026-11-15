@@ -14,7 +14,7 @@
 
 ---@class softlove.ui.Patch
 ---@field bounds? softlove.ui.BoundsPatch
----@field z? number
+---@field depth? number
 ---@field visible? boolean
 ---@field ["public"]? boolean
 ---@field active? boolean

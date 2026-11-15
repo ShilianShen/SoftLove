@@ -25,8 +25,8 @@ describe("WidgetType", function()
 
 		assert.equals(100, widget.bounds.w)
 		assert.same({ x = 0, y = 0, w = 100, h = 0 }, widget.bounds)
-		assert.equals(0, widget.z)
-		assert.is_nil(widget.bounds.z)
+		assert.equals(0, widget.depth)
+		assert.is_nil(widget.bounds.depth)
 		for _, key in ipairs({ "x", "y", "w", "h" }) do
 			assert.is_nil(widget[key])
 		end
