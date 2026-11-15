@@ -20,6 +20,10 @@ local util = require("softlove.ui.util")
 ---@field hooked fun(self: softlove.ui.Widget): table
 local Widget = {}
 
+local function compare(widget1, widget2)
+	return widget1.z < widget2.z
+end
+
 ---@param bounds softlove.ui.Bounds
 function Widget:layout(bounds)
 	if self.active then
@@ -30,24 +34,15 @@ function Widget:layout(bounds)
 	end
 end
 
-local function compare(widget1, widget2)
-	return widget1.z < widget2.z
-end
-
-local function sort(children)
-	local order = {}
-	for _, child in pairs(children) do
-		order[#order + 1] = child
-	end
-	table.sort(order, compare)
-	return order
-end
-
 function Widget:sort()
-	self.order = sort(self.children)
-    for _, child in ipairs(self.order) do
-        child:sort()
-    end
+	self.order = {}
+	for _, child in pairs(self.children) do
+		self.order[#self.order + 1] = child
+	end
+	table.sort(self.order, compare)
+	for _, child in ipairs(self.order) do
+		child:sort()
+	end
 end
 
 ---@param theme softlove.ui.Theme
@@ -56,7 +51,7 @@ function Widget:draw(theme)
 		if self.visible then
 			self:_draw(theme)
 		end
-		for _, child in ipairs(sort(self.children)) do
+		for _, child in ipairs(self.order) do
 			child:draw(theme)
 		end
 	end
@@ -66,7 +61,7 @@ end
 function Widget:update(params)
 	if self.active then
 		self:_update(params)
-		for _, child in ipairs(sort(self.children)) do
+		for _, child in ipairs(self.order) do
 			child:update(params)
 		end
 	end
@@ -83,7 +78,7 @@ function Widget:hook(x, y)
 		for k, v in pairs(ownHooks or {}) do
 			hooked[k] = v
 		end
-		for _, child in ipairs(sort(self.children)) do
+		for _, child in ipairs(self.order) do
 			local childResult, childHooks = child:hook(x, y)
 			result = childResult or result
 			for k, v in pairs(childHooks or {}) do
