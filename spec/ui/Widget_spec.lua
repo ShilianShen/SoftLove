@@ -96,6 +96,11 @@ describe("Widget traversal", function()
 					assert.equals(context, themes)
 					return
 				end
+				if method == "update" then
+					calls[#calls + 1] = self.name
+					assert.equals(context, y)
+					return
+				end
 				calls[#calls + 1] = self.userData.name
 				if method == "layout" then
 					assert.equals(self.userData.name == "root" and context or self.userData.parent.bounds, arg)
@@ -103,8 +108,6 @@ describe("Widget traversal", function()
 					assert.equals(5, arg)
 					assert.equals(6, y)
 					return self, { [self.userData.name] = true }
-				else
-					assert.equals(context, arg)
 				end
 			end
 			local root = widget({
@@ -137,8 +140,8 @@ describe("Widget traversal", function()
 	end
 
 	it("should update a subtree root exactly once without updating its parent", function()
-		local function count(self)
-			self.loveData.count = (self.loveData.count or 0) + 1
+		local function count(userData, loveData, params)
+			loveData.count = (loveData.count or 0) + 1
 		end
 		local root = widget({
 			_update = count,
@@ -156,16 +159,14 @@ describe("Widget traversal", function()
 		local calls = {}
 		local root = widget({
 			active = false,
-			_update = function(self)
+			_update = function()
 				calls[#calls + 1] = "root"
-				self.active = true
 			end,
 			children = {
 				child = widget({
 					active = true,
-					_update = function(self)
+					_update = function()
 						calls[#calls + 1] = "child"
-						self.active = true
 					end,
 					children = {
 						leaf = widget({
@@ -334,6 +335,31 @@ describe("Widget traversal", function()
 end)
 
 describe("Widget defaults", function()
+	it("should pass each widget's userData, loveData and the shared params to update", function()
+		local calls = {}
+		local function process(...)
+			assert.equals(3, select("#", ...))
+			local userData, loveData, params = ...
+			calls[#calls + 1] = { ... }
+			loveData.text = userData.text .. params.locales.suffix
+		end
+		local root = widget({
+			userData = { text = "root" },
+			_update = process,
+			children = { child = widget({ userData = { text = "child" }, _update = process }) },
+		})
+		local params = { locales = { suffix = "!" } }
+		root:sort()
+		root:update(params)
+		assert.equals(2, #calls)
+		for i, item in ipairs({ root, root.children.child }) do
+			assert.equals(item.userData, calls[i][1])
+			assert.equals(item.loveData, calls[i][2])
+			assert.equals(params, calls[i][3])
+			assert.equals(item.userData.text .. "!", item.loveData.text)
+		end
+	end)
+
 	it("should pass exactly each widget's userData, loveData, bounds and the shared themes to draw", function()
 		local calls = {}
 		local function capture(...)

@@ -37,14 +37,15 @@ describe("getPage", function()
 			sort = function(self)
 				assert.equals("content", calls[#calls])
 				Widget.sort(self)
+				assert.equals(self.children.label, self.order[1])
 				calls[#calls + 1] = "sort"
 			end,
-			_update = function(self, params)
+			_update = function(userData, loveData, params)
 				assert.equals("sort", calls[#calls])
-				assert.equals(self.children.label, self.order[1])
-				assert.equals("Ready", self.userData.text)
+				assert.equals("Ready", userData.text)
 				assert.equals("font source", params.fonts)
 				assert.equals("locale source", params.locales)
+				loveData.text = userData.text .. "!"
 				calls[#calls + 1] = "update"
 			end,
 			_layout = function(self, bounds)
@@ -83,6 +84,7 @@ describe("getPage", function()
 		node.tasks._update.func(page, { fonts = "font source", locales = "locale source" })
 		node.tasks._layout.func(page, { window = { x = 10, y = 20, w = 300, h = 200 } })
 		assert.same({ "content", "sort", "update", "layout" }, calls)
+		assert.equals("Ready!", root.loveData.text)
 		assert.same({ 10, 20, 300, 200 }, { root.bounds.x, root.bounds.y, root.bounds.w, root.bounds.h })
 	end)
 
