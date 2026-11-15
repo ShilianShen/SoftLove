@@ -7,6 +7,83 @@ local function widget(patch)
 	return WidgetType.newWidgetType(nil, patch)()
 end
 
+describe("Widget sorting", function()
+	it("should recursively sort all children by z and retain the actual child instances", function()
+		local root = widget({
+			active = false,
+			children = {
+				high = widget({ z = 10, visible = false }),
+				low = widget({
+					z = -10,
+					active = false,
+					children = { high = widget({ z = 2 }), low = widget({ z = 1 }) },
+				}),
+			},
+		})
+		root:sort()
+		assert.equals(2, #root.order)
+		assert.equals(root.children.low, root.order[1])
+		assert.equals(root.children.high, root.order[2])
+		local low = root.children.low
+		assert.equals(low.children.low, low.order[1])
+		assert.equals(low.children.high, low.order[2])
+		assert.same({}, root.children.high.order)
+		assert.same({}, low.children.low.order)
+	end)
+
+	it("should keep every child with equal z without requiring a tie order", function()
+		local root = widget({ children = { first = widget({ z = 1 }), second = widget({ z = 1 }) } })
+		root:sort()
+		assert.equals(2, #root.order)
+		local found = {}
+		for _, child in ipairs(root.order) do
+			found[child] = true
+		end
+		assert.is_true(found[root.children.first])
+		assert.is_true(found[root.children.second])
+		root.children = {}
+		root:sort()
+		assert.same({}, root.order)
+	end)
+
+	for _, method in ipairs({ "draw", "update", "hook" }) do
+		it("should use cached order until sort is called again during " .. method, function()
+			local calls = {}
+			local function child(name, z)
+				local function process(self)
+					calls[#calls + 1] = name
+					return self, {}
+				end
+				return widget({ z = z, _draw = process, _update = process, _hook = process })
+			end
+			local root = widget({ children = { low = child("low", -1), high = child("high", 1) } })
+			root[method](root, 5, 5)
+			assert.same({}, calls)
+			root:sort()
+			local cached = root.order
+			root.children.low.z = 10
+			root.children.high.z = -10
+			root.children.low = nil
+			root.children.middle = child("middle", 0)
+			local hit = root[method](root, 5, 5)
+			assert.same({ "low", "high" }, calls)
+			assert.equals(cached, root.order)
+			if method == "hook" then
+				assert.equals(root.children.high, hit)
+			end
+			calls = {}
+			root:sort()
+			hit = root[method](root, 5, 5)
+			assert.same({ "high", "middle" }, calls)
+			assert.equals(root.children.high, root.order[1])
+			assert.equals(root.children.middle, root.order[2])
+			if method == "hook" then
+				assert.equals(root.children.middle, hit)
+			end
+		end)
+	end
+end)
+
 describe("Widget traversal", function()
 	for _, method in ipairs({ "layout", "draw", "update", "hook" }) do
 		it("should process itself and recurse through child " .. method .. " methods", function()
@@ -42,6 +119,7 @@ describe("Widget traversal", function()
 			})
 			root.children.child.userData.parent = root
 			root.children.child.children.leaf.userData.parent = root.children.child
+			root:sort()
 			if method == "hook" then
 				local hit, hooks = root:hook(5, 6)
 				assert.equals(root.children.child.children.leaf, hit)
@@ -61,6 +139,7 @@ describe("Widget traversal", function()
 			_update = count,
 			children = { child = widget({ _update = count, children = { leaf = widget({ _update = count }) } }) },
 		})
+		root:sort()
 		root:update({})
 		root.children.child:update({})
 		assert.equals(1, root.loveData.count)
@@ -68,24 +147,45 @@ describe("Widget traversal", function()
 		assert.equals(2, root.children.child.children.leaf.loveData.count)
 	end)
 
-	it("should preserve updates for inactive widgets so they can reactivate", function()
+	it("should skip updates for inactive subtrees until externally reactivated", function()
+		local calls = {}
 		local root = widget({
 			active = false,
 			_update = function(self)
+				calls[#calls + 1] = "root"
 				self.active = true
 			end,
 			children = {
 				child = widget({
-					active = false,
+					active = true,
 					_update = function(self)
+						calls[#calls + 1] = "child"
 						self.active = true
 					end,
+					children = {
+						leaf = widget({
+							_update = function()
+								calls[#calls + 1] = "leaf"
+							end,
+						}),
+					},
 				}),
 			},
 		})
+		root:sort()
 		root:update({})
-		assert.is_true(root.active)
+		assert.is_false(root.active)
+		assert.same({}, calls)
 		assert.is_true(root.children.child.active)
+		root.children.child.active = false
+		root.active = true
+		root:update({})
+		assert.is_false(root.children.child.active)
+		assert.same({ "root" }, calls)
+		root.children.child.active = true
+		root:update({})
+		assert.is_true(root.children.child.active)
+		assert.same({ "root", "root", "child", "leaf" }, calls)
 	end)
 
 	it("should skip inactive subtrees during layout, drawing and hook", function()
@@ -103,6 +203,7 @@ describe("Widget traversal", function()
 				}),
 			},
 		})
+		root:sort()
 		root:layout({ x = 0, y = 0, w = 100, h = 100 })
 		root:draw({})
 		assert.equals(root, root:hook(5, 5))
@@ -135,6 +236,7 @@ describe("Widget traversal", function()
 				}),
 			},
 		})
+		root:sort()
 		root:draw({})
 		assert.same({ "child" }, drawn)
 		assert.equals(root.children.child, root:hook(25, 25))
@@ -185,6 +287,7 @@ describe("Widget traversal", function()
 				}),
 			},
 		})
+		root:sort()
 		local hit, hooks = root:hook(5, 5)
 		assert.equals(root.children.high, hit)
 		assert.same({ root = true, low = true, leaf = true, high = true, shared = "high" }, hooks)
@@ -203,6 +306,7 @@ describe("Widget traversal", function()
 				}),
 			},
 		})
+		root:sort()
 		local hit, hooks = root:hook(25, 30)
 		assert.equals(root.children.child, hit)
 		assert.same({ custom = true }, hooks)
@@ -251,6 +355,7 @@ describe("Widget defaults", function()
 					c = child("middle", 0),
 				},
 			})
+			root:sort()
 			root[method](root, {})
 			assert.same({ "low", "middle", "high" }, calls)
 		end)
@@ -326,6 +431,7 @@ describe("Widget defaults", function()
 				}),
 			},
 		})
+		root:sort()
 		local _, first = root:hook(10, 10)
 		first.extra = true
 		local hit, second = root:hook(50, 50)

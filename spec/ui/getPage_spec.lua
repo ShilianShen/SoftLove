@@ -2,6 +2,7 @@ package.path = "src/?.lua;" .. "src/?/init.lua;" .. package.path
 local assert = require("luassert")
 local getPage = require("softlove.ui").getPage
 local WidgetType = require("softlove.ui.WidgetType")
+local Widget = require("softlove.ui.Widget")
 
 local function widget(patch)
 	return WidgetType.newWidgetType(nil, patch)()
@@ -29,10 +30,18 @@ describe("getPage", function()
 		assert.is_nil(page:get("missing"))
 	end)
 
-	it("should run content before update and layout using their declared dependencies", function()
+	it("should run content, sort, update and layout using their declared dependencies", function()
 		local calls = {}
 		local root = widget({
+			children = { label = widget() },
+			sort = function(self)
+				assert.equals("content", calls[#calls])
+				Widget.sort(self)
+				calls[#calls + 1] = "sort"
+			end,
 			_update = function(self, params)
+				assert.equals("sort", calls[#calls])
+				assert.equals(self.children.label, self.order[1])
 				assert.equals("Ready", self.userData.text)
 				assert.equals("font source", params.fonts)
 				assert.equals("locale source", params.locales)
@@ -56,11 +65,12 @@ describe("getPage", function()
 			},
 		}, {})
 		assert.same({ "init", "_init" }, node.tasks.content.parents_c)
-		local updateParents = {}
-		for _, parent in ipairs(node.tasks._update.parents_c) do
-			updateParents[parent] = true
+		local sortParents = {}
+		for _, parent in ipairs(node.tasks._sort.parents_c) do
+			sortParents[parent] = true
 		end
-		assert.same({ _init = true, init = true, content = true }, updateParents)
+		assert.same({ _init = true, init = true, content = true }, sortParents)
+		assert.same({ "_sort" }, node.tasks._update.parents_c)
 		assert.same({ fonts = "fonts", locales = "locales" }, node.tasks._update.parents_d)
 		assert.same({ "_update" }, node.tasks._layout.parents_c)
 		assert.same({ window = "window" }, node.tasks._layout.parents_d)
@@ -69,9 +79,10 @@ describe("getPage", function()
 		node.tasks._init.func(page)
 		node.tasks.init.func(page)
 		node.tasks.content.func(page)
+		node.tasks._sort.func(page)
 		node.tasks._update.func(page, { fonts = "font source", locales = "locale source" })
 		node.tasks._layout.func(page, { window = { x = 10, y = 20, w = 300, h = 200 } })
-		assert.same({ "content", "update", "layout" }, calls)
+		assert.same({ "content", "sort", "update", "layout" }, calls)
 		assert.same({ 10, 20, 300, 200 }, { root.bounds.x, root.bounds.y, root.bounds.w, root.bounds.h })
 	end)
 
