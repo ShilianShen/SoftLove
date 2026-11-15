@@ -23,6 +23,8 @@ Widget 使用两个独立的表保存数据，默认均为空表：
 
 组件根据 `userData` 生成 `loveData`，绘制时使用相应数据。生成显示结果时应将结果写入 `loveData`，保留 `userData` 中的原始输入。原来的 `state` 字段已移除，调用方需要按用途迁移到这两个字段。
 
+`_draw` 的签名为 `function(userData, loveData, bounds, themes)`，由 `Widget:draw` 按这个顺序传入当前 widget 的数据、边界及主题，不再传入 widget 本身。
+
 ## 渲染反馈与动作执行
 
 - **渲染反馈**：根据控制器状态改变颜色、边框、提示或显示区域，属于 UI 的职责。

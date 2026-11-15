@@ -12,7 +12,7 @@ local util = require("softlove.ui.util")
 ---@field children table<any, softlove.ui.Widget>
 ---@field order softlove.ui.Widget[]
 ---@field _layout fun(self: softlove.ui.Widget, bounds: softlove.ui.Bounds)
----@field _draw fun(self: softlove.ui.Widget, theme: softlove.ui.Theme)
+---@field _draw fun(userData: table<string, any>, loveData: table<string, any>, bounds: softlove.ui.Bounds, themes: softlove.ui.Theme)
 ---@field _update fun(self: softlove.ui.Widget, params: table<string, table>)
 ---@field _hook fun(self: softlove.ui.Widget, x: number, y: number): softlove.ui.Widget?, table?
 ---@field hook fun(self: softlove.ui.Widget, x: number, y: number): softlove.ui.Widget?, table?
@@ -49,7 +49,7 @@ end
 function Widget:draw(theme)
 	if self.active then
 		if self.visible then
-			self:_draw(theme)
+			self._draw(self.userData, self.loveData, self.bounds, theme)
 		end
 		for _, child in ipairs(self.order) do
 			child:draw(theme)

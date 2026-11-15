@@ -90,7 +90,12 @@ describe("Widget traversal", function()
 			local calls = {}
 			local context = { x = 0, y = 0, w = 100, h = 100 }
 			local hook = "_" .. method
-			local function process(self, arg, y)
+			local function process(self, arg, y, themes)
+				if method == "draw" then
+					calls[#calls + 1] = self.name
+					assert.equals(context, themes)
+					return
+				end
 				calls[#calls + 1] = self.userData.name
 				if method == "layout" then
 					assert.equals(self.userData.name == "root" and context or self.userData.parent.bounds, arg)
@@ -329,6 +334,32 @@ describe("Widget traversal", function()
 end)
 
 describe("Widget defaults", function()
+	it("should pass exactly each widget's userData, loveData, bounds and the shared themes to draw", function()
+		local calls = {}
+		local function capture(...)
+			assert.equals(4, select("#", ...))
+			calls[#calls + 1] = { ... }
+		end
+		local root = widget({
+			userData = { text = "root" },
+			loveData = { text = "ROOT" },
+			_draw = capture,
+			children = {
+				child = widget({ userData = { text = "child" }, loveData = { text = "CHILD" }, _draw = capture }),
+			},
+		})
+		local themes = { text = { 1, 1, 1, 1 } }
+		root:sort()
+		root:draw(themes)
+		assert.equals(2, #calls)
+		for i, item in ipairs({ root, root.children.child }) do
+			assert.equals(item.userData, calls[i][1])
+			assert.equals(item.loveData, calls[i][2])
+			assert.equals(item.bounds, calls[i][3])
+			assert.equals(themes, calls[i][4])
+		end
+	end)
+
 	it("should inherit parent bounds through multiple levels", function()
 		local root = widget({ children = { panel = widget({ children = { label = widget() } }) } })
 		root:layout({ x = 12, y = 34, w = 300, h = 200 })

@@ -106,8 +106,11 @@ describe("getPage", function()
 			init = {
 				func = function(page)
 					page.entry = widget({
-						_draw = function(_, actual)
-							assert.equals(theme, actual)
+						_draw = function(userData, loveData, bounds, themes)
+							assert.equals(page.entry.userData, userData)
+							assert.equals(page.entry.loveData, loveData)
+							assert.equals(page.entry.bounds, bounds)
+							assert.equals(theme, themes)
 							draws = draws + 1
 						end,
 					})
