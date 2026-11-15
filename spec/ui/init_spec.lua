@@ -21,17 +21,17 @@ describe("ui declaration registry", function()
 
 	it("should resolve inheritance chains independently of name order", function()
 		local data = initialize({
-			a = { type = "middle", w = 20, visible = false },
-			middle = { type = "z", h = 30 },
-			z = { w = 100, h = 200, visible = true },
+			a = { type = "middle", border = { w = 20 }, visible = false },
+			middle = { type = "z", border = { h = 30 } },
+			z = { border = { w = 100, h = 200 }, visible = true },
 		})
 		local widget = data:newWidget("a")
-		assert.equals(20, widget.w)
-		assert.equals(30, widget.h)
+		assert.equals(20, widget.border.w)
+		assert.equals(30, widget.border.h)
 		assert.is_false(widget.visible)
 		assert.is_nil(widget.type)
 		assert.is_nil(data.widgetTypes.a.type)
-		assert.equals(100, data.widgetTypes.z.w)
+		assert.equals(100, data.widgetTypes.z.border.w)
 	end)
 
 	it("should build referenced child types and nested declarations before their owners", function()
@@ -39,18 +39,18 @@ describe("ui declaration registry", function()
 			aPage = {
 				children = {
 					group = {
-						children = { { type = "zLabel", w = 50 } },
+						children = { { type = "zLabel", border = { w = 50 } } },
 					},
 				},
 			},
 			zLabel = { type = "base", userData = { text = "Hello" } },
-			base = { w = 100, h = 20 },
+			base = { border = { w = 100, h = 20 } },
 		})
 		local group = data:newWidget("aPage").children.group
 		assert.is_true(group.active)
 		local label = group.children[1]
-		assert.equals(50, label.w)
-		assert.equals(20, label.h)
+		assert.equals(50, label.border.w)
+		assert.equals(20, label.border.h)
 		assert.equals("Hello", label.userData.text)
 		assert.is_function(label.layout)
 		assert.is_nil(label.type)
@@ -58,26 +58,26 @@ describe("ui declaration registry", function()
 
 	it("should allow multiple declarations and children to share dependencies", function()
 		local data = initialize({
-			base = { h = 10 },
+			base = { border = { h = 10 } },
 			left = { type = "base" },
 			right = { type = "base" },
 			page = { children = { { type = "left" }, { type = "right" }, { type = "left" } } },
 		})
 		local children = data:newWidget("page").children
 		for _, child in ipairs(children) do
-			assert.equals(10, child.h)
+			assert.equals(10, child.border.h)
 		end
 	end)
 
 	it("should preserve whole-field overrides and inherit omitted children", function()
 		local data = initialize({
-			base = { userData = { a = 1, b = 2 }, children = { label = { w = 40 } } },
+			base = { userData = { a = 1, b = 2 }, children = { label = { border = { w = 40 } } } },
 			derived = { type = "base", userData = { a = 3 } },
 			empty = { type = "base", children = {} },
 		})
 		local widget = data:newWidget("derived")
 		assert.same({ a = 3 }, widget.userData)
-		assert.equals(40, widget.children.label.w)
+		assert.equals(40, widget.children.label.border.w)
 		assert.same({}, data:newWidget("empty").children)
 	end)
 
@@ -124,20 +124,20 @@ describe("ui declaration registry", function()
 	end)
 
 	it("should preserve an existing registry if rebuilding fails", function()
-		local data = initialize({ base = { w = 42 } })
+		local data = initialize({ base = { border = { w = 42 } } })
 		local registry = data.widgetTypes
 		local ok = pcall(ui.getNode({ a = { type = "a" } }).tasks.init.func, data)
 		assert.is_false(ok)
 		assert.equals(registry, data.widgetTypes)
-		assert.equals(42, data:newWidget("base").w)
+		assert.equals(42, data:newWidget("base").border.w)
 	end)
 
 	it("should continue supporting explicit registration and removal of built types", function()
-		local node = ui.getNode({ base = { w = 42 } })
+		local node = ui.getNode({ base = { border = { w = 42 } } })
 		local data = {}
 		node.tasks.init.func(data)
 		node.apis.register.func(data, "alias", data.widgetTypes.base)
-		assert.equals(42, data:newWidget("alias").w)
+		assert.equals(42, data:newWidget("alias").border.w)
 		node.apis.unregister.func(data, "alias")
 		assert.has_error(function()
 			data:newWidget("alias")

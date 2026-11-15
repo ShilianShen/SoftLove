@@ -16,7 +16,7 @@ describe("Widget traversal", function()
 			local function process(self, arg, y)
 				calls[#calls + 1] = self.userData.name
 				if method == "layout" then
-					assert.equals(self.userData.name == "root" and context or self.userData.parent, arg)
+					assert.equals(self.userData.name == "root" and context or self.userData.parent.border, arg)
 				elseif method == "hook" then
 					assert.equals(5, arg)
 					assert.equals(6, y)
@@ -111,20 +111,24 @@ describe("Widget traversal", function()
 	it("should draw and hit children outside an invisible parent", function()
 		local drawn = {}
 		local root = widget({
-			x = 0,
-			y = 0,
-			w = 10,
-			h = 10,
+			border = {
+				x = 0,
+				y = 0,
+				w = 10,
+				h = 10,
+			},
 			visible = false,
 			_draw = function()
 				drawn[#drawn + 1] = "root"
 			end,
 			children = {
 				child = widget({
-					x = 20,
-					y = 20,
-					w = 10,
-					h = 10,
+					border = {
+						x = 20,
+						y = 20,
+						w = 10,
+						h = 10,
+					},
 					_draw = function()
 						drawn[#drawn + 1] = "child"
 					end,
@@ -140,31 +144,39 @@ describe("Widget traversal", function()
 	it("should preserve z order and merge hooks from all hits without changing their source", function()
 		local ownHooks = { root = true, shared = "root" }
 		local root = widget({
-			w = 100,
-			h = 100,
+			border = {
+				w = 100,
+				h = 100,
+			},
 			hooked = function()
 				return ownHooks
 			end,
 			children = {
 				high = widget({
 					z = 2,
-					w = 100,
-					h = 100,
+					border = {
+						w = 100,
+						h = 100,
+					},
 					hooked = function()
 						return { high = true, shared = "high" }
 					end,
 				}),
 				low = widget({
 					z = 1,
-					w = 100,
-					h = 100,
+					border = {
+						w = 100,
+						h = 100,
+					},
 					hooked = function()
 						return { low = true, shared = "low" }
 					end,
 					children = {
 						leaf = widget({
-							w = 100,
-							h = 100,
+							border = {
+								w = 100,
+								h = 100,
+							},
 							hooked = function()
 								return { leaf = true, shared = "leaf" }
 							end,
@@ -198,8 +210,10 @@ describe("Widget traversal", function()
 
 	it("should respect inside and return no hooks when nothing is hit", function()
 		local root = widget({
-			w = 100,
-			h = 100,
+			border = {
+				w = 100,
+				h = 100,
+			},
 			inside = function()
 				return false
 			end,
@@ -215,7 +229,7 @@ describe("Widget defaults", function()
 		local root = widget({ children = { panel = widget({ children = { label = widget() } }) } })
 		root:layout({ x = 12, y = 34, w = 300, h = 200 })
 		for _, item in ipairs({ root, root.children.panel, root.children.panel.children.label }) do
-			assert.same({ 12, 34, 300, 200 }, { item.x, item.y, item.w, item.h })
+			assert.same({ 12, 34, 300, 200 }, { item.border.x, item.border.y, item.border.w, item.border.h })
 		end
 	end)
 
@@ -252,10 +266,12 @@ describe("Widget defaults", function()
 	}) do
 		it("should not hook or request information at the " .. point.name, function()
 			local root = widget({
-				x = 10,
-				y = 20,
-				w = 100,
-				h = 50,
+				border = {
+					x = 10,
+					y = 20,
+					w = 100,
+					h = 50,
+				},
 				hooked = function()
 					error("information requested for a miss")
 				end,
@@ -271,8 +287,10 @@ describe("Widget defaults", function()
 			error("UI executed an action")
 		end
 		local root = widget({
-			w = 100,
-			h = 100,
+			border = {
+				w = 100,
+				h = 100,
+			},
 			hooked = function()
 				return { id = 7, action = action }
 			end,
@@ -284,7 +302,7 @@ describe("Widget defaults", function()
 	end)
 
 	it("should return an empty information table for a default hit", function()
-		local root = widget({ w = 100, h = 100 })
+		local root = widget({ border = { w = 100, h = 100 } })
 		local hit, info = root:hook(50, 50)
 		assert.equals(root, hit)
 		assert.same({}, info)
@@ -292,12 +310,16 @@ describe("Widget defaults", function()
 
 	it("should not reuse merged information between hook calls", function()
 		local root = widget({
-			w = 100,
-			h = 100,
+			border = {
+				w = 100,
+				h = 100,
+			},
 			children = {
 				child = widget({
-					w = 20,
-					h = 20,
+					border = {
+						w = 20,
+						h = 20,
+					},
 					hooked = function()
 						return { child = true }
 					end,
@@ -323,38 +345,39 @@ describe("Widget public access", function()
 	it("should allow a public descendant beneath a private ancestor", function()
 		local root = widget({
 			children = { panel = widget({ children = {
-				label = widget({ public = true, w = 42 }),
+				label = widget({ public = true, z = 42 }),
 			} }) },
 		})
 		assert.is_nil(Widget.get(root, "panel"))
-		assert.equals(42, Widget.get(root, "panel", "label").w)
+		assert.equals(42, Widget.get(root, "panel", "label").z)
 	end)
 
 	it("should expose live scalar values while hiding tables and functions", function()
-		local root = widget({ public = true, w = 42, visible = false, title = "Label" })
+		local root = widget({ public = true, z = 42, visible = false, title = "Label" })
 		local view = Widget.get(root)
-		assert.equals(42, view.w)
+		assert.equals(42, view.z)
 		assert.is_false(view.visible)
 		assert.equals("Label", view.title)
+		assert.is_nil(view.border)
 		assert.is_nil(view.userData)
 		assert.is_nil(view.loveData)
 		assert.is_nil(view.children)
 		assert.is_nil(view.draw)
 		assert.is_nil(view.hook)
-		root.w = 84
-		assert.equals(84, view.w)
+		root.z = 84
+		assert.equals(84, view.z)
 	end)
 
 	it("should reject replacing and adding fields through the public view", function()
-		local root = widget({ public = true, w = 42 })
+		local root = widget({ public = true, z = 42 })
 		local view = Widget.get(root)
 		assert.has_error(function()
-			view.w = 100
-		end, "attempt to modify a constant table (key = w)")
+			view.z = 100
+		end, "attempt to modify a constant table (key = z)")
 		assert.has_error(function()
 			view.extra = true
 		end, "attempt to modify a constant table (key = extra)")
-		assert.equals(42, root.w)
+		assert.equals(42, root.z)
 		assert.is_nil(root.extra)
 	end)
 end)
