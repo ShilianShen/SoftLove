@@ -10,9 +10,8 @@
 ---@field _layout fun(self: softlove.ui.Widget, bounds: softlove.ui.Bounds)
 ---@field _draw fun(userData: table, loveData: table, bounds: softlove.ui.Bounds, themes: softlove.ui.Theme)
 ---@field _update fun(userData: table, loveData: table, params: table, children: table<any, table>)
----@field _hook fun(self: softlove.ui.Widget, x: number, y: number): softlove.ui.Widget?, table?
+---@field _hook fun(self: softlove.ui.Widget, x: number, y: number): table
 ---@field inside fun(self: softlove.ui.Widget, x: number, y: number): boolean
----@field hooked fun(self: softlove.ui.Widget): table
 local Widget = {}
 
 local function compare(widget1, widget2)
@@ -69,23 +68,33 @@ end
 ---@param x number
 ---@param y number
 ---@return softlove.ui.Widget? widget
----@return table? hooked
+---@return table? information
 function Widget:hook(x, y)
 	if self.active then
-		local result, ownHooks = self:_hook(x, y)
-		local hooked = {}
-		for k, v in pairs(ownHooks or {}) do
-			hooked[k] = v
+		local result
+		local information = {}
+		if
+			self.visible
+			and self.bounds.x < x
+			and x < self.bounds.x + self.bounds.w
+			and self.bounds.y < y
+			and y < self.bounds.y + self.bounds.h
+			and self:inside(x, y)
+		then
+			result = self
+			for k, v in pairs(self:_hook(x, y) or {}) do
+				information[k] = v
+			end
 		end
 		for _, child in ipairs(self.order) do
 			local childResult, childHooks = child:hook(x, y)
 			result = childResult or result
 			for k, v in pairs(childHooks or {}) do
-				hooked[k] = v
+				information[k] = v
 			end
 		end
 		if result then
-			return result, hooked
+			return result, information
 		end
 	end
 end

@@ -132,7 +132,10 @@ describe("getPage", function()
 				w = 100,
 				h = 100,
 			},
-			hooked = function()
+			_hook = function(self, x, y)
+				assert.equals(5, x)
+				assert.equals(6, y)
+				assert.equals(100, self.bounds.w)
 				return { id = "root" }
 			end,
 		})

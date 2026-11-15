@@ -52,9 +52,9 @@ describe("Widget sorting", function()
 			local function child(name, depth)
 				local function process(self)
 					calls[#calls + 1] = name
-					return self, {}
+					return {}
 				end
-				return widget({ depth = depth, _draw = process, _update = process, _hook = process })
+				return widget({ bounds = { w = 100, h = 100 }, depth = depth, _draw = process, _update = process, _hook = process })
 			end
 			local root = widget({ children = { low = child("low", -1), high = child("high", 1) } })
 			root[method](root, 5, 5)
@@ -108,7 +108,7 @@ describe("Widget traversal", function()
 				elseif method == "hook" then
 					assert.equals(5, arg)
 					assert.equals(6, y)
-					return self, { [self.userData.name] = true }
+					return { [self.userData.name] = true }
 				end
 			end
 			local root = widget({
@@ -128,6 +128,9 @@ describe("Widget traversal", function()
 			})
 			root.children.child.userData.parent = root
 			root.children.child.children.leaf.userData.parent = root.children.child
+			if method == "hook" then
+				root:layout(context)
+			end
 			root:sort()
 			if method == "hook" then
 				local hit, hooks = root:hook(5, 6)
@@ -226,6 +229,9 @@ describe("Widget traversal", function()
 				h = 10,
 			},
 			visible = false,
+			_hook = function()
+				error("information requested for an invisible widget")
+			end,
 			_draw = function()
 				drawn[#drawn + 1] = "root"
 			end,
@@ -257,7 +263,7 @@ describe("Widget traversal", function()
 				w = 100,
 				h = 100,
 			},
-			hooked = function()
+			_hook = function()
 				return ownHooks
 			end,
 			children = {
@@ -267,7 +273,7 @@ describe("Widget traversal", function()
 						w = 100,
 						h = 100,
 					},
-					hooked = function()
+					_hook = function()
 						return { high = true, shared = "high" }
 					end,
 				}),
@@ -277,7 +283,7 @@ describe("Widget traversal", function()
 						w = 100,
 						h = 100,
 					},
-					hooked = function()
+					_hook = function()
 						return { low = true, shared = "low" }
 					end,
 					children = {
@@ -286,7 +292,7 @@ describe("Widget traversal", function()
 								w = 100,
 								h = 100,
 							},
-							hooked = function()
+							_hook = function()
 								return { leaf = true, shared = "leaf" }
 							end,
 						}),
@@ -327,6 +333,9 @@ describe("Widget traversal", function()
 			},
 			inside = function()
 				return false
+			end,
+			_hook = function()
+				error("information requested when inside returned false")
 			end,
 		})
 		local hit, hooks = root:hook(5, 5)
@@ -476,7 +485,7 @@ describe("Widget defaults", function()
 					w = 100,
 					h = 50,
 				},
-				hooked = function()
+				_hook = function()
 					error("information requested for a miss")
 				end,
 			})
@@ -495,7 +504,7 @@ describe("Widget defaults", function()
 				w = 100,
 				h = 100,
 			},
-			hooked = function()
+			_hook = function()
 				return { id = 7, action = action }
 			end,
 		})
@@ -524,7 +533,7 @@ describe("Widget defaults", function()
 						w = 20,
 						h = 20,
 					},
-					hooked = function()
+					_hook = function()
 						return { child = true }
 					end,
 				}),

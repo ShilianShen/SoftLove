@@ -28,8 +28,7 @@
 ---@field _draw? fun(userData: table, loveData: table, bounds: softlove.ui.Bounds, themes: softlove.ui.Theme)
 ---@field _layout? fun(self: softlove.ui.Widget, bounds: softlove.ui.Bounds)
 ---@field _update? fun(userData: table, loveData: table, params: table, children: table<any, table>)
----@field _hook? fun(self: softlove.ui.Widget, x: number, y: number): softlove.ui.Widget?, table?
----@field hooked? fun(self: softlove.ui.Widget): table
+---@field _hook? fun(self: softlove.ui.Widget, x: number, y: number): table
 ---@field layout? fun(self: softlove.ui.Widget, bounds: softlove.ui.Bounds)
 ---@field sort? fun(self: softlove.ui.Widget)
 ---@field draw? fun(self: softlove.ui.Widget, theme: softlove.ui.Theme)
