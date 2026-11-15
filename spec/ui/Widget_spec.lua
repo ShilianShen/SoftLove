@@ -22,11 +22,11 @@ describe("Widget sorting", function()
 		})
 		root:sort()
 		assert.equals(2, #root.order)
-		assert.equals(root.children.low, root.order[1])
-		assert.equals(root.children.high, root.order[2])
+		assert.equals(root.children.high, root.order[1])
+		assert.equals(root.children.low, root.order[2])
 		local low = root.children.low
-		assert.equals(low.children.low, low.order[1])
-		assert.equals(low.children.high, low.order[2])
+		assert.equals(low.children.high, low.order[1])
+		assert.equals(low.children.low, low.order[2])
 		assert.same({}, root.children.high.order)
 		assert.same({}, low.children.low.order)
 	end)
@@ -61,24 +61,25 @@ describe("Widget sorting", function()
 			assert.same({}, calls)
 			root:sort()
 			local cached = root.order
+			local low = root.children.low
 			root.children.low.z = 10
 			root.children.high.z = -10
 			root.children.low = nil
 			root.children.middle = child("middle", 0)
 			local hit = root[method](root, 5, 5)
-			assert.same({ "low", "high" }, calls)
+			assert.same({ "high", "low" }, calls)
 			assert.equals(cached, root.order)
 			if method == "hook" then
-				assert.equals(root.children.high, hit)
+				assert.equals(low, hit)
 			end
 			calls = {}
 			root:sort()
 			hit = root[method](root, 5, 5)
-			assert.same({ "high", "middle" }, calls)
-			assert.equals(root.children.high, root.order[1])
-			assert.equals(root.children.middle, root.order[2])
+			assert.same({ "middle", "high" }, calls)
+			assert.equals(root.children.middle, root.order[1])
+			assert.equals(root.children.high, root.order[2])
 			if method == "hook" then
-				assert.equals(root.children.middle, hit)
+				assert.equals(root.children.high, hit)
 			end
 		end)
 	end
@@ -295,8 +296,8 @@ describe("Widget traversal", function()
 		})
 		root:sort()
 		local hit, hooks = root:hook(5, 5)
-		assert.equals(root.children.high, hit)
-		assert.same({ root = true, low = true, leaf = true, high = true, shared = "high" }, hooks)
+		assert.equals(root.children.low.children.leaf, hit)
+		assert.same({ root = true, low = true, leaf = true, high = true, shared = "leaf" }, hooks)
 		assert.same({ root = true, shared = "root" }, ownHooks)
 	end)
 
@@ -358,7 +359,7 @@ describe("Widget defaults", function()
 		root:sort()
 		root:update(params)
 		assert.equals(3, #calls)
-		for i, item in ipairs({ root, root.children.child, root.children[2] }) do
+		for i, item in ipairs({ root, root.children[2], root.children.child }) do
 			assert.equals(item.userData, calls[i][1])
 			assert.equals(item.loveData, calls[i][2])
 			assert.equals(params, calls[i][3])
@@ -436,7 +437,7 @@ describe("Widget defaults", function()
 	end)
 
 	for _, method in ipairs({ "draw", "update" }) do
-		it("should process siblings in increasing z order during " .. method, function()
+		it("should process deeper siblings first in decreasing z order during " .. method, function()
 			local calls = {}
 			local function child(name, z)
 				return widget({
@@ -455,7 +456,7 @@ describe("Widget defaults", function()
 			})
 			root:sort()
 			root[method](root, {})
-			assert.same({ "low", "middle", "high" }, calls)
+			assert.same({ "high", "middle", "low" }, calls)
 		end)
 	end
 
