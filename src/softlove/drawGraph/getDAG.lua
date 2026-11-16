@@ -33,6 +33,7 @@ end
 ---@param Y number
 ---@param W number
 ---@param H number
+---@return softlove.drawGraph.Content
 local function getDAG(vertices, parents, children, order, target, X, Y, W, H)
 	X = X or 0
 	Y = Y or 0
@@ -51,10 +52,15 @@ local function getDAG(vertices, parents, children, order, target, X, Y, W, H)
 			local vertex = vertices[vtag]
 			local x = X + W / B * (i - 0.5)
 			local y = Y + H / D * (j - 0.5)
+			local t = vtag
+			for _ in pairs(vertex.apis or {}) do
+				t = t .. "!"
+				break
+			end
 			content:add(vtag, "text", {
 				x = x,
 				y = y,
-				t = vtag,
+				t = t,
 				tc = vertex.dirty and "warning" or "success",
 				sc = target == vtag and "accent_surface" or nil,
 				bc = target == vtag and "accent_border" or nil,
