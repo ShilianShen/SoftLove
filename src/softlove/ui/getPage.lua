@@ -55,7 +55,6 @@ return function(subtasks, apis)
 	tasks._sort = {
 		func = Page.sort,
 		parents_c = parents_c,
-		parents_d = { fonts = "fonts", locales = "locales" },
 		atag = "writable",
 		back = false,
 	}
