@@ -8,106 +8,6 @@ local drawGraph = {
 	defaultNode = { tasks = {}, parents_c = {}, children_c = {}, order_c = {} },
 }
 
----@param graph softdep.Graph
----@param theme table|nil
----@param font love.Font|nil
-function drawGraph:call(graph, theme, font)
-	love.graphics.push("all")
-	local rw = 0.6
-	local rh = 0.6
-	local W, H = love.graphics.getDimensions()
-	local mouseX, mouseY = love.mouse.getPosition()
-	theme = theme or self.theme
-	font = font or self.font
-
-	local nodesContent =
-		getDAG(graph.nodes, graph.parents_n, graph.children_n, graph.order_n, self.ntag, 0, 0, W * rw, H * rh)
-
-	for ntag, text in pairs(nodesContent.texts) do
-		local x = text.x
-		local y = text.y
-		local w = font:getWidth(text.t)
-		local h = font:getHeight()
-		if mouseX >= x - w / 2 and mouseX <= x + w / 2 and mouseY >= y - h / 2 and mouseY <= y + h / 2 then
-			self.ntag = ntag
-			self.ttag = nil
-			break
-		end
-	end
-
-	local node = self.ntag and graph.nodes[self.ntag] or self.defaultNode
-	local tasksContent =
-		getDAG(node.tasks, node.parents_c, node.children_c, node.order_c, self.ttag, 0, H * rh, W * rw, H * (1 - rh))
-
-	for ttag, text in pairs(tasksContent.texts) do
-		local x = text.x
-		local y = text.y
-		local w = font:getWidth(text.t)
-		local h = font:getHeight()
-		if mouseX >= x - w / 2 and mouseX <= x + w / 2 and mouseY >= y - h / 2 and mouseY <= y + h / 2 then
-			self.ttag = ttag
-			break
-		end
-	end
-
-	local content = Content.union({ n = nodesContent, t = tasksContent })
-
-	if self.ntag and self.ttag then
-		for _, ptag in pairs(graph.parents_d[self.ntag][self.ttag]) do
-			local pnode = graph.nodes[ptag]
-			local x1 = nodesContent.texts[ptag].x
-			local y1 = nodesContent.texts[ptag].y
-			local x2 = tasksContent.texts[self.ttag].x
-			local y2 = tasksContent.texts[self.ttag].y
-			content:add("ae" .. ptag, "line", { x1 = x1, y1 = y1, x2 = x2, y2 = y2, s = "dot" })
-			content:add("av" .. ptag, "text", {
-				x = (x1 + x2) / 2,
-				y = (y1 + y2) / 2,
-				t = pnode.atag,
-				bc = "surface",
-			})
-		end
-	end
-
-	content:add("dbackground", "rect", { x = W * rw, y = 0, w = W * (1 - rw), h = H, sc = "background" })
-	content:draw(theme, font)
-
-	if self.ntag then
-		if not self.ttag then
-			local apis = {}
-			for itag, api in pairs(node.apis) do
-				apis[itag] = { dirty = api.dirty, atag = api.atag, func = api.func }
-			end
-			self.drawable:setf(
-				inspect({
-					data = node.data,
-					count = node.count,
-					atag = node.atag,
-					dirty = node.dirty,
-					apis = apis,
-				}, { indent = "    " }),
-				W * (1 - rw),
-				"left"
-			)
-		else
-			self.drawable:setf(inspect(node.tasks[self.ttag], { indent = "    " }), W * (1 - rw), "left")
-		end
-		self.drawable:setFont(font)
-		local x, y = W * rw, 0
-		local w, h = self.drawable:getDimensions()
-		if h > H then
-			local rate = (mouseY - y) / H
-			local offset = math.max(0, h - H) * rate
-			y = y - offset
-		end
-		love.graphics.setColor(node.dirty and theme.warning or theme.success)
-		love.graphics.draw(self.drawable, x, y)
-	end
-	love.graphics.pop()
-end
-
-setmetatable(drawGraph, { __call = drawGraph.call })
-
 drawGraph.theme = {
 	background = { 0.025, 0.025, 0.025, 0.7 },
 
@@ -125,4 +25,109 @@ drawGraph.theme = {
 drawGraph.font = love.graphics.newFont(12)
 drawGraph.drawable = love.graphics.newText(drawGraph.font)
 
-return drawGraph
+---@param graph softdep.Graph
+---@param theme table|nil
+---@param font love.Font|nil
+return function(graph, theme, font)
+	love.graphics.push("all")
+	local rw = 0.6
+	local rh = 0.6
+	local W, H = love.graphics.getDimensions()
+	local mouseX, mouseY = love.mouse.getPosition()
+	theme = theme or drawGraph.theme
+	font = font or drawGraph.font
+
+	local nodesContent =
+		getDAG(graph.nodes, graph.parents_n, graph.children_n, graph.order_n, drawGraph.ntag, 0, 0, W * rw, H * rh)
+
+	for ntag, text in pairs(nodesContent.texts) do
+		local x = text.x
+		local y = text.y
+		local w = font:getWidth(text.t)
+		local h = font:getHeight()
+		if mouseX >= x - w / 2 and mouseX <= x + w / 2 and mouseY >= y - h / 2 and mouseY <= y + h / 2 then
+			drawGraph.ntag = ntag
+			drawGraph.ttag = nil
+			break
+		end
+	end
+
+	local node = drawGraph.ntag and graph.nodes[drawGraph.ntag] or drawGraph.defaultNode
+	local tasksContent = getDAG(
+		node.tasks,
+		node.parents_c,
+		node.children_c,
+		node.order_c,
+		drawGraph.ttag,
+		0,
+		H * rh,
+		W * rw,
+		H * (1 - rh)
+	)
+
+	for ttag, text in pairs(tasksContent.texts) do
+		local x = text.x
+		local y = text.y
+		local w = font:getWidth(text.t)
+		local h = font:getHeight()
+		if mouseX >= x - w / 2 and mouseX <= x + w / 2 and mouseY >= y - h / 2 and mouseY <= y + h / 2 then
+			drawGraph.ttag = ttag
+			break
+		end
+	end
+
+	local content = Content.union({ n = nodesContent, t = tasksContent })
+
+	if drawGraph.ntag and drawGraph.ttag then
+		for _, ptag in pairs(graph.parents_d[drawGraph.ntag][drawGraph.ttag]) do
+			local pnode = graph.nodes[ptag]
+			local x1 = nodesContent.texts[ptag].x
+			local y1 = nodesContent.texts[ptag].y
+			local x2 = tasksContent.texts[drawGraph.ttag].x
+			local y2 = tasksContent.texts[drawGraph.ttag].y
+			content:add("ae" .. ptag, "line", { x1 = x1, y1 = y1, x2 = x2, y2 = y2, s = "dot" })
+			content:add("av" .. ptag, "text", {
+				x = (x1 + x2) / 2,
+				y = (y1 + y2) / 2,
+				t = pnode.atag,
+				bc = "surface",
+			})
+		end
+	end
+
+	content:add("dbackground", "rect", { x = W * rw, y = 0, w = W * (1 - rw), h = H, sc = "background" })
+	content:draw(theme, font)
+
+	if drawGraph.ntag then
+		if not drawGraph.ttag then
+			local apis = {}
+			for itag, api in pairs(node.apis) do
+				apis[itag] = { dirty = api.dirty, atag = api.atag, func = api.func }
+			end
+			drawGraph.drawable:setf(
+				inspect({
+					data = node.data,
+					count = node.count,
+					atag = node.atag,
+					dirty = node.dirty,
+					apis = apis,
+				}, { indent = "    " }),
+				W * (1 - rw),
+				"left"
+			)
+		else
+			drawGraph.drawable:setf(inspect(node.tasks[drawGraph.ttag], { indent = "    " }), W * (1 - rw), "left")
+		end
+		drawGraph.drawable:setFont(font)
+		local x, y = W * rw, 0
+		local w, h = drawGraph.drawable:getDimensions()
+		if h > H then
+			local rate = (mouseY - y) / H
+			local offset = math.max(0, h - H) * rate
+			y = y - offset
+		end
+		love.graphics.setColor(node.dirty and theme.warning or theme.success)
+		love.graphics.draw(drawGraph.drawable, x, y)
+	end
+	love.graphics.pop()
+end
