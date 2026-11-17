@@ -8,6 +8,7 @@ main.lua
 dist
 assets
 !src/softlove/assets
+!spec/assets
 configs
 libs
 locales
