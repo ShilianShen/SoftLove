@@ -42,7 +42,7 @@ function Scope:draw(X, Y, W, H, theme)
 	end
 end
 
-function Scope.getNode(target, calculate)
+return function(target, calculate)
 	return {
 		tasks = {
 			init = {
@@ -50,7 +50,7 @@ function Scope.getNode(target, calculate)
 				atag = "writable",
 				back = false,
 			},
-			calculate = {
+			update = {
 				func = function(self, params)
 					for i = 1, self.size - 1 do
 						self.memory[i] = self.memory[i + 1]
@@ -60,9 +60,6 @@ function Scope.getNode(target, calculate)
 						value = value and 1 or 0
 					end
 					self.memory[self.size] = value
-				end,
-				auto = function(self)
-					return true
 				end,
 				atag = "writable",
 				parents_c = { "init" },
@@ -76,5 +73,3 @@ function Scope.getNode(target, calculate)
 		atag = "none",
 	}
 end
-
-return Scope
