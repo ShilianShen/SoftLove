@@ -145,13 +145,13 @@ function TimeProfiler:update()
 			self.order[#self.order + 1] = metadata
 		end
 	end
-	table.sort(self.order, self.comp)
+	table.sort(self.order, self.compare)
 end
 
 ---@param a softlove.TimeProfiler.Metadata
 ---@param b softlove.TimeProfiler.Metadata
 ---@return boolean
-function TimeProfiler.comp(a, b)
+function TimeProfiler.compare(a, b)
 	if a.mu ~= b.mu then
 		return a.mu > b.mu
 	end
