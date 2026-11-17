@@ -37,24 +37,31 @@ local function getNode(types, methods)
 	}
 end
 
-function assets.getNodes()
-	return {
-		fonts = getNode({ "Font" }, {
-			newFont = love.graphics.newFont,
-			newImageFont = love.graphics.newImageFont,
-		}),
-		images = getNode({ "Image", "ImageData" }, {
-			newImage = love.graphics.newImage,
-			newImageData = love.image.newImageData,
-		}),
-		shaders = getNode({ "Shader" }, {
-			newShader = love.graphics.newShader,
-		}),
-		source = getNode({ "Source", "SoundData" }, {
-			newSource = love.audio.newSource,
-			newSoundData = love.sound.newSoundData,
-		}),
-	}
+function assets.Fonts()
+	return getNode({ "Font" }, {
+		newFont = love.graphics.newFont,
+		newImageFont = love.graphics.newImageFont,
+	})
+end
+
+function assets.Images()
+	return getNode({ "Image", "ImageData" }, {
+		newImage = love.graphics.newImage,
+		newImageData = love.image.newImageData,
+	})
+end
+
+function assets.Shaders()
+	return getNode({ "Shader" }, {
+		newShader = love.graphics.newShader,
+	})
+end
+
+function assets.Sources()
+	return getNode({ "Source", "SoundData" }, {
+		newSource = love.audio.newSource,
+		newSoundData = love.sound.newSoundData,
+	})
 end
 
 return assets
