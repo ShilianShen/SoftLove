@@ -51,12 +51,4 @@ function system.Locales()
 	return locales
 end
 
-function system.getCallbacks(nodes)
-	return {
-		focus = nodes.window.apis.focus,
-		resize = nodes.window.apis.resize,
-		visible = nodes.window.apis.visible,
-	}
-end
-
 return system

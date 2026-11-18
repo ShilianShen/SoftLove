@@ -77,28 +77,4 @@ function input.Wheel()
 	return wheel
 end
 
-function input.getCallbacks(nodes)
-	return {
-		joystickadded = nodes.joysticks.apis.added,
-		joystickremoved = nodes.joysticks.apis.removed,
-		joystickpressed = nodes.joysticks.apis.pressed,
-		joystickreleased = nodes.joysticks.apis.released,
-		joystickaxis = nodes.joysticks.apis.axis,
-		joystickhat = nodes.joysticks.apis.hat,
-		gamepadpressed = nodes.joysticks.apis.pressed,
-		gamepadreleased = nodes.joysticks.apis.released,
-		gamepadaxis = nodes.joysticks.apis.axis,
-
-		mousemoved = nodes.mouse.apis.moved,
-		mousepressed = nodes.mouse.apis.pressed,
-		mousereleased = nodes.mouse.apis.released,
-		mousefocus = nodes.mouse.apis.focus,
-
-		keypressed = nodes.keyboard.apis.pressed,
-		keyreleased = nodes.keyboard.apis.released,
-
-		wheelmoved = nodes.wheel.apis.moved,
-	}
-end
-
 return input
