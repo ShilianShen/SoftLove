@@ -21,7 +21,7 @@ local function union(...)
 end
 
 function softlove.getNodes()
-	return union(system.getNodes(), input.getNodes())
+	return input.getNodes()
 end
 
 function softlove.setCallbacks(nodes)
