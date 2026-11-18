@@ -61,15 +61,6 @@ local wheel = {
 	atag = "readonly",
 }
 
-function input.getNodes()
-	return {
-		joysticks = joysticks,
-		mouse = mouse,
-		keyboard = keyboard,
-		wheel = wheel,
-	}
-end
-
 function input.Joysticks()
 	return joysticks
 end
