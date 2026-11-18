@@ -1,10 +1,7 @@
 local input = require("softlove.input")
 local system = require("softlove.system")
-local assets = require("softlove.assets")
 local softlove = {
-	drawGraph = require("softlove.drawGraph"),
-	Scope = require("softlove.Scope"),
-	TimeProfiler = require("softlove.TimeProfiler"),
+	util = require("softlove.util"),
 	ui = require("softlove.ui"),
 	input = require("softlove.input"),
 	system = require("softlove.system"),

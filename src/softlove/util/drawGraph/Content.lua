@@ -1,4 +1,4 @@
-local style = require("softlove.drawGraph.style")
+local style = require("softlove.util.drawGraph.style")
 
 ---@param tbl table<string, any>
 ---@return fun(): string?, any

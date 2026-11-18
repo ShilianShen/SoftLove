@@ -1,5 +1,5 @@
-local Content = require("softlove.drawGraph.Content")
-local getDAG = require("softlove.drawGraph.getDAG")
+local Content = require("softlove.util.drawGraph.Content")
+local getDAG = require("softlove.util.drawGraph.getDAG")
 local inspect = require("softlove.inspect")
 
 local drawGraph = {

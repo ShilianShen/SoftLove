@@ -1,4 +1,4 @@
-local Content = require("softlove.drawGraph.Content")
+local Content = require("softlove.util.drawGraph.Content")
 
 ---@param parents softdep.AdjList
 ---@param order string[]
