@@ -4,7 +4,7 @@ local ui = require("softlove.ui")
 
 local function initialize(widgets)
 	local data = {}
-	ui.getNode(widgets).tasks.init.func(data)
+	ui.Widgets(widgets).tasks.init.func(data)
 	return data
 end
 
@@ -84,7 +84,7 @@ describe("ui declaration registry", function()
 	it("should isolate declarations, repeated children, instances and registry initializations", function()
 		local child = { userData = { text = "Original" } }
 		local widgets = { page = { children = { first = child, second = child } } }
-		local node = ui.getNode(widgets)
+		local node = ui.Widgets(widgets)
 		local first, second = {}, {}
 		node.tasks.init.func(first)
 		node.tasks.init.func(second)
@@ -99,8 +99,10 @@ describe("ui declaration registry", function()
 
 	it("should reject missing parents including those in nested children", function()
 		rejects({ panel = { type = "missing" } }, "unknown widget type: missing at panel")
-		rejects({ page = { children = { label = { type = "missing" } } } },
-			"unknown widget type: missing at page.children[label]")
+		rejects(
+			{ page = { children = { label = { type = "missing" } } } },
+			"unknown widget type: missing at page.children[label]"
+		)
 	end)
 
 	it("should reject self inheritance and longer inheritance cycles", function()
@@ -126,14 +128,14 @@ describe("ui declaration registry", function()
 	it("should preserve an existing registry if rebuilding fails", function()
 		local data = initialize({ base = { bounds = { w = 42 } } })
 		local registry = data.widgetTypes
-		local ok = pcall(ui.getNode({ a = { type = "a" } }).tasks.init.func, data)
+		local ok = pcall(ui.Widgets({ a = { type = "a" } }).tasks.init.func, data)
 		assert.is_false(ok)
 		assert.equals(registry, data.widgetTypes)
 		assert.equals(42, data:newWidget("base").bounds.w)
 	end)
 
 	it("should continue supporting explicit registration and removal of built types", function()
-		local node = ui.getNode({ base = { bounds = { w = 42 } } })
+		local node = ui.Widgets({ base = { bounds = { w = 42 } } })
 		local data = {}
 		node.tasks.init.func(data)
 		node.apis.register.func(data, "alias", data.widgetTypes.base)
