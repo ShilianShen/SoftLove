@@ -125,6 +125,56 @@ describe("ui declaration registry", function()
 		rejects({ a = cyclic }, "cycle detected")
 	end)
 
+	it("should reject undeclared properties including numeric keys and false values", function()
+		for _, key in ipairs({ "custom", "visibile", "order", "newWidget", 1 }) do
+			rejects(
+				{ panel = { [key] = false } },
+				"unknown widget declaration property: " .. tostring(key) .. " at panel"
+			)
+		end
+	end)
+
+	it("should reject undeclared properties in nested children with their paths", function()
+		rejects(
+			{ page = { children = { group = { children = { { custom = true } } } } } },
+			"unknown widget declaration property: custom at page.children[group].children[1]"
+		)
+	end)
+
+	it("should accept all declared properties and arbitrary user and rendering data", function()
+		local callback = function() end
+		local declaration = {
+			type = "base",
+			bounds = { x = 1, y = 2, w = 3, h = 4 },
+			depth = 5,
+			visible = false,
+			active = false,
+			userData = { custom = true },
+			loveData = { custom = false },
+			children = {},
+		}
+		for _, key in ipairs({
+			"inside",
+			"_draw",
+			"_layout",
+			"_update",
+			"_hook",
+			"layout",
+			"sort",
+			"draw",
+			"update",
+			"hook",
+		}) do
+			declaration[key] = callback
+		end
+		local widget = initialize({ base = {}, panel = declaration }):newWidget("panel")
+		for key, value in pairs(declaration) do
+			if key ~= "type" then
+				assert.same(value, widget[key])
+			end
+		end
+	end)
+
 	it("should preserve an existing registry if rebuilding fails", function()
 		local data = initialize({ base = { bounds = { w = 42 } } })
 		local registry = data.widgetTypes

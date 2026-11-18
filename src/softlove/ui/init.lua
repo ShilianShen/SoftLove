@@ -8,6 +8,27 @@ local ui = {
 ---@field widgetTypes table<string, softlove.ui.WidgetType>
 local Ui = {}
 
+local declarationFields = {
+	type = true,
+	bounds = true,
+	depth = true,
+	visible = true,
+	active = true,
+	userData = true,
+	loveData = true,
+	inside = true,
+	children = true,
+	_draw = true,
+	_layout = true,
+	_update = true,
+	_hook = true,
+	layout = true,
+	sort = true,
+	draw = true,
+	update = true,
+	hook = true,
+}
+
 local function sortedKeys(values)
 	local keys = {}
 	for key in pairs(values) do
@@ -22,6 +43,9 @@ function Ui.sortWidgets(widgets)
 	local dependencies = {}
 	local function collect(declaration, parents, path)
 		assert(type(declaration) == "table", "expected widget declaration at " .. path)
+		for key in pairs(declaration) do
+			assert(declarationFields[key], "unknown widget declaration property: " .. tostring(key) .. " at " .. path)
+		end
 		local parent = declaration.type
 		if parent ~= nil then
 			assert(type(parent) == "string", "expected widget type name at " .. path)

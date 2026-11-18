@@ -36,6 +36,7 @@
 ---@field hook? fun(self: softlove.ui.Widget, x: number, y: number): softlove.ui.Widget?, table?
 
 ---Named declarations use type names and recursively declared children.
+---Only fields declared here or inherited from Patch are accepted; unknown fields raise an error.
 ---@class softlove.ui.WidgetTypeDeclaration: softlove.ui.Patch
 ---@field type? string
 ---@field children? table<any, softlove.ui.WidgetTypeDeclaration>
