@@ -7,11 +7,16 @@ local Mouse = require("softlove.input.Mouse")
 local Wheel = require("softlove.input.Wheel")
 
 describe("input", function()
-	describe("getNodes", function()
+	describe("node factories", function()
 		local nodes
 
 		before_each(function()
-			nodes = input.getNodes()
+			nodes = {
+				joysticks = input.Joysticks(),
+				keyboard = input.Keyboard(),
+				mouse = input.Mouse(),
+				wheel = input.Wheel(),
+			}
 		end)
 
 		it("should define state tasks for every input node", function()
@@ -28,6 +33,11 @@ describe("input", function()
 				assert.equals(module.step, tasks.step.func)
 				assert.same({ "init" }, tasks.step.parents_c)
 				assert.is_nil(tasks.step.auto)
+				assert.is_false(tasks.init.back)
+				assert.is_true(tasks.step.back)
+				assert.equals("writable", tasks.init.atag)
+				assert.equals("writable", tasks.step.atag)
+				assert.equals("readonly", nodes[name].atag)
 			end
 		end)
 
@@ -61,6 +71,7 @@ describe("input", function()
 				for apiName, func in pairs(apis) do
 					assert.equals(func, nodes[nodeName].apis[apiName].func)
 					assert.equals("writable", nodes[nodeName].apis[apiName].atag)
+					assert.is_true(nodes[nodeName].apis[apiName].dirty)
 				end
 			end
 
@@ -68,32 +79,6 @@ describe("input", function()
 				assert.is_table(nodes.joysticks.apis[apiName])
 				assert.equals("writable", nodes.joysticks.apis[apiName].atag)
 			end
-		end)
-	end)
-
-	describe("getCallbacks", function()
-		it("should map LOVE input callbacks to node APIs", function()
-			local nodes = input.getNodes()
-			local callbacks = input.getCallbacks(nodes)
-
-			assert.same({
-				joystickadded = nodes.joysticks.apis.added,
-				joystickremoved = nodes.joysticks.apis.removed,
-				joystickpressed = nodes.joysticks.apis.pressed,
-				joystickreleased = nodes.joysticks.apis.released,
-				joystickaxis = nodes.joysticks.apis.axis,
-				joystickhat = nodes.joysticks.apis.hat,
-				gamepadpressed = nodes.joysticks.apis.pressed,
-				gamepadreleased = nodes.joysticks.apis.released,
-				gamepadaxis = nodes.joysticks.apis.axis,
-				mousemoved = nodes.mouse.apis.moved,
-				mousepressed = nodes.mouse.apis.pressed,
-				mousereleased = nodes.mouse.apis.released,
-				mousefocus = nodes.mouse.apis.focus,
-				keypressed = nodes.keyboard.apis.pressed,
-				keyreleased = nodes.keyboard.apis.released,
-				wheelmoved = nodes.wheel.apis.moved,
-			}, callbacks)
 		end)
 	end)
 end)

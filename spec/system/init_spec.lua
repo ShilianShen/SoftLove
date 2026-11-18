@@ -5,17 +5,22 @@ local Locales = require("softlove.system.Locales")
 local Window = require("softlove.system.Window")
 
 describe("system", function()
-	describe("getNodes", function()
+	describe("node factories", function()
 		local nodes
 
 		before_each(function()
-			nodes = system.getNodes()
+			nodes = { window = system.Window(), locales = system.Locales() }
 		end)
 
 		it("should define the window tasks", function()
 			assert.equals(Window.init, nodes.window.tasks.init.func)
 			assert.equals(Window.update, nodes.window.tasks.update.func)
 			assert.same({ "init" }, nodes.window.tasks.update.parents_c)
+			assert.is_false(nodes.window.tasks.init.back)
+			assert.is_false(nodes.window.tasks.update.back)
+			assert.equals("writable", nodes.window.tasks.init.atag)
+			assert.equals("writable", nodes.window.tasks.update.atag)
+			assert.equals("readonly", nodes.window.atag)
 		end)
 
 		it("should initialize locales and expose translate", function()
@@ -26,6 +31,9 @@ describe("system", function()
 			assert.same({}, ctx.translator)
 			assert.is_false(ctx.current)
 			assert.equals(Locales.translate, ctx.translate)
+			assert.is_false(nodes.locales.tasks.init.back)
+			assert.equals("writable", nodes.locales.tasks.init.atag)
+			assert.equals("readonly", nodes.locales.atag)
 		end)
 
 		it("should bind system APIs as writable operations", function()
@@ -46,20 +54,9 @@ describe("system", function()
 				for apiName, func in pairs(apis) do
 					assert.equals(func, nodes[nodeName].apis[apiName].func)
 					assert.equals("writable", nodes[nodeName].apis[apiName].atag)
+					assert.is_true(nodes[nodeName].apis[apiName].dirty)
 				end
 			end
-		end)
-	end)
-
-	describe("getCallbacks", function()
-		it("should map LOVE window callbacks to node APIs", function()
-			local nodes = system.getNodes()
-
-			assert.same({
-				focus = nodes.window.apis.focus,
-				resize = nodes.window.apis.resize,
-				visible = nodes.window.apis.visible,
-			}, system.getCallbacks(nodes))
 		end)
 	end)
 end)
