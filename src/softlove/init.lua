@@ -20,10 +20,6 @@ local function union(...)
 	return result
 end
 
-function softlove.getNodes()
-	return input.getNodes()
-end
-
 function softlove.setCallbacks(nodes)
 	local callbacks = union(system.getCallbacks(nodes), input.getCallbacks(nodes))
 	for k, v in pairs(callbacks) do

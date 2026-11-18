@@ -1,7 +1,7 @@
-Mouse = require("softlove.input.Mouse")
-Keyboard = require("softlove.input.Keyboard")
-Joysticks = require("softlove.input.Joysticks")
-Wheel = require("softlove.input.Wheel")
+local Mouse = require("softlove.input.Mouse")
+local Keyboard = require("softlove.input.Keyboard")
+local Joysticks = require("softlove.input.Joysticks")
+local Wheel = require("softlove.input.Wheel")
 local input = {}
 
 local function getTasks(x)
@@ -17,49 +17,73 @@ local function getTasks(x)
 	return tasks
 end
 
+local joysticks = {
+	tasks = getTasks(Joysticks),
+	apis = {
+		added = { func = Joysticks.added, atag = "writable", dirty = true },
+		removed = { func = Joysticks.removed, atag = "writable", dirty = true },
+		pressed = { func = Joysticks.pressed, atag = "writable", dirty = true },
+		released = { func = Joysticks.released, atag = "writable", dirty = true },
+		axis = { func = Joysticks.axis, atag = "writable", dirty = true },
+		hat = { func = Joysticks.hat, atag = "writable", dirty = true },
+		gamepadpressed = { func = Joysticks.gamepadpressed, atag = "writable", dirty = true },
+		gamepadreleased = { func = Joysticks.gamepadreleased, atag = "writable", dirty = true },
+		gamepadaxis = { func = Joysticks.gamepadaxis, atag = "writable", dirty = true },
+	},
+	atag = "readonly",
+}
+
+local mouse = {
+	tasks = getTasks(Mouse),
+	apis = {
+		moved = { func = Mouse.moved, atag = "writable", dirty = true },
+		pressed = { func = Mouse.pressed, atag = "writable", dirty = true },
+		released = { func = Mouse.released, atag = "writable", dirty = true },
+		focus = { func = Mouse.focus, atag = "writable", dirty = true },
+	},
+	atag = "readonly",
+}
+
+local keyboard = {
+	tasks = getTasks(Keyboard),
+	apis = {
+		pressed = { func = Keyboard.pressed, atag = "writable", dirty = true },
+		released = { func = Keyboard.released, atag = "writable", dirty = true },
+	},
+	atag = "readonly",
+}
+
+local wheel = {
+	tasks = getTasks(Wheel),
+	apis = {
+		moved = { func = Wheel.moved, atag = "writable", dirty = true },
+	},
+	atag = "readonly",
+}
+
 function input.getNodes()
 	return {
-		joysticks = {
-			tasks = getTasks(Joysticks),
-			apis = {
-				added = { func = Joysticks.added, atag = "writable", dirty = true },
-				removed = { func = Joysticks.removed, atag = "writable", dirty = true },
-				pressed = { func = Joysticks.pressed, atag = "writable", dirty = true },
-				released = { func = Joysticks.released, atag = "writable", dirty = true },
-				axis = { func = Joysticks.axis, atag = "writable", dirty = true },
-				hat = { func = Joysticks.hat, atag = "writable", dirty = true },
-				gamepadpressed = { func = Joysticks.gamepadpressed, atag = "writable", dirty = true },
-				gamepadreleased = { func = Joysticks.gamepadreleased, atag = "writable", dirty = true },
-				gamepadaxis = { func = Joysticks.gamepadaxis, atag = "writable", dirty = true },
-			},
-			atag = "readonly",
-		},
-		mouse = {
-			tasks = getTasks(Mouse),
-			apis = {
-				moved = { func = Mouse.moved, atag = "writable", dirty = true },
-				pressed = { func = Mouse.pressed, atag = "writable", dirty = true },
-				released = { func = Mouse.released, atag = "writable", dirty = true },
-				focus = { func = Mouse.focus, atag = "writable", dirty = true },
-			},
-			atag = "readonly",
-		},
-		keyboard = {
-			tasks = getTasks(Keyboard),
-			apis = {
-				pressed = { func = Keyboard.pressed, atag = "writable", dirty = true },
-				released = { func = Keyboard.released, atag = "writable", dirty = true },
-			},
-			atag = "readonly",
-		},
-		wheel = {
-			tasks = getTasks(Wheel),
-			apis = {
-				moved = { func = Wheel.moved, atag = "writable", dirty = true },
-			},
-			atag = "readonly",
-		},
+		joysticks = joysticks,
+		mouse = mouse,
+		keyboard = keyboard,
+		wheel = wheel,
 	}
+end
+
+function input.Joysticks()
+	return joysticks
+end
+
+function input.Mouse()
+	return mouse
+end
+
+function input.Keyboard()
+	return keyboard
+end
+
+function input.Wheel()
+	return wheel
 end
 
 function input.getCallbacks(nodes)
