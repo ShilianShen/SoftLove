@@ -1,5 +1,6 @@
 local util = {}
 
+---Shallowly select the first non-nil value for each field from left to right, preserving false and 0; do not merge or copy field values.
 function util.patch(...)
 	local args = { ... }
 	local result = {}
@@ -15,6 +16,9 @@ function util.patch(...)
 	return result
 end
 
+---Expand an acyclic table structure into an independent tree: copy table keys and values recursively, splitting repeated references.
+---Metatables are not copied; non-table values such as functions and userdata pass through, leaving closure and LÖVE resource state shared.
+---Detect cycles only along the current recursion path, allowing shared source tables across branches; report cycles with their paths.
 function util.deepcopyDAGToTree(root)
 	local in_progress = {}
 

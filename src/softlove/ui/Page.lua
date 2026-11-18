@@ -1,8 +1,10 @@
 local util = require("softlove.ui.util")
 
+---A page holds a widget tree in a SoftDep node; application tasks and APIs access actual Widgets through self.entry.
+---Changing userData alone does not invoke _update; SoftDep task and API configuration controls page recomputation.
 ---@class softlove.ui.Page
----@field entry softlove.ui.Widget
----@field ui boolean
+---@field entry softlove.ui.Widget Root instance, created by a user subtask.
+---@field ui boolean Page marker.
 local Page = {}
 
 ---@param params { window: softlove.ui.Bounds }
@@ -31,7 +33,10 @@ function Page:hook(x, y)
 	return self.entry:hook(x, y)
 end
 
----User subtasks must assign self.entry before _sort runs.
+---Build a page node. User subtasks must assign self.entry before _sort runs.
+---Dependency order: _init -> user subtasks -> _sort -> _update -> _layout; draw and hook are separately invoked APIs.
+---Updating before layout lets _layout read this pass's loveData; see Widget:update for parent-child data flow.
+---User task and API declaration tables are copied; functions and captured state remain shared. Defaults do not modify input declarations.
 ---@param subtasks table<string, softdep.declaration.Task>
 ---@param apis table<string, softdep.declaration.Api>
 ---@return softdep.declaration.Node

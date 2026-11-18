@@ -8,6 +8,7 @@ local ui = {
 ---@field widgetTypes table<string, softlove.ui.WidgetType>
 local Ui = {}
 
+-- Keep in sync with WidgetTypeDeclaration and its inherited Patch fields; keys within userData/loveData are unrestricted.
 local declarationFields = {
 	type = true,
 	bounds = true,
@@ -38,6 +39,7 @@ local function sortedKeys(values)
 	return keys
 end
 
+---Validate all declarations and order dependencies from type and nested type references so dependencies are built before their users.
 ---@param widgets table<string, softlove.ui.WidgetTypeDeclaration>
 function Ui.sortWidgets(widgets)
 	local dependencies = {}
@@ -88,6 +90,7 @@ function Ui.sortWidgets(widgets)
 	return order
 end
 
+---Strip the declaration-only type field, build child declarations into Widget instances, then derive the current type.
 ---@param declaration softlove.ui.WidgetTypeDeclaration
 ---@param widgetTypes table<string, softlove.ui.WidgetType>
 function Ui.buildWidgetType(declaration, widgetTypes)
@@ -107,6 +110,7 @@ function Ui.buildWidgetType(declaration, widgetTypes)
 	return WidgetType.newWidgetType(parent, patch)
 end
 
+---Copy declarations during initialization; replace the existing registry only after the entire new registry builds successfully.
 ---@param widgets table<string, softlove.ui.WidgetTypeDeclaration>
 function Ui:init(widgets)
 	assert(type(widgets) == "table", "expected widgets table")
@@ -120,6 +124,7 @@ function Ui:init(widgets)
 	self.newWidget = Ui.newWidget
 end
 
+---Register an existing type by reference without copying; newWidget copies its table fields when creating instances later.
 ---@param name string
 ---@param widgetType softlove.ui.WidgetType
 function Ui:register(name, widgetType)
@@ -138,6 +143,27 @@ function Ui:newWidget(name, patch)
 	return widgetType:newWidget(patch)
 end
 
+---Declare a registry of reusable widget types; validation and construction run in the returned SoftDep node's init task.
+---Declarations, types and instances own copied data tables; changing the original declarations later does not update the built registry.
+---Application code supplies state through instance userData; _update stores derived display results in the widget's loveData.
+---For example, a minimal numeric widget declaration (_update and _draw are plain functions):
+---```lua
+---ui.Widgets({
+---    counter = {
+---        userData = {
+---            value = 0,
+---            setValue = function(self, value) self.value = value end,
+---        },
+---        _update = function(userData, loveData, params, children)
+---            loveData.text = tostring(userData.value)
+---        end,
+---        _draw = function(userData, loveData, bounds, theme)
+---            love.graphics.print(loveData.text or "", bounds.x, bounds.y)
+---        end,
+---    },
+---})
+---```
+---After creating an instance, call widget.userData:setValue(42); the next update recomputes loveData.text.
 ---@param widgets table<string, softlove.ui.WidgetTypeDeclaration>
 ---@return softdep.declaration.Node
 function ui.Widgets(widgets)
