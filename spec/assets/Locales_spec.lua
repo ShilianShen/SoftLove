@@ -1,6 +1,6 @@
 package.path = "src/?.lua;" .. "src/?/init.lua;" .. package.path
 local assert = require("luassert")
-local Locales = require("softlove.system.Locales")
+local Locales = require("softlove.assets.Locales")
 
 describe("Locales", function()
 	local ctx

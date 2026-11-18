@@ -1,4 +1,5 @@
 local Cache = require("softlove.assets.Cache")
+local Locales = require("softlove.assets.Locales")
 local assets = {}
 
 local function check(self, obj)
@@ -62,6 +63,27 @@ function assets.Sources()
 		newSource = love.audio.newSource,
 		newSoundData = love.sound.newSoundData,
 	})
+end
+
+function assets.Locales()
+	return {
+		tasks = {
+			init = {
+				func = function(self)
+					Locales.init(self)
+					self.translate = Locales.translate
+				end,
+				atag = "writable",
+				back = false,
+			},
+		},
+		apis = {
+			add = { func = Locales.add, atag = "writable", dirty = true },
+			del = { func = Locales.del, atag = "writable", dirty = true },
+			setCurrent = { func = Locales.setCurrent, atag = "writable", dirty = true },
+		},
+		atag = "readonly",
+	}
 end
 
 return assets

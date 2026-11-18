@@ -1,7 +1,6 @@
 package.path = "src/?.lua;" .. "src/?/init.lua;" .. package.path
 local assert = require("luassert")
 local system = require("softlove.system")
-local Locales = require("softlove.system.Locales")
 local Window = require("softlove.system.Window")
 
 describe("system", function()
@@ -9,7 +8,7 @@ describe("system", function()
 		local nodes
 
 		before_each(function()
-			nodes = { window = system.Window(), locales = system.Locales() }
+			nodes = { window = system.Window() }
 		end)
 
 		it("should define the window tasks", function()
@@ -23,30 +22,12 @@ describe("system", function()
 			assert.equals("readonly", nodes.window.atag)
 		end)
 
-		it("should initialize locales and expose translate", function()
-			local ctx = {}
-
-			nodes.locales.tasks.init.func(ctx)
-
-			assert.same({}, ctx.translator)
-			assert.is_false(ctx.current)
-			assert.equals(Locales.translate, ctx.translate)
-			assert.is_false(nodes.locales.tasks.init.back)
-			assert.equals("writable", nodes.locales.tasks.init.atag)
-			assert.equals("readonly", nodes.locales.atag)
-		end)
-
 		it("should bind system APIs as writable operations", function()
 			local expected = {
 				window = {
 					focus = Window.focus,
 					visible = Window.visible,
 					resize = Window.resize,
-				},
-				locales = {
-					add = Locales.add,
-					del = Locales.del,
-					setCurrent = Locales.setCurrent,
 				},
 			}
 
