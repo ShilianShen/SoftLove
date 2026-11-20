@@ -100,21 +100,7 @@ return function(graph, theme, font)
 
 	if drawGraph.ntag then
 		if not drawGraph.ttag then
-			local apis = {}
-			for itag, api in pairs(node.apis) do
-				apis[itag] = { dirty = api.dirty, atag = api.atag, func = api.func }
-			end
-			drawGraph.drawable:setf(
-				inspect({
-					data = node.data,
-					count = node.count,
-					atag = node.atag,
-					dirty = node.dirty,
-					apis = apis,
-				}, { indent = "    " }),
-				W * (1 - rw),
-				"left"
-			)
+			drawGraph.drawable:setf(inspect(node.data, { indent = "    " }), W * (1 - rw), "left")
 		else
 			drawGraph.drawable:setf(inspect(node.tasks[drawGraph.ttag], { indent = "    " }), W * (1 - rw), "left")
 		end
