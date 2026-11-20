@@ -27,8 +27,10 @@ function Page:update(params)
 	self.entry:update(params)
 end
 
+---Forward the hit Widget and merged information; information._path lists hit child keys in visit order, omitting the root.
 ---@param x number
 ---@param y number
+---@return softlove.ui.Widget?, softlove.ui.HookInformation?
 function Page:hook(x, y)
 	return self.entry:hook(x, y)
 end

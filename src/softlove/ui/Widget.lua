@@ -15,7 +15,7 @@
 ---@field _layout fun(self: softlove.ui.Widget, bounds: softlove.ui.Bounds) bounds is the parent's area; the root receives the Page's window area.
 ---@field _draw fun(userData: table, loveData: table, bounds: softlove.ui.Bounds, themes: softlove.ui.Theme) Plain function receiving this widget's data and layout result.
 ---@field _update fun(userData: table, loveData: table, params: table, children: table<any, table>) Plain function; children maps keys to child userData tables.
----@field _hook fun(self: softlove.ui.Widget, x: number, y: number): table Supplies extra information after a hit; hook returns the hit Widget.
+---@field _hook fun(self: softlove.ui.Widget, x: number, y: number): table Supplies extra information after a hit; _path is reserved for hook.
 ---@field inside fun(self: softlove.ui.Widget, x: number, y: number): boolean Additional hit test within bounds.
 local Widget = {}
 
@@ -84,14 +84,20 @@ end
 
 ---Call this widget's _hook only when coordinates lie strictly within bounds (excluding edges) and pass inside.
 ---Invisible or missed parents do not block child hit tests; later hits replace earlier results and overwrite matching information keys.
+---information._path contains hit widgets' keys in their parents' children maps, in visit order; the unnamed root is omitted.
+---The list is flat across sibling subtrees; repeated names and non-string keys are preserved.
+---Each call builds a fresh path; _path supplied by _hook is ignored. No hit still returns nil for both results.
+---Custom child hook overrides may supply their own ordered key list; without one, their child key is appended on a hit.
 ---@param x number
 ---@param y number
+---@param name? any Key supplied by the parent during recursion; omit when calling hook on a root.
 ---@return softlove.ui.Widget? widget
----@return table? information
-function Widget:hook(x, y)
+---@return softlove.ui.HookInformation? information
+function Widget:hook(x, y, name)
 	if self.active then
 		local result
-		local information = {}
+		local path = {}
+		local information = { _path = path }
 		if
 			self.visible
 			and self.bounds.x < x
@@ -101,15 +107,35 @@ function Widget:hook(x, y)
 			and self:inside(x, y)
 		then
 			result = self
+			if name ~= nil then
+				path[#path + 1] = name
+			end
 			for k, v in pairs(self:_hook(x, y) or {}) do
-				information[k] = v
+				if k ~= "_path" then
+					information[k] = v
+				end
 			end
 		end
+		local childNames = {}
+		for key, child in pairs(self.children) do
+			childNames[child] = key
+		end
 		for _, child in ipairs(self.order) do
-			local childResult, childHooks = child:hook(x, y)
+			local childName = childNames[child]
+			local childResult, childHooks = child:hook(x, y, childName)
 			result = childResult or result
+			local childPath = childHooks and childHooks._path
+			if childPath then
+				for _, key in ipairs(childPath) do
+					path[#path + 1] = key
+				end
+			elseif childResult and childName ~= nil then
+				path[#path + 1] = childName
+			end
 			for k, v in pairs(childHooks or {}) do
-				information[k] = v
+				if k ~= "_path" then
+					information[k] = v
+				end
 			end
 		end
 		if result then

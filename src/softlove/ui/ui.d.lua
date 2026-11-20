@@ -3,6 +3,10 @@
 ---The application defines the theme structure; draw passes it unchanged to each widget's _draw.
 ---@alias softlove.ui.Theme table
 
+---Merged hit information; application keys are allowed, but _path is maintained by hook rather than _hook.
+---@class softlove.ui.HookInformation: table
+---@field _path any[] Keys of hit widgets in their parents' children maps, in visit order; omits the unnamed root and preserves key types.
+
 ---The resulting layout area; the specific _layout implementation determines its coordinates.
 ---@class softlove.ui.Bounds
 ---@field x number
@@ -34,12 +38,12 @@
 ---@field _draw? fun(userData: table, loveData: table, bounds: softlove.ui.Bounds, themes: softlove.ui.Theme) Receives original references to this widget's data tables, layout result and theme.
 ---@field _layout? fun(self: softlove.ui.Widget, bounds: softlove.ui.Bounds) Reads the parent's area and writes the layout result to self.bounds.
 ---@field _update? fun(userData: table, loveData: table, params: table, children: table<any, table>) children[key] references a direct child's userData, not its Widget.
----@field _hook? fun(self: softlove.ui.Widget, x: number, y: number): table Extra information after a hit; does not select the hit Widget.
+---@field _hook? fun(self: softlove.ui.Widget, x: number, y: number): table Extra hit information; does not select the hit Widget or override _path.
 ---@field layout? fun(self: softlove.ui.Widget, bounds: softlove.ui.Bounds)
 ---@field sort? fun(self: softlove.ui.Widget)
 ---@field draw? fun(self: softlove.ui.Widget, theme: softlove.ui.Theme)
 ---@field update? fun(self: softlove.ui.Widget, params: table)
----@field hook? fun(self: softlove.ui.Widget, x: number, y: number): softlove.ui.Widget?, table?
+---@field hook? fun(self: softlove.ui.Widget, x: number, y: number, name?: any): softlove.ui.Widget?, softlove.ui.HookInformation?
 
 ---A named declaration for the Widgets registry; type references a name in the same registry, and children contains recursive declarations.
 ---Unlike Patch, children contains declarations to build rather than existing Widget instances.

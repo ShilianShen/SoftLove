@@ -135,7 +135,12 @@ describe("Widget traversal", function()
 			if method == "hook" then
 				local hit, hooks = root:hook(5, 6)
 				assert.equals(root.children.child.children.leaf, hit)
-				assert.same({ root = true, child = true, leaf = true }, hooks)
+				assert.same({
+					root = true,
+					child = true,
+					leaf = true,
+					_path = { "child", "leaf" },
+				}, hooks)
 			else
 				root[method](root, context)
 			end
@@ -303,7 +308,14 @@ describe("Widget traversal", function()
 		root:sort()
 		local hit, hooks = root:hook(5, 5)
 		assert.equals(root.children.low.children.leaf, hit)
-		assert.same({ root = true, low = true, leaf = true, high = true, shared = "leaf" }, hooks)
+		assert.same({
+			root = true,
+			low = true,
+			leaf = true,
+			high = true,
+			shared = "leaf",
+			_path = { "high", "low", "leaf" },
+		}, hooks)
 		assert.same({ root = true, shared = "root" }, ownHooks)
 	end)
 
@@ -322,7 +334,7 @@ describe("Widget traversal", function()
 		root:sort()
 		local hit, hooks = root:hook(25, 30)
 		assert.equals(root.children.child, hit)
-		assert.same({ custom = true }, hooks)
+		assert.same({ custom = true, _path = { "child" } }, hooks)
 	end)
 
 	it("should respect inside and return no hooks when nothing is hit", function()
@@ -514,11 +526,11 @@ describe("Widget defaults", function()
 		assert.equals(action, info.action)
 	end)
 
-	it("should return an empty information table for a default hit", function()
+	it("should return an empty path when only the unnamed root is hit", function()
 		local root = widget({ bounds = { w = 100, h = 100 } })
 		local hit, info = root:hook(50, 50)
 		assert.equals(root, hit)
-		assert.same({}, info)
+		assert.same({ _path = {} }, info)
 	end)
 
 	it("should not reuse merged information between hook calls", function()
@@ -541,9 +553,99 @@ describe("Widget defaults", function()
 		})
 		root:sort()
 		local _, first = root:hook(10, 10)
+		assert.same({ "child" }, first._path)
 		first.extra = true
+		first._path[1] = nil
 		local hit, second = root:hook(50, 50)
 		assert.equals(root, hit)
-		assert.same({}, second)
+		assert.is_not.equal(first._path, second._path)
+		assert.same({ _path = {} }, second)
+	end)
+end)
+
+describe("Widget hook paths", function()
+	it(
+		"should exclude missed, invisible and inactive widgets while retaining hits under missed or invisible parents",
+		function()
+			local function branch(patch)
+				patch.children = { leaf = widget({ bounds = { w = 100, h = 100 } }) }
+				return widget(patch)
+			end
+			local root = widget({
+				visible = false,
+				children = {
+					outside = branch({ depth = 4 }),
+					invisible = branch({ depth = 3, visible = false, bounds = { w = 100, h = 100 } }),
+					rejected = branch({
+						depth = 2,
+						bounds = { w = 100, h = 100 },
+						inside = function()
+							return false
+						end,
+					}),
+					inactive = branch({ depth = 1, active = false, bounds = { w = 100, h = 100 } }),
+				},
+			})
+			root:sort()
+			local hit, info = root:hook(5, 5)
+			assert.equals(root.children.rejected.children.leaf, hit)
+			assert.same({ "leaf", "leaf", "leaf" }, info._path)
+		end
+	)
+
+	it("should reserve _path without modifying information supplied by callbacks", function()
+		local supplied = { _path = { "ignored" }, id = "child" }
+		local root = widget({
+			bounds = { w = 100, h = 100 },
+			_hook = function()
+				return { _path = false, id = "root" }
+			end,
+			children = {
+				child = widget({
+					bounds = { w = 100, h = 100 },
+					_hook = function()
+						return supplied
+					end,
+				}),
+			},
+		})
+		root:sort()
+		local _, info = root:hook(5, 5)
+		assert.same({ "child" }, info._path)
+		assert.equals("child", info.id)
+		assert.same({ _path = { "ignored" }, id = "child" }, supplied)
+	end)
+
+	it("should append a custom hook's path without modifying its array", function()
+		local root = widget({
+			bounds = { w = 100, h = 100 },
+			children = { child = widget({ children = { leaf = widget() } }) },
+		})
+		local child = root.children.child
+		local leaf = child.children.leaf
+		local path = { "child", "leaf" }
+		child.hook = function()
+			return leaf, { _path = path, custom = true }
+		end
+		root:sort()
+		local hit, info = root:hook(5, 5)
+		assert.equals(leaf, hit)
+		assert.same({ "child", "leaf" }, info._path)
+		assert.is_not.equal(path, info._path)
+		assert.same({ "child", "leaf" }, path)
+		assert.is_true(info.custom)
+	end)
+
+	it("should preserve numeric and false child keys in visit order", function()
+		local root = widget({
+			children = {
+				[7] = widget({ depth = 2, bounds = { w = 100, h = 100 } }),
+				[false] = widget({ depth = 1, bounds = { w = 100, h = 100 } }),
+			},
+		})
+		root:sort()
+		local hit, info = root:hook(5, 5)
+		assert.equals(root.children[false], hit)
+		assert.same({ 7, false }, info._path)
 	end)
 end)
