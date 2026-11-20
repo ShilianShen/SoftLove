@@ -25,6 +25,26 @@ drawGraph.theme = {
 drawGraph.font = love.graphics.newFont(12)
 drawGraph.drawable = love.graphics.newText(drawGraph.font)
 
+local function tableDepth(value, visiting)
+	if type(value) ~= "table" then
+		return 0
+	end
+
+	visiting = visiting or {}
+	if visiting[value] then
+		return 0
+	end
+	visiting[value] = true
+
+	local depth = 1
+	for _, child in pairs(value) do
+		depth = math.max(depth, 1 + tableDepth(child, visiting))
+	end
+
+	visiting[value] = nil
+	return depth
+end
+
 ---@param graph softdep.Graph
 ---@param theme table|nil
 ---@param font love.Font|nil
@@ -99,19 +119,33 @@ return function(graph, theme, font)
 	content:draw(theme, font)
 
 	if drawGraph.ntag then
+		local x, y = W * rw, 0
+		local w = W * (1 - rw)
+		local D = tableDepth(node.data)
+
+		local depth = 1 + (D - 1) * (mouseX - x) / w
+		if depth < 1 then
+			depth = 1
+		elseif depth > D then
+			depth = D
+		else
+			depth = math.floor(depth + 0.5)
+		end
+
 		if not drawGraph.ttag then
-			drawGraph.drawable:setf(inspect(node.data, { indent = "    " }), W * (1 - rw), "left")
+			drawGraph.drawable:setf(inspect(node.data, { indent = "    ", depth = depth }), W * (1 - rw), "left")
 		else
 			drawGraph.drawable:setf(inspect(node.tasks[drawGraph.ttag], { indent = "    " }), W * (1 - rw), "left")
 		end
 		drawGraph.drawable:setFont(font)
-		local x, y = W * rw, 0
-		local w, h = drawGraph.drawable:getDimensions()
+
+		local h = drawGraph.drawable:getHeight()
 		if h > H then
 			local rate = (mouseY - y) / H
 			local offset = math.max(0, h - H) * rate
 			y = y - offset
 		end
+
 		love.graphics.setColor(node.dirty and theme.warning or theme.success)
 		love.graphics.draw(drawGraph.drawable, x, y)
 	end
