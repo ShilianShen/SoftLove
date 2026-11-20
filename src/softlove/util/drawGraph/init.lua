@@ -3,10 +3,11 @@ local getDAG = require("softlove.util.drawGraph.getDAG")
 local inspect = require("softlove.inspect")
 
 local drawGraph = {
-	ntag = nil,
-	ttag = nil,
 	defaultNode = { tasks = {}, parents_c = {}, children_c = {}, order_c = {} },
 }
+
+-- Keep selections independent without retaining graphs that are no longer in use.
+local selections = setmetatable({}, { __mode = "k" })
 
 drawGraph.theme = {
 	background = { 0.025, 0.025, 0.025, 0.7 },
@@ -59,8 +60,17 @@ return function(graph, theme, font)
 	theme = theme or drawGraph.theme
 	font = font or drawGraph.font
 
+	local selection = selections[graph]
+	if not selection then
+		selection = {}
+		selections[graph] = selection
+	end
+	if not graph.nodes[selection.ntag] then
+		selection.ntag, selection.ttag = nil, nil
+	end
+
 	local nodesContent =
-		getDAG(graph.nodes, graph.parents_n, graph.children_n, graph.order_n, drawGraph.ntag, 0, 0, W * rw, H * rh)
+		getDAG(graph.nodes, graph.parents_n, graph.children_n, graph.order_n, selection.ntag, 0, 0, W * rw, H * rh)
 
 	for ntag, text in pairs(nodesContent.texts) do
 		local x = text.x
@@ -68,19 +78,22 @@ return function(graph, theme, font)
 		local w = font:getWidth(text.t)
 		local h = font:getHeight()
 		if mouseX >= x - w / 2 and mouseX <= x + w / 2 and mouseY >= y - h / 2 and mouseY <= y + h / 2 then
-			drawGraph.ntag = ntag
-			drawGraph.ttag = nil
+			selection.ntag = ntag
+			selection.ttag = nil
 			break
 		end
 	end
 
-	local node = drawGraph.ntag and graph.nodes[drawGraph.ntag] or drawGraph.defaultNode
+	local node = selection.ntag and graph.nodes[selection.ntag] or drawGraph.defaultNode
+	if selection.ttag and not node.tasks[selection.ttag] then
+		selection.ttag = nil
+	end
 	local tasksContent = getDAG(
 		node.tasks,
 		node.parents_c,
 		node.children_c,
 		node.order_c,
-		drawGraph.ttag,
+		selection.ttag,
 		0,
 		H * rh,
 		W * rw,
@@ -93,20 +106,20 @@ return function(graph, theme, font)
 		local w = font:getWidth(text.t)
 		local h = font:getHeight()
 		if mouseX >= x - w / 2 and mouseX <= x + w / 2 and mouseY >= y - h / 2 and mouseY <= y + h / 2 then
-			drawGraph.ttag = ttag
+			selection.ttag = ttag
 			break
 		end
 	end
 
 	local content = Content.union({ n = nodesContent, t = tasksContent })
 
-	if drawGraph.ntag and drawGraph.ttag then
-		for _, ptag in pairs(graph.parents_d[drawGraph.ntag][drawGraph.ttag]) do
+	if selection.ntag and selection.ttag then
+		for _, ptag in pairs(graph.parents_d[selection.ntag][selection.ttag]) do
 			local pnode = graph.nodes[ptag]
 			local x1 = nodesContent.texts[ptag].x
 			local y1 = nodesContent.texts[ptag].y
-			local x2 = tasksContent.texts[drawGraph.ttag].x
-			local y2 = tasksContent.texts[drawGraph.ttag].y
+			local x2 = tasksContent.texts[selection.ttag].x
+			local y2 = tasksContent.texts[selection.ttag].y
 			content:add("ae" .. ptag, "line", { x1 = x1, y1 = y1, x2 = x2, y2 = y2, s = "dot" })
 			content:add("av" .. ptag, "text", {
 				x = (x1 + x2) / 2,
@@ -120,7 +133,7 @@ return function(graph, theme, font)
 	content:add("dbackground", "rect", { x = W * rw, y = 0, w = W * (1 - rw), h = H, sc = "background" })
 	content:draw(theme, font)
 
-	if drawGraph.ntag then
+	if selection.ntag then
 		local x, y = W * rw, 0
 		local w = W * (1 - rw)
 		local D = tableDepth(node.data)
@@ -134,10 +147,10 @@ return function(graph, theme, font)
 			depth = math.floor(depth + 0.5)
 		end
 
-		if not drawGraph.ttag then
+		if not selection.ttag then
 			drawGraph.drawable:setf(inspect(node.data, { indent = "    ", depth = depth }), W * (1 - rw), "left")
 		else
-			drawGraph.drawable:setf(inspect(node.tasks[drawGraph.ttag], { indent = "    " }), W * (1 - rw), "left")
+			drawGraph.drawable:setf(inspect(node.tasks[selection.ttag], { indent = "    " }), W * (1 - rw), "left")
 		end
 		drawGraph.drawable:setFont(font)
 
