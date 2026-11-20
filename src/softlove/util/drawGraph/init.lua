@@ -37,9 +37,11 @@ local function tableDepth(value, visiting)
 	visiting[value] = true
 
 	local depth = 1
-	for _, child in pairs(value) do
-		depth = math.max(depth, 1 + tableDepth(child, visiting))
+	-- Match inspect's raw traversal of table keys, values and visible metatables.
+	for key, child in next, value do
+		depth = math.max(depth, 1 + tableDepth(key, visiting), 1 + tableDepth(child, visiting))
 	end
+	depth = math.max(depth, 1 + tableDepth(getmetatable(value), visiting))
 
 	visiting[value] = nil
 	return depth
